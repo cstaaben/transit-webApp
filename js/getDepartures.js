@@ -1,7 +1,7 @@
-//<<<<<<< HEAD
+
 //getStopData.js
 //ahenry
-
+//comment
 function getStop(lat, lon, submitDate, submitTime){
 	if(!isNaN(lat) && !isNaN(lon)){
 		$.getJSON("https://transit.land/api/v1/stops", {lat: lat, lon:lon, r:250 }, function(data){
@@ -54,15 +54,9 @@ function getDepartures(stop, submitDate, submitTime){
 	//}
 }
 
-$(document).ready(function(){
-	//Dummy data
-	/*
-	var lat = 47.492708;
-	var lon = -117.5857637;
-	var stop = getStop(lat, lon);
-	*/
-});
-//=======
+
+
+
 //getStopData.js
 //ahenry
 
@@ -238,4 +232,3 @@ $(document).ready(function(){
 		getArrivalsDepartures(lat, lon);
 	});
 });
-//>>>>>>> 36e93f82dfb77265a8be967d4a59675992772c86
