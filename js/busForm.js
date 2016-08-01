@@ -1,5 +1,7 @@
 $( document ).ready(function() {
-	$("#map").width('50%').height('300px');
+	$("#map").width('50%').height('300px').css({"float": "left"});
+	$("#stops").width('50%').height('300px').css({"float": "right"});
+	$("p").css("padding","10px");
 		
 	//initMap();
 	initForm();
@@ -43,6 +45,8 @@ function initForm() {
 
 function submitClick()
 {
+	clearMarkers();
+	
 	var date = new Date($.now());
 	var time = $("#time").val()+":"+date.getSeconds();
 	var location = $("#location").val();

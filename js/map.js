@@ -5,9 +5,11 @@ function initMap() {
 		  center: {lat: 47.6588, lng: -117.4260},
 		  zoom: 10
 	});
-	infowindow = new google.maps.InfoWindow();
-	markers = [];
 	
+	markers = [];
+	infowindow = new google.maps.InfoWindow({
+			content: ""
+	});
 }
 
 function moveMap(latLng) {
@@ -17,35 +19,55 @@ function moveMap(latLng) {
 			map.setZoom(16);
 	});
 	
-	//map.addListener("center_changed", clearMarker);
 }
 
-function setMarker(latLng, name) {
+function setMarker(latLng, name, info) {
+	
+	//console.log(info);
+	
 	m = new google.maps.Marker({
 		map: map,
-		position: {lat: latLng[0], lng: latLng[1]},
+		position: {lat: parseFloat(latLng[1]), lng: parseFloat(latLng[0])},
 		draggable: false,
 		title: name,
-		animation: google.maps.Animation.DROP
+		animation: google.maps.Animation.DROP,
+		data: info
 	});
 	
-	markers.push(m);
 	
-	return m;
+	
+	//for(var i = 0; i < markers.length; i++) {
+		//google.maps.event.clearInstanceListeners(markers[i]);
+	m.addListener("click", function() {
+			$("#stops").html("<p>" + this.data + "</p>");
+			//console.log(this.data);
+	});
+	//}	
+	markers.push(m);
 }
 
 function setInfo(mark, info) {
 	mark.addListener("click", function() {
 			infowindow.close();
-			infowindow.setContent(info);
+			infowindow = new google.maps.InfoWindow({
+					content: info,
+			});
 			infowindow.open(map, marker);
 	});
+}
+
+function closeWindows() {
+	for(var i = 0; i < windows.length; i++) {
+		windows[i].close();
+	}
 }
 
 function clearMarkers() {
 	for(var i = 0; i < markers.length; i++) {
 		markers[i].setMap(null);
 	}
+	
+	markers = [];
 }
 
 function getShortestDist(orLat, orLng, destAra) {
