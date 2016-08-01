@@ -57,8 +57,8 @@ var getStopTitles = function(schedule_stop_pair){
 
 function getDepartures(stop){
 	departures = [];
-	var time = Date.now().getHours();
-	time += Date.now().toString(":mm:ss");
+	var time = "06:55:00";//Date.now().getHours();
+	//time += Date.now().toString(":mm:ss");
 	var date = Date.now().toString("yyyy-MM-dd");
 	for(var i = 0; i < stop.routes_serving_stop.length; i++){
 		
