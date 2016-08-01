@@ -5,6 +5,7 @@ $( document ).ready(function() {
 
 	$("p").css("padding","10px");
 	$("#map").slideUp();
+	$("#stops").slideUp();
 	$("h3").hide();
 	//initMap();
 	initForm();
@@ -48,6 +49,7 @@ function initForm() {
 
 function submitClick()
 {
+	
 	$("#map").slideDown(500);
 	clearMarkers();
 	
