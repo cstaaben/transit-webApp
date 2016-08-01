@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
 
 body{
 	background: url(../img/plaza.jpg) no-repeat center center fixed; 
@@ -36,7 +36,7 @@ input{
 	margin-top: 10em;
 }
 
-#map, #stops{
+#map{
 	margin-top: 4em;
 	margin-left: 25%;
 	margin-right: 25%;
