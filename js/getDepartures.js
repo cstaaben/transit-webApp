@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //getStopData.js
 //ahenry
 
@@ -62,7 +62,7 @@ $(document).ready(function(){
 	var stop = getStop(lat, lon);
 	*/
 });
-=======
+//=======
 //getStopData.js
 //ahenry
 
@@ -238,4 +238,4 @@ $(document).ready(function(){
 		getArrivalsDepartures(lat, lon);
 	});
 });
->>>>>>> 36e93f82dfb77265a8be967d4a59675992772c86
+//>>>>>>> 36e93f82dfb77265a8be967d4a59675992772c86

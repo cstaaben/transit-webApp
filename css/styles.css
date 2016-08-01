@@ -1,20 +1,27 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
 
 body{
-	background: url(../img/plaza.jpg) no-repeat center center fixed; 
+	background: url(../img/plaza2.jpg) no-repeat center center fixed; 
   	-webkit-background-size: cover;
   	-moz-background-size: cover;
   	-o-background-size: cover;
   	background-size: cover;
   	-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://media02.hongkiat.com/oversized-background-image-design/bg.jpg', sizingMethod='scale')";
   	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.http://media02.hongkiat.com/oversized-background-image-design/bg.jpg', sizingMethod='scale');
-  }
+ }
+/*body{
+ 	background: url(../img/sayagata.png);
+ } 
+ OPTIONAL OTHER BACKGROUND
+ */
 
 h1{
 	font-family: 'Open Sans', sans-serif;
+	padding: .25em;
 	font-size: 5em;
 	color: white;
 	text-align: center;
+	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
 input{
@@ -29,14 +36,13 @@ input{
 	min-width: 25%;
 	max-width: 50%;
 	padding: 5em;
-	border-radius: 2%;
 	background-color: hsla(82, 54%, 64%, 0.86);
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 10em;
 }
 
-#map{
+#map,#stops{
 	margin-top: 4em;
 	margin-left: 25%;
 	margin-right: 25%;

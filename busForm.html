@@ -1,21 +1,43 @@
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+		<link rel = "stylesheet" type = "text/css" href="css/styles.css">
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="js/semantic.min.js"></script>
 		<script src="js/busForm.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnnmS81Gsx73eGbCi7rt5ERc1XdUy7Vf8&callback=initMap"></script>
 		<script src="js/geocodingStart.js"></script>
 		<script src="js/map.js"></script>
 		<script src="js/getDepartures.js"></script>
+		
 		<title>Transit App</title>
 	</head>
 
 	<body>
-		<div id="inputForm">
-			Location: <input type="text" id="location"><br>
-			Time: <input type="time" id="time"><br>
-			Date: <input type="date" id="date"><br>
-			<input type="submit" id="btnSubmit" value="Submit">
+<!comment-->
+<!-- FORM -->
+
+	<h1>Plan Your Route!</h1><br>
+
+	<div id="inputForm" class="ui large form">
+				<div class="field">
+				<input type="text" id="location" placeholder="Location" autofocus><br>
+			</div>
+
+			<div class="two fields">
+				<div class="field">
+					<input type="time" id="time" placeholder = "Time">
+				</div>
+				<div class="field">
+					<input type="date" id="date" placeholder = "Date">
+				</div>
+			</div>
+			
+			<button class = "ui huge blue button" id="btnSubmit">Submit</button>
 		</div>
+
+<!-- Info and Map -->
 
 		<h3>Departures</h3>
 		<table border="2" id="tblDepartures" hidden="true">
