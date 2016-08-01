@@ -1,6 +1,8 @@
 $( document ).ready(function() {
+	//PUT THESE IN CSS
 	//$("#map").width('50%').height('300px').css({"float": "left"});
 	//$("#stops").width('50%').height('300px').css({"float": "right"});
+
 	$("p").css("padding","10px");
 	$("#map").slideUp();
 	$("h3").hide();
@@ -14,7 +16,7 @@ $( document ).ready(function() {
 });
 
 function initForm() {
-	//GET CURRENT DATE/TIME
+//GET CURRENT DATE/TIME
 	var date = new Date($.now());
 
 //SET TIME AND DATE DATA TO WORK FOR INPUT FIELDS	
@@ -54,7 +56,7 @@ function submitClick()
 	var location = $("#location").val();
 	var submitDate = $("#date").val();
 	
-	// console.log(location);
+	console.log(location);
 	// console.log(time);
 	// console.log(submitDate);
 
