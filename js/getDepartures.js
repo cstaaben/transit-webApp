@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 //getStopData.js
 //ahenry
 
@@ -54,15 +54,6 @@ function getDepartures(stop, submitDate, submitTime){
 	//}
 }
 
-$(document).ready(function(){
-	//Dummy data
-	/*
-	var lat = 47.492708;
-	var lon = -117.5857637;
-	var stop = getStop(lat, lon);
-	*/
-});
-=======
 //getStopData.js
 //ahenry
 
@@ -238,4 +229,3 @@ $(document).ready(function(){
 		getArrivalsDepartures(lat, lon);
 	});
 });
->>>>>>> 36e93f82dfb77265a8be967d4a59675992772c86
