@@ -1,8 +1,9 @@
 $( document ).ready(function() {
-	$("#map").width('50%').height('300px').css({"float": "left"});
-	$("#stops").width('50%').height('300px').css({"float": "right"});
+	//$("#map").width('50%').height('300px').css({"float": "left"});
+	//$("#stops").width('50%').height('300px').css({"float": "right"});
 	$("p").css("padding","10px");
-		
+	$("#map").slideUp();
+	$("h3").hide();
 	//initMap();
 	initForm();
 	
@@ -45,6 +46,7 @@ function initForm() {
 
 function submitClick()
 {
+	$("#map").slideDown(500);
 	clearMarkers();
 	
 	var date = new Date($.now());
