@@ -5,6 +5,7 @@ $( document ).ready(function() {
 
 	$("p").css("padding","10px");
 	$("#map").slideUp();
+	$("#stops").slideUp();
 	$("h3").hide();
 	//initMap();
 	initForm();
@@ -48,6 +49,7 @@ function initForm() {
 
 function submitClick()
 {
+	
 	$("#map").slideDown(500);
 	clearMarkers();
 	
@@ -56,7 +58,7 @@ function submitClick()
 	var location = $("#location").val();
 	var submitDate = $("#date").val();
 	
-	console.log(location);
+	//console.log(location);
 	// console.log(time);
 	// console.log(submitDate);
 

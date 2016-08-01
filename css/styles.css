@@ -50,3 +50,9 @@ input{
 	height: 300px;
 }
 
+#stops{
+	background-color: hsla(82, 54%, 64%, 0.86);
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.5em;
+	padding-left: 5em;
+}

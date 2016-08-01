@@ -41,6 +41,7 @@ function setMarker(latLng, name, info) {
 	m.addListener("click", function() {
 			$("#stops").html("<p>" + this.data + "</p>");
 			//console.log(this.data);
+			$("#stops").slideDown(500);
 	});
 	//}	
 	markers.push(m);
