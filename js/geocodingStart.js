@@ -4,19 +4,25 @@
 //AIzaSyDNjqAjndVUEOxXE3r1i3PdGx-uPHZDBgI
 
 
-function getGeoCoding(location)
+function getGeoCoding(location, submitDate, submitTime)
 {
 	var link = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key=AIzaSyDNjqAjndVUEOxXE3r1i3PdGx-uPHZDBgI";
-	$.getJSON(link, "", getDone);
+	$.getJSON(link, "", function(data) {
+			getDone(data, submitDate, submitTime);
+	});
 }
 
-function getDone(data){
+function getDone(data, submitDate, submitTime){
 	//console.log('WORKED');
 	//console.log(data.results[0].geometry.location);
-	var fullLocation = data.results[0].geometry.location;
-	
-	var lat = fullLocation.lat;
-	var lng = fullLocation.lng;
-	
-	console.log(lat+", "+lng);
+	if(data["status"] == "OK") {
+		var latLng = data.results[0].geometry.location;
+		
+		moveMap(latLng);
+		getStop(latLng.lat, latLng.lng, submitDate, submitTime);
+	}
+	else {
+		alert("Geocode failed: " + data["status"]);
+	}
+
 }

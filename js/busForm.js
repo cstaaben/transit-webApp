@@ -1,8 +1,17 @@
 $( document ).ready(function() {
+	$("#map").width('50%').height('300px');
+		
+	//initMap();
+	initForm();
 	
     //console.log( "ready!" );
 
-//GET CURRENT DATE/TIME
+	$("#btnSubmit").click(submitClick);
+	
+});
+
+function initForm() {
+	//GET CURRENT DATE/TIME
 	var date = new Date($.now());
 
 //SET TIME AND DATE DATA TO WORK FOR INPUT FIELDS	
@@ -26,28 +35,23 @@ $( document ).ready(function() {
 
 	var currentTime = hour+":"+minutes;
 	var currentDate = date.getFullYear()+"-"+month+"-"+day;
-
-//POPULATE FORM
+	
+	//POPULATE FORM
 	$("#time").val(currentTime);
 	$("#date").val(currentDate);
+}
 
-
-	$("#btnSubmit").click(submitClick);
-
-
-	function submitClick()
-	{
-		var time = $("#time").val()+":"+date.getSeconds();
-		var location = $("#location").val();
-		var submitDate = $("#date").val();
-		
-		// console.log(location);
-		// console.log(time);
-		// console.log(submitDate);
-
-		getGeoCoding(location);
-	}
+function submitClick()
+{
+	var date = new Date($.now());
+	var time = $("#time").val()+":"+date.getSeconds();
+	var location = $("#location").val();
+	var submitDate = $("#date").val();
 	
-});
+	// console.log(location);
+	// console.log(time);
+	// console.log(submitDate);
 
-
+	getGeoCoding(location, submitDate, time);
+	
+}
