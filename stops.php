@@ -1,6 +1,7 @@
 <?php
 //stops.php
 //Audrey Henry
+header('Access-Control-Allow-Origin: *');
 if($_SERVER["REQUEST_METHOD"] !== "GET"){
 	http_response_code(400);
 	echo json_encode("Error: Bad request type");
