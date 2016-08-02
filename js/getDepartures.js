@@ -113,7 +113,7 @@ var getStopTitles = function(schedule_stop_pair){
 		updateDepartures();
 	}
 }
-/*
+
 function getDepartures(stop){
 	departures = [];
 	var time = "06:55:00";//Date.now().getHours();
@@ -151,7 +151,7 @@ function getDepartures(stop){
 			});
 	}
 }
-*/
+
 function getArrivals(stop){
 	arrivals = [];
 	var time = Date.now().getHours();
