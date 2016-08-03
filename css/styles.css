@@ -56,3 +56,39 @@ input{
 	font-size: 1.5em;
 	padding-left: 5em;
 }
+
+#favesDiv{
+	background-color: hsla(82, 54%, 64%, 0.86);
+	width: 400px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left:auto;
+	overflow:scroll;
+	height:150px;
+}
+
+#buttonTd {
+	display:inline-block;
+	width: 50px;
+}
+
+#delFaveBtn {
+	margin: 5px;
+}
+
+#addFavBtn{
+	display:inline-block;
+	margin-left: 5px;
+}
+
+.faveMessage {
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.25em;
+	padding: 5px;
+}
+
+#favesDiv{
+	padding-top: 10px;
+	padding-left: 10px;
+}
