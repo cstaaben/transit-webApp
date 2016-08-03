@@ -3,9 +3,8 @@ $( document ).ready(function() {
 	//$("#map").width('50%').height('300px').css({"float": "left"});
 	//$("#stops").width('50%').height('300px').css({"float": "right"});
 
-	
 	initForm();
-	$("#map").slideUp();
+	//$("#map").slideUp();
 	$("#stops").slideUp();
 	$("h3").hide();
 	
@@ -49,13 +48,13 @@ function initForm() {
 
 function submitClick()
 {
-	$("#map").slideDown(500);
+	$("#stops").slideDown(500);
 	//clearMarkers();
 
 	// automatically scroll down to displayed map
-	$('html,body').animate({
-        scrollTop: $("#map").offset().top},
-        'slow');
+	/*$('html,body').animate({
+        scrollTop: $("#stops").offset().top},
+        'slow');*/
 	
 	var date = new Date($.now());
 	var time = $("#time").val()+":"+date.getSeconds();
@@ -66,6 +65,6 @@ function submitClick()
 	// console.log(time);
 	// console.log(submitDate);
 
-	getGeoCoding(location, submitDate, time);
+	//getGeoCoding(location, submitDate, time);
 	
 }

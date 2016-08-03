@@ -20,8 +20,7 @@ function getDone(data, submitDate, submitTime){
 		var latLng = data.results[0].geometry.location;
 		
 		initMap(latLng);
-		//moveMap(latLng);
-		//getStop(latLng.lat, latLng.lng, submitDate, submitTime);
+		getStop(latLng.lat, latLng.lng, submitDate, submitTime);
 	}
 	else {
 		alert("Geocode failed: " + data["status"]);

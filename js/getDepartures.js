@@ -47,7 +47,7 @@ function getDepartures(stop, submitDate, submitTime){
 				}
 				//console.log(times);
 				
-				setMarker(stop.geometry.coordinates, stop.name, times);
+				//setMarker(stop.geometry.coordinates, stop.name, times);
 			});
 		
 		

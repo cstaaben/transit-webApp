@@ -2,7 +2,7 @@ function initMap(latLng) {
 	
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
-		  center: latLng,
+		  center: {lat: 47.6588, lng: -117.4260},
 		  zoom: 10
 	});
 	
@@ -10,6 +10,8 @@ function initMap(latLng) {
 	infowindow = new google.maps.InfoWindow({
 			content: ""
 	});
+	
+	getCurLocation();
 	
 	google.maps.event.addListenerOnce(map, "idle", function() {
 			map.setZoom(16);
@@ -73,17 +75,4 @@ function clearMarkers() {
 	}
 	
 	markers = [];
-}
-
-function getShortestDist(orLat, orLng, destAra) {
-	var o;
-	o = orLat + "," + orLng;
-	
-	for(var i = 0; i < destAra.length; i++) {
-		console.log(destAra[i]);
-	}
-	
-	//var req = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + o + 
-	//		"&destinations=" + dest + "&key=AIzaSyBnnmS81Gsx73eGbCi7rt5ERc1XdUy7Vf8";
-	//$.getJSON(req, "");
 }
