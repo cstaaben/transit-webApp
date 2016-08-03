@@ -16,8 +16,8 @@ $( document ).ready(function() {
 
     //console.log( "ready!" );
 
-	//$("#btnSubmit").click(routeSubmit);
-	$("#btnRouteSubmit").click(submitClick);
+	$("#btnSubmit").click(submitClick);
+	$("#btnRouteSubmit").click(routeSubmit);
 	
 });
 
@@ -73,12 +73,21 @@ function submitClick()
 	var location = $("#location").val();
 	var submitDate = $("#date").val();
 	debugger;
-	//console.log(location);
-	// console.log(time);
-	// console.log(submitDate);
+	// console.log(location);
+	//  console.log(time);
+	//  console.log(submitDate);
 
 	getGeoCoding(location, submitDate, time);
 	
+}
+
+function routeSubmit(){
+	console.log( $("#starting").val());
+	console.log( $("#destination").val());
+	console.log( $("#date2").val());
+	console.log( $("#time2").val());
+	console.log( $("#timeType").val());
+
 }
 
 
