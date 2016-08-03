@@ -94,9 +94,9 @@ function setMenu(){
 		populateRouteForm();
 	});
 
-	$(".favorites").click(function(){
+	$(".favoritesMenu").click(function(){
 		$(".formbody").hide();
-		$("favorites").show();
+		$("#favorites").show();
 	});
 
 }
