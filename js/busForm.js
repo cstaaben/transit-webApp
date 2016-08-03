@@ -61,7 +61,7 @@ function submitClick()
 	var time = $("#time").val()+":"+date.getSeconds();
 	var location = $("#location").val();
 	var submitDate = $("#date").val();
-	
+	debugger;
 	//console.log(location);
 	// console.log(time);
 	// console.log(submitDate);
