@@ -16,11 +16,12 @@ body{
  */
 
 h1{
-	font-family: 'Open Sans', sans-serif;
+	
 	padding: .25em;
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 5em;
 	color: white;
-	text-align: center;
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
@@ -29,17 +30,39 @@ input{
 	color: green;	
 }
 
+ul{
+	margin-left:23%;
+	margin-bottom:2em;
+	width: 100%;
+}
+
+li{
+	list-style: none;
+	display: inline;
+	background-color: hsla(82, 54%, 64%, 0.86);
+	color: white;
+	padding: 1em;
+	margin: auto;
+
+}
+
 #location{
 	max-width: 100%;
 }
 #inputForm{
-	min-width: 25%;
-	max-width: 50%;
-	padding: 5em;
-	background-color: hsla(82, 54%, 64%, 0.86);
+	padding: 1em;
+	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 10em;
+	margin-top: 10px;
+}
+
+#planRoute{
+	padding: 1em;
+	/*background-color: hsla(82, 54%, 64%, 0.86);*/
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
 }
 
 #map,#stops{
@@ -56,3 +79,18 @@ input{
 	font-size: 1.5em;
 	padding-left: 5em;
 }
+
+
+.formBody{
+	background: hsla(82, 54%, 64%, 0.86);
+	min-width: 25%;
+	max-width: 50%;
+	padding: 1em;
+	background-color: hsla(82, 54%, 64%, 0.86);
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	border: none;
+
+}
+

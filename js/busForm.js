@@ -3,6 +3,7 @@ $( document ).ready(function() {
 	//$("#map").width('50%').height('300px').css({"float": "left"});
 	//$("#stops").width('50%').height('300px').css({"float": "right"});
 
+	$(".menu .item").tab();
 	$("p").css("padding","10px");
 	$("#map").slideUp();
 	$("#stops").slideUp();
@@ -10,9 +11,11 @@ $( document ).ready(function() {
 	//initMap();
 	initForm();
 	
+
     //console.log( "ready!" );
 
-	$("#btnSubmit").click(submitClick);
+	$("#btnSubmit").click(routeSubmit);
+	$("#btnRouteSubmit").click(submitClick);
 	
 });
 
@@ -64,4 +67,9 @@ function submitClick()
 
 	getGeoCoding(location, submitDate, time);
 	
+}
+
+
+function populateForm(){
+
 }
