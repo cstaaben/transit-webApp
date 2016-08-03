@@ -1,0 +1,94 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
+
+body{
+	background: url(../img/plaza2.jpg) no-repeat center center fixed; 
+  	-webkit-background-size: cover;
+  	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
+  	-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://media02.hongkiat.com/oversized-background-image-design/bg.jpg', sizingMethod='scale')";
+  	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.http://media02.hongkiat.com/oversized-background-image-design/bg.jpg', sizingMethod='scale');
+ }
+/*body{
+ 	background: url(../img/sayagata.png);
+ } 
+ OPTIONAL OTHER BACKGROUND
+ */
+
+h1{
+	font-family: 'Open Sans', sans-serif;
+	padding: .25em;
+	font-size: 5em;
+	color: white;
+	text-align: center;
+	background-color: hsla(82, 54%, 64%, 0.86);
+}
+
+input{
+	opacity: 1;
+	color: green;	
+}
+
+#location{
+	max-width: 100%;
+}
+#inputForm{
+	min-width: 25%;
+	max-width: 50%;
+	padding: 5em;
+	background-color: hsla(82, 54%, 64%, 0.86);
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10em;
+}
+
+#map,#stops{
+	margin-top: 4em;
+	margin-left: 25%;
+	margin-right: 25%;
+	width: 50%;
+	height: 300px;
+}
+
+#stops{
+	background-color: hsla(82, 54%, 64%, 0.86);
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.5em;
+	padding-left: 5em;
+}
+
+#favesDiv{
+	background-color: hsla(82, 54%, 64%, 0.86);
+	width: 400px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left:auto;
+	overflow:scroll;
+	height:150px;
+}
+
+#buttonTd {
+	display:inline-block;
+	width: 50px;
+}
+
+#delFaveBtn {
+	margin: 5px;
+}
+
+#addFavBtn{
+	display:inline-block;
+	margin-left: 5px;
+}
+
+.faveMessage {
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.25em;
+	padding: 5px;
+}
+
+#favesDiv{
+	padding-top: 10px;
+	padding-left: 10px;
+}
