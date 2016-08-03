@@ -6,6 +6,7 @@
 
 function getGeoCoding(location, submitDate, submitTime)
 {
+	
 	var link = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key=AIzaSyDNjqAjndVUEOxXE3r1i3PdGx-uPHZDBgI";
 	$.getJSON(link, "", function(data) {
 			getDone(data, submitDate, submitTime);
@@ -18,8 +19,9 @@ function getDone(data, submitDate, submitTime){
 	if(data["status"] == "OK") {
 		var latLng = data.results[0].geometry.location;
 		
-		moveMap(latLng);
-		getStop(latLng.lat, latLng.lng, submitDate, submitTime);
+		initMap(latLng);
+		//moveMap(latLng);
+		//getStop(latLng.lat, latLng.lng, submitDate, submitTime);
 	}
 	else {
 		alert("Geocode failed: " + data["status"]);

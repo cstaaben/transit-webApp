@@ -3,12 +3,12 @@ $( document ).ready(function() {
 	//$("#map").width('50%').height('300px').css({"float": "left"});
 	//$("#stops").width('50%').height('300px').css({"float": "right"});
 
-	$("p").css("padding","10px");
+	
+	initForm();
 	$("#map").slideUp();
 	$("#stops").slideUp();
 	$("h3").hide();
-	//initMap();
-	initForm();
+	
 	
     //console.log( "ready!" );
 
@@ -49,9 +49,13 @@ function initForm() {
 
 function submitClick()
 {
-	
 	$("#map").slideDown(500);
-	clearMarkers();
+	//clearMarkers();
+
+	// automatically scroll down to displayed map
+	$('html,body').animate({
+        scrollTop: $("#map").offset().top},
+        'slow');
 	
 	var date = new Date($.now());
 	var time = $("#time").val()+":"+date.getSeconds();

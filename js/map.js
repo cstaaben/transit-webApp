@@ -1,14 +1,18 @@
-function initMap() {
+function initMap(latLng) {
 	
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
-		  center: {lat: 47.6588, lng: -117.4260},
+		  center: latLng,
 		  zoom: 10
 	});
 	
 	markers = [];
 	infowindow = new google.maps.InfoWindow({
 			content: ""
+	});
+	
+	google.maps.event.addListenerOnce(map, "idle", function() {
+			map.setZoom(16);
 	});
 }
 
