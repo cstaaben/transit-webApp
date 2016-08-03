@@ -14,32 +14,82 @@
 		<title>Transit App</title>
 	</head>
 
-	<body>
+<body>
 
 <!-- FORM -->
 
-	<h1>Plan Your Route!</h1><br>
+	<h1 class="header">Plan Your Route!</h1><br>
+
+<ul id = "menu">
+	<li class="findStopsMenu">Find Stops</li>
+	<li class="planRouteMenu">Plan Route</li>
+	<li class="Favorites">Favorites</li>
+</ul>
+
+<div id = "findStops" class="formBody">
 
 	<div id="inputForm" class="ui large form">
-				<div class="field">
-				<input type="text" id="location" placeholder="Location" autofocus><br>
-			</div>
-
-			<div class="two fields">
-				<div class="field">
-					<input type="time" id="time" placeholder = "Time">
-				</div>
-				<div class="field">
-					<input type="date" id="date" placeholder = "Date">
-				</div>
-			</div>
-			
-			<button class = "ui huge blue button" id="btnSubmit">Submit</button>
+		<div class="field">
+			<input type="text" id="location" placeholder="Location" autofocus><br>
 		</div>
 
-<!-- Info and Map -->
+		<div class="two fields">
+			<div class="field">
+				<input type="time" id="time" placeholder = "Time">
+			</div>
+			<div class="field">
+				<input type="date" id="date" placeholder = "Date">
+			</div>
+		</div>
+		<button class = "ui huge blue button" id="btnSubmit">Submit</button>
+	</div>
 
-		<h3>Departures</h3>
+
+
+
+</div>
+
+
+<div id = "planRoute" class="formBody">
+
+	<div id = "routeForm" class = "ui large form">
+  		<div class = "two fields">
+			<div class = "field">
+				<input id = "starting" type = "text" placeholder = "Starting Point">
+			</div>
+			
+			<div class = "field">
+				<input id = "destination" type = "text" placeholder = "Destination">
+			</div>
+		</div>
+		<div class = "three fields">
+			<div class = "field">
+				<input id = "date" type = "date">
+			</div>
+			<div class = "field">
+				<input type ="time" id="time">
+			</div>
+			<div class="field">
+				<select class="ui dropdown">
+					<option value="departAt">Depart At</option>
+					<option value = "arriveBy">Arrive By</option>
+				</select>
+			</div>
+		</div>
+		<button id = "btnRouteSubmit" class = "ui huge blue button">Submit</button>
+
+</div>
+
+
+
+<div id = "favorites"></div>
+
+
+
+
+
+
+<h3>Departures</h3>
 		<table border="2" id="tblDepartures" hidden="true">
 			<tr>
 				<th>Leaves At</th>
@@ -59,6 +109,8 @@
 
 		<div id="map"></div>
 		<div id="stops"></div>
+
+
 
 	</body>
 </html>
