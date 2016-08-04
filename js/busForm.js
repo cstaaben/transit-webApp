@@ -93,19 +93,26 @@ function routeSubmit(){
 
 function setMenu(){
 	$(".findStopsMenu").click(function(){
+		$("li").removeClass("active");
 		$(".formBody").hide();
 		$("#findStops").show();
+		$(".findStopsMenu").addClass("active");
+
 	});
 
 	$(".planRouteMenu").click(function(){
+		$("li").removeClass("active");
 		$(".formBody").hide();
 		$("#planRoute").show();
 		populateRouteForm();
+		$(".planRouteMenu").addClass("active");
 	});
 	
 	$(".favoritesMenu").click(function(){
+		$("li").removeClass("active");
 		$(".formbody").hide();
 		$("#favorites").show();
+		$(".favoritesMenu").addClass("active");
 	});
 
 }
