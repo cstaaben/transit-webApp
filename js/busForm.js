@@ -102,7 +102,7 @@ function setMenu(){
 		$("#planRoute").show();
 		populateRouteForm();
 	});
-
+	
 	$(".favoritesMenu").click(function(){
 		$(".formbody").hide();
 		$("#favorites").show();
