@@ -51,7 +51,7 @@ li{
 }
 
 #inputForm{
-	padding: 1em;
+	
 	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
@@ -59,7 +59,7 @@ li{
 }
 
 #planRoute{
-	padding: 1em;
+	padding-top: 2.7em;
 	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
@@ -85,7 +85,7 @@ li{
 	background: hsla(82, 54%, 64%, 0.86);
 	min-width: 25%;
 	max-width: 50%;
-	padding: 1em;
+	padding: 2em;
 	background-color: hsla(82, 54%, 64%, 0.86);
 	margin-left: auto;
 	margin-right: auto;
