@@ -48,7 +48,6 @@ function getRoute(){
 	var routeId = $("#allRoutes").val();
 	$.getJSON("http://localhost/transit-webApp/services/route_stop_patterns.php", {traversed_by: routeId}, function(data){
 		var pattern = data.route_stop_patterns[0];
-		debugger;
 		initRouteMap(pattern);
 	});
 }
@@ -62,8 +61,20 @@ function initRouteMap(pattern){
 		  center: {lat: centerLat, lng: centerLon},
 		  zoom: 12
 	});
+	var firstLon =  pattern.geometry.coordinates[0][0];
+	var lastLon =  pattern.geometry.coordinates[pattern.geometry.coordinates.length - 1][0];
+	var firstLat = pattern.geometry.coordinates[0][1];
+	var lastLat = pattern.geometry.coordinates[pattern.geometry.coordinates.length - 1][1];
 	$("#routeMap").slideDown(500, function(){
 		google.maps.event.trigger(map, 'resize');
+		var bounds = new google.maps.LatLngBounds();
+		bounds.extend(new google.maps.LatLng(centerLat, centerLon));
+		bounds.extend(new google.maps.LatLng(firstLat, firstLon));
+		bounds.extend(new google.maps.LatLng(lastLat, lastLon));
+		debugger;
+		//map.panTo({lat: centerLat, lng:centerLon});
+		map.fitBounds(bounds);
+
 	});
 }
 
