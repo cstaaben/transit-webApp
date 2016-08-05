@@ -14,6 +14,7 @@
 		<script src="js/map.js"></script>
 		<script src="js/getDepartures.js"></script>
 		<script src="js/favorites.js"></script>
+		<script src="js/selectRoute.js"></script>
 		
 		<title>Transit App</title>
 	</head>
@@ -25,38 +26,42 @@
 	<h1 class="header">Plan Your Route!</h1><br>
 
 <ul id = "menu">
-	<li class="findStopsMenu">Find Stops</li>
-	<li class="planRouteMenu">Plan Route</li>
-	<li class="Favorites">Favorites</li>
+	<li class="findStopsMenu active">Find Stops</li>
+	<li class="planTripMenu">Plan Trip</li>
+	<li class="getRouteMenu">Find Full Route</li>
+	<li class="favoritesMenu">Favorites</li>
+
 </ul>
 
 <div id = "findStops" class="formBody">
 
 	<div id="inputForm" class="ui large form">
 		<div class="field">
+			<p class="invalid">* Please Enter Your Location</p>
 			<input type="text" id="location" placeholder="Location" autofocus><br>
 		</div>
 
 		<div class="two fields">
 			<div class="field">
-				<input type="time" id="time" placeholder = "Time">
-			</div>
-			<div class="field">
 				<input type="date" id="date" placeholder = "Date">
 			</div>
+			<div class="field">
+				<input type="time" id="time" placeholder = "Time">
+			</div>
+		
 		</div>
 		<button class = "ui huge blue button" id="btnSubmit">Submit</button>
 	</div>
 
 
-
-
 </div>
 
 
-<div id = "planRoute" class="formBody">
+<div id = "planTrip" class="formBody">
 
 	<div id = "routeForm" class = "ui large form">
+		<p class="invalid start">* Please Enter Starting Point</p>
+		<p class="invalid destination">* Please Enter A Destination</p>
   		<div class = "two fields">
 			<div class = "field">
 				<input id = "starting" type = "text" placeholder = "Starting Point">
@@ -68,28 +73,41 @@
 		</div>
 		<div class = "three fields">
 			<div class = "field">
-				<input id = "date" type = "date">
+				<input id = "date2" type = "date">
 			</div>
 			<div class = "field">
-				<input type ="time" id="time">
+				<input type ="time" id="time2">
 			</div>
 			<div class="field">
-				<select class="ui dropdown">
+				<select class="ui dropdown" id="timeType">
 					<option value="departAt">Depart At</option>
 					<option value = "arriveBy">Arrive By</option>
 				</select>
 			</div>
 		</div>
-		<button id = "btnRouteSubmit" class = "ui huge blue button">Submit</button>
-
+		<button id = "btnTripSubmit" class = "ui huge blue button">Submit</button>
+	</div>
 </div>
 
 
 
-<div id = "favorites"></div>
+<div id ="getRoute" class="formBody">
+	<div id="getRoute" class="ui large form">
+		<div class="field">
+			<select class="ui dropdown" id="allRoutes">
+			</select>
+		</div>
+		<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
+	</div>
+</div>	
 
 
 
+<div id="favorites" class="formBody">
+	<table id="faves">
+
+	</table>
+</div>
 
 
 
@@ -115,13 +133,10 @@
 			</ul>
 		</div>
 		<div id="map"></div>
+		<div id="routeMap"></div>
+		<div id="stops"></div>
 		
-		<div id="favesDiv">
-			<table id="faves">
-				<col width="50">
-				<col width="150">
-			</table>
-		</div>
+		
 
 
 

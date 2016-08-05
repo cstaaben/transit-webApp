@@ -32,7 +32,7 @@ input{
 
 ul{
 	margin-left:23%;
-	margin-bottom:2em;
+	margin-bottom: .9em;
 	width: 100%;
 }
 
@@ -43,14 +43,25 @@ li{
 	color: white;
 	padding: 1em;
 	margin: auto;
-
+	margin-bottom: 0;
+	cursor: pointer;
 }
 
+li:hover{
+	background-color: hsla(82, 54%, 50%, 0.86);
+}
+
+.active{
+	background-color: hsla(82, 54%, 50%, 0.86);
+}
+
+}
 #location{
 	max-width: 100%;
 }
+
 #inputForm{
-	padding: 1em;
+	
 	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
@@ -58,7 +69,7 @@ li{
 }
 
 #planRoute{
-	padding: 1em;
+	padding-top: 2.7em;
 	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
@@ -73,6 +84,15 @@ li{
 	height: 300px;
 }
 
+#routeMap{
+	margin-top: 4em;
+	margin-left: 25%;
+	margin-right: 25%;
+	margin-bottom: 10%;
+	width: 50%;
+	height: 600px;
+}
+
 #stops{
 	background-color: hsla(82, 54%, 64%, 0.86);
 	font-family: 'Open Sans', sans-serif;
@@ -80,39 +100,69 @@ li{
 	padding-left: 5em;
 }
 
-<<<<<<< HEAD
-
 .formBody{
 	background: hsla(82, 54%, 64%, 0.86);
 	min-width: 25%;
 	max-width: 50%;
-	padding: 1em;
+	padding: 2em;
 	background-color: hsla(82, 54%, 64%, 0.86);
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 10px;
+	margin-top: 0;
 	border: none;
 
 }
 
-=======
-#favesDiv{
-	background-color: hsla(82, 54%, 64%, 0.86);
-	width: 400px;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-left:auto;
+
+
+
+#favorites{
+	max-height: 300px;
 	overflow:scroll;
-	height:150px;
+	overflow-x: hidden;
+	
 }
 
-#buttonTd {
+#faves{
+	margin-top:10px;
+	background-color: white;
+	border-radius: 5px;
+	min-width:604px;
+}
+
+.ui.icon.button.stopbtn{
 	display:inline-block;
-	width: 50px;
+	background-color: #33f3ea;
+
 }
 
-#delFaveBtn {
-	margin: 5px;
+tr.favesRow{
+	display: inline-block;
+	height: 50px;
+	width: 100%;
+	border-radius: 10px;
+	padding-top:8px;
+	padding-bottom:8px;
+}
+
+td#buttonTd{
+	display: inline-block;
+	margin-left:12px;
+}
+
+.favName{
+	display: inline-block;
+	width:170px;
+	margin-left:30px;
+}
+
+.faveTd{
+	display: inline-block;
+	margin-left:30px;
+}
+
+tr.favesRow:hover{
+	background-color: #f8f5f5;
 }
 
 #addFavBtn{
@@ -127,8 +177,20 @@ li{
 	padding: 5px;
 }
 
-#favesDiv{
-	padding-top: 10px;
-	padding-left: 10px;
+#busArrows{
+	color: grey;
+	vertical-align: 0px;
 }
->>>>>>> origin/master
+
+
+
+.ui.form>.destination{
+	margin-right: 15em;
+}
+.invalid{
+	color: red;
+	font-size: 1em;
+	font-family: 'Open Sans', sans-serif;
+	display: inline-block;
+}
+
