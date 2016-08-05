@@ -172,3 +172,14 @@ tr.favesRow:hover{
 	color: grey;
 	vertical-align: 0px;
 }
+
+
+.ui.form>.destination{
+	margin-right: 15em;
+}
+.invalid{
+	color: red;
+	font-size: 1em;
+	font-family: 'Open Sans', sans-serif;
+	display: inline-block;
+}

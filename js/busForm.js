@@ -7,16 +7,19 @@ $( document ).ready(function() {
 	$("#stops").slideUp();
 	$("h3").hide();
 
+	$(".invalid").hide();
 	$(".formBody").hide();
 	$("#findStops").show();
 	
 	//initMap();
+	getRoutes();
 	initForm();
 	setMenu();
 
     //console.log( "ready!" );
 
 	$("#btnSubmit").click(submitClick);
+	$("#btnTripSubmit").click(tripSubmit);
 	$("#btnRouteSubmit").click(routeSubmit);
 	
 });
@@ -64,29 +67,46 @@ function initForm(){
 
 function submitClick()
 {
-	
-	$("#map").slideDown(500);
-	clearMarkers();
-	
-	var date = new Date($.now());
-	var time = $("#time").val()+":"+date.getSeconds();
-	var location = $("#location").val();
-	var submitDate = $("#date").val();
-	debugger;
-	// console.log(location);
-	//  console.log(time);
-	//  console.log(submitDate);
+	if($("#location").val()=="")
+	{
+		console.log("empty Location");
+		stopsValidation();
+	}
 
-	getGeoCoding(location, submitDate, time);
-	
+	else{
+		$(".invalid").hide();
+		$("#map").slideDown(500);
+		clearMarkers();
+		
+		var date = new Date($.now());
+		var time = $("#time").val()+":"+date.getSeconds();
+		var location = $("#location").val();
+		var submitDate = $("#date").val();
+		debugger;
+		// console.log(location);
+		//  console.log(time);
+		//  console.log(submitDate);
+
+		getGeoCoding(location, submitDate, time);
+	}//end else	
 }
 
-function routeSubmit(){
+function tripSubmit(){
+	$(".invalid").hide();
 	console.log( $("#starting").val());
 	console.log( $("#destination").val());
 	console.log( $("#date2").val());
 	console.log( $("#time2").val());
 	console.log( $("#timeType").val());
+
+	if( $("#starting").val()=="" || $("#destination").val() == ""){
+		routeValidation();
+	}
+
+	else{
+		console.log("GO DO FUNCTIONS");
+		$(".invalid").hide();
+	}
 
 }
 
@@ -97,15 +117,16 @@ function setMenu(){
 		$(".formBody").hide();
 		$("#findStops").show();
 		$(".findStopsMenu").addClass("active");
-
+		$(".invalid").hide();
 	});
 
-	$(".planRouteMenu").click(function(){
+	$(".planTripMenu").click(function(){
 		$("li").removeClass("active");
 		$(".formBody").hide();
-		$("#planRoute").show();
+		$("#planTrip").show();
 		populateRouteForm();
-		$(".planRouteMenu").addClass("active");
+		$(".planTripMenu").addClass("active");
+		$(".invalid").hide();
 	});
 	
 	$(".favoritesMenu").click(function(){
@@ -113,8 +134,17 @@ function setMenu(){
 		$(".formbody").hide();
 		$("#favorites").show();
 		$(".favoritesMenu").addClass("active");
+		$(".invalid").hide();
 	});
 
+	$(".getRouteMenu").click(function(){
+		$("li").removeClass("active");
+		$(".formbody").hide();
+		$("#getRoute").show();
+		$(".getRouteMenu").addClass("active");
+		$(".invalid").hide();
+		
+	});
 }
 
 function populateRouteForm(){
@@ -146,4 +176,30 @@ function populateRouteForm(){
 	//POPULATE FORM
 	$("#time2").val(currentTime);
 	$("#date2").val(currentDate);
+}
+
+
+function stopsValidation(){
+	console.log("stopsValidation");
+	$(".invalid").show();
+}
+
+function routeValidation(){
+	if($("#starting").val() == ""){
+		console.log("Starting Fucked");
+		$(".start").show();
+	}
+	else if($("#destination").val() == ""){
+		$(".destination").show();
+	}
+	if($("#destination").val() == "" && $("#starting").val() == "")
+	{
+		$(".invalid").show();
+	}
+}
+
+function routeSubmit(){
+	var data = $("#allRoutes").val();
+	console.log(data);
+
 }
