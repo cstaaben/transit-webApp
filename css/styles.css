@@ -44,7 +44,7 @@ li{
 	padding: 1em;
 	margin: auto;
 	margin-bottom: 0;
-
+	cursor: pointer;
 }
 
 li:hover{
@@ -82,6 +82,15 @@ li:hover{
 	margin-right: 25%;
 	width: 50%;
 	height: 300px;
+}
+
+#routeMap{
+	margin-top: 4em;
+	margin-left: 25%;
+	margin-right: 25%;
+	margin-bottom: 10%;
+	width: 50%;
+	height: 600px;
 }
 
 #stops{
