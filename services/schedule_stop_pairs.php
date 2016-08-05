@@ -30,6 +30,9 @@ if(isset($_GET["route_onestop_id"])){
 if(isset($_GET["onestop_id"])){
 	$url .= "&onestop_id=" . $_GET["onestop_id"];
 }
+if(isset($_GET["total"])) {
+	$url .= "&total=" . $_GET["total"];
+}
 
 
 $ch = curl_init();

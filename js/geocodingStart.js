@@ -19,7 +19,7 @@ function getDone(data, submitDate, submitTime){
 	if(data["status"] == "OK") {
 		var latLng = data.results[0].geometry.location;
 		
-		initMap(latLng);
+		//initMap(latLng);
 		getStop(latLng.lat, latLng.lng, submitDate, submitTime);
 	}
 	else {

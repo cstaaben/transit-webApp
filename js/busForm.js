@@ -5,7 +5,7 @@ $( document ).ready(function() {
 
 
 	initForm();
-	//$("#map").slideUp();
+	$("#map").slideUp();
 	$(".menu .item").tab();
 	$("p").css("padding","10px");
 	$("#map").slideUp();
@@ -16,8 +16,8 @@ $( document ).ready(function() {
 
     //console.log( "ready!" );
 
-	$("#btnSubmit").click(routeSubmit);
-	$("#btnRouteSubmit").click(submitClick);
+	$("#btnSubmit").click(submitClick);
+	$("#btnRouteSubmit").click(routeSubmit);
 	
 });
 
@@ -57,25 +57,29 @@ function submitClick()
 	$("#stops").slideDown(500);
 	//clearMarkers();
 
-	// automatically scroll down to displayed map
-	/*$('html,body').animate({
+	// automatically scroll down to stops div
+	$('html,body').animate({
         scrollTop: $("#stops").offset().top},
-        'slow');*/
+        'slow');
 	
 	var date = new Date($.now());
 	var time = $("#time").val()+":"+date.getSeconds();
 	var location = $("#location").val();
 	var submitDate = $("#date").val();
-	debugger;
+	//debugger;
 	//console.log(location);
 	// console.log(time);
 	// console.log(submitDate);
 
-	//getGeoCoding(location, submitDate, time);
+	getGeoCoding(location, submitDate, time);
 	
 }
 
 
 function populateForm(){
 
+}
+
+function routeSubmit() {
+	
 }
