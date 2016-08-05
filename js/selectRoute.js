@@ -2,7 +2,8 @@
 function getRoutes(){
 	var link = "https://transit.land/api/v1/routes?operated_by=o-c2kx-spokanetransitauthority"
 	$.getJSON(link, "", getDone);
-}
+
+}//end getRoutes
 
 function getDone(data){
 	var data = data.routes;
@@ -25,12 +26,14 @@ function getDone(data){
 
 	}//End For Loop
 
-	//SORT THE ARRAY
+
+	//Sort the Array
 	array.sort( function(a,b){
 		return a.num - b.num;
 	});
 
-	//POPULATE THE FORM
+
+	//Populates the Form
 	for(var x = 0; x < array.length; x++)
 	{
 		var str = "<option value = '" + array[x].id + "'>" + array[x].num + " - " + array[x].longName + "</option>";
@@ -39,5 +42,5 @@ function getDone(data){
 	}//End For Loop
 
 
-}
+}// end getDone
 
