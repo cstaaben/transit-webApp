@@ -68,13 +68,60 @@ function initRouteMap(pattern){
 	$("#routeMap").slideDown(500, function(){
 		google.maps.event.trigger(map, 'resize');
 		var bounds = new google.maps.LatLngBounds();
-		bounds.extend(new google.maps.LatLng(centerLat, centerLon));
-		bounds.extend(new google.maps.LatLng(firstLat, firstLon));
-		bounds.extend(new google.maps.LatLng(lastLat, lastLon));
-		debugger;
-		//map.panTo({lat: centerLat, lng:centerLon});
+		var routeCoords = [];
+		//Extend the boundaries of the map to include all of the stops
+		//Also add each geometry point to the routeCoords, so we can draw the path
+		for(var i = 0; i < pattern.geometry.coordinates.length; i++){
+			bounds.extend(new google.maps.LatLng(pattern.geometry.coordinates[i][1], pattern.geometry.coordinates[i][0]));
+			routeCoords.push({lat: pattern.geometry.coordinates[i][1], lng: pattern.geometry.coordinates[i][0]})
+		}
+
+		/*So I just found out that you can request multiple onestop_ids in a "get stop" request. I spent all morning trying to synchronize a bunch of
+		conflicting AJAX calls and was going to implement a horribly inefficient recursive method to create the stops. 
+		Now that I've realized that we can request mulitple stops by onestop_id in a request, all I have to do is build a string with all of the onestop_ids
+		and make one request to get that data. Once we have all of the data for the stops, all that needs to be done is create a marker for each one. All of the
+		stops are now displayed on the map, and they populate very quickly. My soul can now be at rest.*/
+		//Build a string of all of the onestop_ids for the request
+		var stopIds = "";
+		for(var i = 0; i < pattern.stop_pattern.length; i++){
+			stopIds += pattern.stop_pattern[i];
+			if(i < pattern.stop_pattern.length - 1){
+				stopIds += ",";
+			}
+		}
+		//Request data for all of the stops in the route
+		$.getJSON("http://localhost/transit-webApp/services/stops.php", {onestop_id: stopIds}, function(data){
+			var stops = data.stops;
+			//Create a marker for each of the stops and add it to the map.
+			for(var i = 0; i < stops.length; i++){
+				var newMarker =  new google.maps.Marker({
+					position: {lat: stops[i].geometry.coordinates[1], lng: stops[i].geometry.coordinates[0]},
+					map: map,
+					title: stops[i].name
+				});
+				console.log(stops[i].onestop_id);
+				newMarker.setMap(map);
+			}
+		});	
+
+		//Initialize the route path using the routeCoords
+		var routePath = new google.maps.Polyline({
+			path: routeCoords,
+			geodesic: true,
+			strokeColor: '#0099ff',
+			strokeOpacity: 1.0,
+    		strokeWeight: 2
+		});
+		//Attach the path to the map
+		routePath.setMap(map);
+		//Fit the map to include all of our coordinates
 		map.fitBounds(bounds);
+		//window.scrollTo(0, document.body.scrollHeight);
 
 	});
+	//Ok, it just pops down. I can't figure out how to make it slide down smoothly
+	$("html, body").animate({ scrollTop: $(document).height()}, 1000);
+
 }
+
 
