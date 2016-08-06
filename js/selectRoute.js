@@ -92,6 +92,7 @@ function initRouteMap(pattern){
 		//Request data for all of the stops in the route
 		$.getJSON("http://localhost/transit-webApp/services/stops.php", {onestop_id: stopIds}, function(data){
 			var stops = data.stops;
+			var infoWindow = new google.maps.InfoWindow();
 			//Create a marker for each of the stops and add it to the map.
 			for(var i = 0; i < stops.length; i++){
 				var newMarker =  new google.maps.Marker({
@@ -99,7 +100,21 @@ function initRouteMap(pattern){
 					map: map,
 					title: stops[i].name
 				});
-				console.log(stops[i].onestop_id);
+				var routes_served = "";
+				for(var j = 0; j < stops[i].routes_serving_stop.length; j++){
+					routes_served += stops[i].routes_serving_stop[j].route_name;
+					if(j < stops[i].routes_serving_stop.length - 1){
+						routes_served += ", ";
+					}
+				}
+				var content = '<div id="content"><h3 id="firstHeading" class="firstHeading">' + stops[i].name + '</h3><p>Connects with routes: ' + routes_served + ' </p></div>';
+				google.maps.event.addListener(newMarker, 'click', (function(newMarker, map, content){
+					return function(){
+						infoWindow.close();
+						infoWindow.setContent(content);
+						infoWindow.open(map, newMarker);
+					};
+				}(newMarker, map, content)));
 				newMarker.setMap(map);
 			}
 		});	
