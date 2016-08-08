@@ -150,7 +150,7 @@ function setMenu(){
 		$(".favoritesMenu").addClass("active");
 		$(".invalid").hide();
 		$("#map").hide();
-		$("#routeMap").show();
+		$("#routeMap").hide();
 		$("#stops").hide();
 	});
 
