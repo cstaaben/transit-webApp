@@ -1,11 +1,11 @@
 
 function getRoutes(){
-	var link = "https://transit.land/api/v1/routes?operated_by=o-c2kx-spokanetransitauthority"
-	$.getJSON(link, "", getDone);
+	var link = "https://transit.land/api/v1/routes?operated_by=o-c2kx-spokanetransitauthority";
+	$.getJSON(link, "", getRoutesDone);
 
 }//end getRoutes
 
-function getDone(data){
+function getRoutesDone(data){
 	var data = data.routes;
 	var array = [];
 
@@ -46,7 +46,7 @@ function getDone(data){
 
 function getRoute(){
 	var routeId = $("#allRoutes").val();
-	$.getJSON("http://localhost/transit-webApp/services/route_stop_patterns.php", {traversed_by: routeId}, function(data){
+	$.getJSON("./services/route_stop_patterns.php", {traversed_by: routeId}, function(data){
 		var pattern = data.route_stop_patterns[0];
 		initRouteMap(pattern);
 	});
@@ -71,7 +71,7 @@ function initRouteMap(pattern){
 		bounds.extend(new google.maps.LatLng(centerLat, centerLon));
 		bounds.extend(new google.maps.LatLng(firstLat, firstLon));
 		bounds.extend(new google.maps.LatLng(lastLat, lastLon));
-		debugger;
+		//debugger;
 		//map.panTo({lat: centerLat, lng:centerLon});
 		map.fitBounds(bounds);
 

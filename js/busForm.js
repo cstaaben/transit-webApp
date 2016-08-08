@@ -2,18 +2,13 @@ $( document ).ready(function() {
 	//PUT THESE IN CSS
 
 
-	initForm();
+	//initForm();
 	$("#map").slideUp();
 	$(".menu .item").tab();
 	$("p").css("padding","10px");
-	$("#map").slideUp();
 	$("#routeMap").slideUp();
 	$("#stops").slideUp();
 	$("h3").hide();
-<<<<<<< HEAD
-	
-	
-=======
 
 	$(".invalid").hide();
 	$(".formBody").hide();
@@ -23,16 +18,13 @@ $( document ).ready(function() {
 	getRoutes();
 	initForm();
 	setMenu();
->>>>>>> 2fea9e2651a07f1745a6b08dadeb58be5bd65b0f
 
     //console.log( "ready!" );
 
 	$("#btnSubmit").click(submitClick);
-<<<<<<< HEAD
-=======
 	$("#btnTripSubmit").click(tripSubmit);
->>>>>>> 2fea9e2651a07f1745a6b08dadeb58be5bd65b0f
 	$("#btnRouteSubmit").click(routeSubmit);
+	
 	
 });
 
@@ -86,20 +78,20 @@ function submitClick()
 	}
 
 	else{
+		
+		$(".invalid").hide();
+		$("#stops").slideDown(500);
+		//clearMarkers();
 		// automatically scroll down to stops div
 		$('html,body').animate({
 			   scrollTop: $("#stops").offset().top},
 			   'slow');
 		
-		$(".invalid").hide();
-		$("#stops").slideDown(500);
-		clearMarkers();
-		
 		var date = new Date($.now());
 		var time = $("#time").val()+":"+date.getSeconds();
 		var location = $("#location").val();
 		var submitDate = $("#date").val();
-		debugger;
+		//debugger;
 		// console.log(location);
 		//  console.log(time);
 		//  console.log(submitDate);
@@ -148,6 +140,7 @@ function setMenu(){
 		$(".invalid").hide();
 		$("#map").hide();
 		$("#routeMap").hide();
+		$("#stops").hide();
 	});
 	
 	$(".favoritesMenu").click(function(){
@@ -158,6 +151,7 @@ function setMenu(){
 		$(".invalid").hide();
 		$("#map").hide();
 		$("#routeMap").show();
+		$("#stops").hide();
 	});
 
 	$(".getRouteMenu").click(function(){
@@ -168,6 +162,7 @@ function setMenu(){
 		$(".invalid").hide();
 		$("#map").hide();
 		$("#routeMap").hide();
+		$("#stops").hide();
 	});
 }
 

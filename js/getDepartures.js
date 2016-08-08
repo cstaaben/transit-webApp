@@ -5,77 +5,113 @@
 function getStop(lat, lon, submitDate, submitTime){
 	if(!isNaN(lat) && !isNaN(lon)){
 		$.getJSON("./services/stops.php", {lat: lat, lon:lon, r:250 }, function(data){
+				$("#stopList").empty();
 				$.each(data.stops, function(index, value) {
+						
 						$("#stopList").append("<li id=\"" + value.onestop_id + "\">" + value.name + "</li>");
+						getDepartures(value, submitDate, submitTime);
+						
 				});
-					
-				for(var i = 0; i < data.stops.length; i++) {
-					var stop = data.stops[i];
-					
-					//console.log(data);
-					getDepartures(stop, submitDate, submitTime);
-					
-				}
+				
 		});
 	}
 }
 
 function getDepartures(stop, submitDate, submitTime){
-	//debugger;
-	//console.log(stop);
 	
 	var t = submitTime.split(":");
 	var e = parseInt(t[0]) + 3;
 	var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
-	//console.log(typeof(submitTime));
-	
-	for(var i = 0; i < stop.routes_serving_stop.length; i++){
-		//var newTime = time;
-		//newTime.setHours(newTime.getHours + 1);
-		//var timeInterval = time + "," + newTime
-		var tempTimeInterval = "13:00:00,15:00:00";
-		var route = stop.routes_serving_stop[i];
-		
-		$.getJSON("./services/schedule_stop_pairs.php", 
-		{route_onestop_id: route.route_onestop_id, 
-			origin_onestop_id: stop.onestop_id, total: true, date: submitDate, origin_departure_between: tempTimeInterval}, function(data){				
-				var times = "";
 
-				var trip = "";//data.schedule_stop_pairs[0].trip_headsign;
-				/*if(isNaN(trip)) {
-					for(var j = 0; (j < data.schedule_stop_pairs.length || isNaN(trip)); j++) {
-						trip = data.schedule_stop_pairs[j].trip_headsign;
-					}
-				}*/
-				
-					
-				var sublist = "<ul><li>" + route.route_name + ": " + trip + "<ul>";
-				console.log(data);
-				for(var j = 0; j < data.schedule_stop_pairs.length; j++) {
-					var pairs = data.schedule_stop_pairs[j];
-					var p = pairs.route_onestop_id.split("-");
-					/*if(times.indexOf(p[p.length-1]) >= 0) {
-						times += p[p.length-1] + " -> " + pairs.origin_arrival_time + "<br>";
-					}
-					else {
-						times += "<br>" + p[p.length-1] + " -> " + pairs.origin_arrival_time + "<br>";
-					}*/
-					
-					sublist += "<li>" + pairs.origin_arrival_time + "</li>";
-					
-				} // end for j
-				
-				sublist += "</ul></li></ul>";
-				//$("#" + stop.onestop_id).append(sublist);
-				console.log(sublist);
-				//setMarker(stop.geometry.coordinates, stop.name, times);
-			});
-		
-		
-	}
+	var tempTimeInterval = "13:00:00,15:00:00";
+	
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php", 
+			data: 
+				{ 
+					origin_onestop_id: stop.onestop_id, 
+					total: true, 
+					date: submitDate, 
+					origin_departure_between: tempTimeInterval
+				},
+			success: function(data) { 
+						//console.log(data);
+						buildRouteList(data, stop);
+				},
+			dataType: "json",
+			async: false
+	});
+	
 }
 
+function getArrivals(stop, submitTime, submitDate) {
+	var t = submitTime.split(":");
+	var e = parseInt(t[0]) + 3;
+	var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
 
+	var tempTimeInterval = "13:00:00,15:00:00";
+	
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php", 
+			data: 
+				{ 
+					origin_onestop_id: stop.onestop_id, 
+					total: true, 
+					date: submitDate, 
+					destination_arrival_between: tempTimeInterval
+				},
+			success: function(data) { 
+						//console.log(data);
+						buildRouteList(data, stop);
+				},
+			dataType: "json",
+			async: false
+	});
+}
+
+function buildRouteList(data, stop) {
+	var dest;
+	var sublist;
+	var pid;
+	
+	//console.log(stop);
+	//console.log(data);
+	
+	$.each(stop.routes_serving_stop, function(i, route) {
+			
+			$.each(data.schedule_stop_pairs, function(j, pair) {
+					if(pair.route_onestop_id == route.route_onestop_id) {
+						dest = pair.trip_headsign;
+					}
+			});
+			
+			sublist = "<ul><li>" + route.route_name + ": " + dest + "<ul>";
+			
+			$.each(data.schedule_stop_pairs, function(j, pair) {
+					//debugger;
+					if(pair.route_onestop_id == route.route_onestop_id) {
+						sublist += "<li>" + pair.origin_arrival_time + "</li>";
+						pid = pair.route_onestop_id; 
+					}
+			});
+			
+			sublist += "</ul></li></ul>";
+			//console.log(stop.onestop_id + " -> " + sublist[i]);
+			$("li:contains(\"" + stop.name + "\")").append(" <button type=\"button\" class=\"routeViewBtn\" data-id=\"" +
+					pid + "\"" + (($("li:contains(\"" + stop.name + "\")").length > 0) ? "" : " disabled") + 
+					">View Route</button>" + sublist);
+			
+			$(".routeViewBtn").click(function() {
+					$("#stops").slideUp(500);
+					$(".getRouteMenu").trigger("click");
+					$("#allRoutes").val($("option[value=\"" + pid + "\"]").val());
+					$("#btnRouteSubmit").trigger("click");
+			});
+			
+	});
+}
 
 
 //getStopData.js
@@ -245,11 +281,11 @@ function refreshArrivalTable(){
 	$("#tblArrivals").show();
 }
 
-$(document).ready(function(){
+/*$(document).ready(function(){
 	$("#btnGetDepartures").click(function(){
 		//Dummy data
 		var lat = 47.492708;
 		var lon = -117.5857637;
 		getArrivalsDepartures(lat, lon);
 	});
-});
+});*/

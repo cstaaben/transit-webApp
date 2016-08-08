@@ -9,11 +9,11 @@ function getGeoCoding(location, submitDate, submitTime)
 	
 	var link = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key=AIzaSyDNjqAjndVUEOxXE3r1i3PdGx-uPHZDBgI";
 	$.getJSON(link, "", function(data) {
-			getDone(data, submitDate, submitTime);
+			getGeoCodeDone(data, submitDate, submitTime);
 	});
 }
 
-function getDone(data, submitDate, submitTime){
+function getGeoCodeDone(data, submitDate, submitTime){
 	//console.log('WORKED');
 	//console.log(data.results[0].geometry.location);
 	if(data["status"] == "OK") {

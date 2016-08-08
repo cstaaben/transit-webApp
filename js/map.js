@@ -11,8 +11,6 @@ function initMap(latLng) {
 			content: ""
 	});
 	
-	getCurLocation();
-	
 	google.maps.event.addListenerOnce(map, "idle", function() {
 			map.setZoom(16);
 	});
