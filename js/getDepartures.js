@@ -92,22 +92,33 @@ function buildRouteList(data, stop) {
 			$.each(data.schedule_stop_pairs, function(j, pair) {
 					//debugger;
 					if(pair.route_onestop_id == route.route_onestop_id) {
-						sublist += "<li>" + pair.origin_arrival_time + "</li>";
+						sublist += "<li>" + pair.origin_arrival_time + " <input type=\"button\" data-coords=\"" + 
+						stop.geometry.coordinates + "\" value=\"View Map\" class=\"viewStopBtn\"></li>";
 						pid = pair.route_onestop_id; 
 					}
 			});
 			
 			sublist += "</ul></li></ul>";
 			//console.log(stop.onestop_id + " -> " + sublist[i]);
-			$("li:contains(\"" + stop.name + "\")").append(" <button type=\"button\" class=\"routeViewBtn\" data-id=\"" +
+			$("li:contains(\"" + stop.name + "\")").append(" <input type=\"button\" class=\"routeViewBtn\" data-id=\"" +
 					pid + "\"" + (($("li:contains(\"" + stop.name + "\")").length > 0) ? "" : " disabled") + 
-					">View Route</button>" + sublist);
+					"value=\"View Route\">" + sublist);
 			
 			$(".routeViewBtn").click(function() {
 					$("#stops").slideUp(500);
 					$(".getRouteMenu").trigger("click");
 					$("#allRoutes").val($("option[value=\"" + pid + "\"]").val());
 					$("#btnRouteSubmit").trigger("click");
+			});
+			
+			$(".viewStopBtn").click(function() {
+					var latLng = $(this).attr("data-coords");
+					var t = latLng.split(",");
+					
+					$("#map").slideDown(500);
+					initMap(t);
+					google.maps.event.trigger(map, "resize");
+					setMarker(t, stop.name);
 			});
 			
 	});

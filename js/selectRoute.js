@@ -90,7 +90,7 @@ function initRouteMap(pattern){
 			}
 		}
 		//Request data for all of the stops in the route
-		$.getJSON("http://localhost/transit-webApp/services/stops.php", {onestop_id: stopIds}, function(data){
+		$.getJSON("./services/stops.php", {onestop_id: stopIds}, function(data){
 			var stops = data.stops;
 			var infoWindow = new google.maps.InfoWindow();
 			//Create a marker for each of the stops and add it to the map.
