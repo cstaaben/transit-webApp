@@ -219,6 +219,5 @@ function routeValidation(){
 
 function routeSubmit(){
 	var data = $("#allRoutes").val();
-	console.log(data);
 
 }
