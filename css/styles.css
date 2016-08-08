@@ -114,6 +114,9 @@ li:hover{
 }
 
 
+#getFullRoute, #routeForm{
+	margin-top:10px;
+}
 
 
 #favorites{
