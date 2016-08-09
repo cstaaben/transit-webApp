@@ -102,20 +102,18 @@ function submitClick()
 
 function tripSubmit(){
 	$(".invalid").hide();
-	console.log( $("#starting").val());
-	console.log( $("#destination").val());
-	console.log( $("#date2").val());
-	console.log( $("#time2").val());
-	console.log( $("#timeType").val());
 
 	if( $("#starting").val()=="" || $("#destination").val() == ""){
 		routeValidation();
 	}
 
 	else{
-		console.log("GO DO FUNCTIONS");
-		if($("timeType").val() === "arriveBy"){
+		if($("#timeType").val() === "arriveBy"){
 			getTrips_arriveBy($("#starting").val(), $("#destination").val(), $("#date2").val(), $("#time2").val());
+		}else{
+			console.log("departing");
+			getTrips_departAt($("#starting").val(), $("#destination").val(), $("#date2").val(), $("#time2").val());
+			$("#routes").empty();
 		}
 		$(".invalid").hide();
 	}
@@ -130,7 +128,7 @@ function setMenu(){
 		$("#findStops").show();
 		$(".findStopsMenu").addClass("active");
 		$(".invalid").hide();
-		$("#map").show();
+		$("#map").hide();
 		$("#routeMap").hide();
 	});
 
