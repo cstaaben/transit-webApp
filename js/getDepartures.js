@@ -109,6 +109,7 @@ function buildRouteList(data, stop) {
 			
 			if($.inArray(pid, rids) != -1) {
 			
+<<<<<<< HEAD
 				$.each(data.schedule_stop_pairs, function(j, pair) {
 						if(pair.route_onestop_id == route.route_onestop_id) {
 							dest = pair.trip_headsign;
