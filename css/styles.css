@@ -265,4 +265,10 @@ tr.favesRow:hover{
 	position:absolute;
 	right:5px;
 	top:10px;
+	background-color: gray;
 }
+
+#starIcon {
+	color:yellow;
+}
+
