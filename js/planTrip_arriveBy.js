@@ -10,12 +10,13 @@ function getTrips_arriveBy(origin, destination, date, time){
 		zoom: 7, center: {lat: 41.85, lng: -87.65}
         });
     directionsDisplay.setMap(map);
-	arriveByRequest.Route({origin: origin, destination: destination, travelMode: 'TRANSIT', transitOptions: {arrivalTime: time, modes: {'BUS'}}}, function(response, status){
-		debugger;
+	arriveByRequest.route({origin: origin, destination: destination, travelMode: 'TRANSIT'}, function(response, status){
 		if(status === 'OK'){
 			directionsDisplay.setDirections(response);
+			debugger;
 		} else{
 			window.alert("Houston we have a problem");
+			debugger;
 		}
 	});
 }
