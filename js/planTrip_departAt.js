@@ -6,16 +6,12 @@
 function getTrips_departAt(origin, dest, date, time){
 	
 	var departAtRequest = new google.maps.DirectionsService();
-	var directionsDisplay = new google.maps.DirectionsRenderer();
-	
-	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 7, center: {lat: 47.6588, lng: -117.4260}
-    });
-	$("#map").show();
-	
-    directionsDisplay.setMap(map);
-	
+
 	var D = combineDateTime(date, time);
+	
+	var v;
+	var directionsDisplay;
+	var map;
 	
 	departAtRequest.route({	origin: origin,	destination: dest, travelMode: 'TRANSIT',
 					transitOptions: {	departureTime: D,
@@ -26,21 +22,28 @@ function getTrips_departAt(origin, dest, date, time){
 					function(results,status){
 						
 						if(status === 'OK'){
-							directionsDisplay.setDirections(results);
+							
 							for(var j = 0; j < results.routes.length; j++){
 								$("#routes").append(makeRoutes(results,j));
 							}
 							$("#routesList").show();
 							
 							$(".pRoutesRow").click(function(){
-								var v = $.parseJSON($(this).attr("value"));
+								v = $.parseJSON($(this).attr("value"));
+								directionsDisplay = new google.maps.DirectionsRenderer();
+								$("#map").empty();
+								map = new google.maps.Map(document.getElementById('map'), {
+									zoom: 12, center: {lat: 47.6588, lng: -117.4260}, scrollwheel: false
+								});
+								$("#map").hide();
+								directionsDisplay.setMap(map);
 								directionsDisplay.setDirections(v);
+								$("#map").show();
 							});
 							
 						} else{
 							window.alert("Houston we have a problem");
 						}
-					
 					
 					});
 }
@@ -53,7 +56,6 @@ function makeRoutes(results,j){
 	var rD = JSON.stringify(res);
 	
 	var tmpstr = "rr"+j+"";
-	
 	
 	var div = '<div class="pRoutesRow" id="'+ tmpstr +'" value=\''+ rD +'\' >\
 					<i class="ui big bus icon pRouteBusIcon"></i>\
