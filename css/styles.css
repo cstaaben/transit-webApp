@@ -286,3 +286,7 @@ tr.favesRow:hover{
 	right:5px;
 	top:10px;
 }
+
+.btnAddFave{
+	padding-bottom: 1em;
+}
