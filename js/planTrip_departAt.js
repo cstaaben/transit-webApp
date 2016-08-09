@@ -28,29 +28,34 @@ function getTrips_departAt(origin, dest, date, time){
 						if(status === 'OK'){
 							directionsDisplay.setDirections(results);
 							for(var j = 0; j < results.routes.length; j++){
-								$("#routes").append(makeRoutes(results.routes[j]));
+								$("#routes").append(makeRoutes(results,j));
 							}
 							$("#routesList").show();
+							
+							$(".pRoutesRow").click(function(){
+								var v = $.parseJSON($(this).attr("value"));
+								directionsDisplay.setDirections(v);
+							});
 							
 						} else{
 							window.alert("Houston we have a problem");
 						}
-						
-						$(".pRoutesRow").click(function(){
-							console.log($(this));
-							var v = $.parseJSON($(this).attr("data"));
-							console.log(v);
-						});
+					
 					
 					});
 }
 
-function makeRoutes(result,j){
+function makeRoutes(results,j){
 	
-	var routeData = {rtdt: result.legs[0]};
-	var rD = JSON.stringify(routeData);
+	var result = results.routes[j];
+
+	var res = {geocoded_waypoints: results.geocoded_waypoints, request: results.request, routes: [result], status: "OK"};
+	var rD = JSON.stringify(res);
 	
-	var div = '<div class="pRoutesRow" data=" '+rD+' ">\
+	var tmpstr = "rr"+j+"";
+	
+	
+	var div = '<div class="pRoutesRow" id="'+ tmpstr +'" value=\''+ rD +'\' >\
 					<i class="ui big bus icon pRouteBusIcon"></i>\
 					<p class="routeDtoA">' + result.legs[0].departure_time.text + ' - '+ result.legs[0].arrival_time.text + '</p><br>'+
 					'<p class="routeDist">' + result.legs[0].distance.text + '</p>'+
