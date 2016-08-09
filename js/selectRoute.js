@@ -56,7 +56,7 @@ function initRouteMap(pattern){
 	//Estimate center of map as the center coordinates in the geometry.coordinates array
 	var centerLon = pattern.geometry.coordinates[Math.floor(pattern.geometry.coordinates.length/2)][0];
 	var centerLat = pattern.geometry.coordinates[Math.floor(pattern.geometry.coordinates.length/2)][1];
-	var mapDiv = document.getElementById('routeMap');
+	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
 		  center: {lat: centerLat, lng: centerLon},
 		  zoom: 12
@@ -65,7 +65,7 @@ function initRouteMap(pattern){
 	var lastLon =  pattern.geometry.coordinates[pattern.geometry.coordinates.length - 1][0];
 	var firstLat = pattern.geometry.coordinates[0][1];
 	var lastLat = pattern.geometry.coordinates[pattern.geometry.coordinates.length - 1][1];
-	$("#routeMap").slideDown(500, function(){
+	$("#map").slideDown(500, function(){
 		google.maps.event.trigger(map, 'resize');
 		var bounds = new google.maps.LatLngBounds();
 		var routeCoords = [];
