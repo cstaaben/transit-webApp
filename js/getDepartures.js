@@ -12,8 +12,8 @@ function getStop(lat, lon, submitDate, submitTime){
 						//console.log(value);
 						$("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
 							" data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" + 
-							" class=\"viewStopBtn ui mini blue button\"><br><table id=\"" + jq_id(value.onestop_id) + "\" border=\"1\"" +
-							" class=\"tblFindStops\">" +
+							" class=\"viewStopBtn ui mini blue button\"><br><table id=\"" + 
+							jq_id(value.onestop_id) + "\" border=\"1\"" +" class=\"tblFindStops\">" +
 							"<thead><th>Route</th><th>Time</th><th></th></thead><tbody></tbody></table>");
 						
 						$(".viewStopBtn").click(function() {
@@ -139,4 +139,16 @@ function buildRouteList(data, stop) {
 function jq_id(id) {
 	var s = id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
 	return s.replace( /~/g, "_");
+}
+
+function convertTime(time) { //credit to user HBP on StackOverflow for conversion code inspiration
+  // Check correct time format and split into components
+  time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+  if (time.length > 1) { // If time format correct
+    time = time.slice(1);  // Remove full string match value
+    time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+    time[0] = +time[0] % 12 || 12; // Adjust hours
+  }
+  return time.join(''); // return adjusted time or original string
 }
