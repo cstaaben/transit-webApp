@@ -114,6 +114,9 @@ function tripSubmit(){
 
 	else{
 		console.log("GO DO FUNCTIONS");
+		if($("timeType").val() === "arriveBy"){
+			getTrips_arriveBy($("#starting").val(), $("#destination").val(), $("#date2").val(), $("#time2").val());
+		}
 		$(".invalid").hide();
 	}
 
@@ -221,3 +224,4 @@ function routeSubmit(){
 	var data = $("#allRoutes").val();
 
 }
+
