@@ -101,6 +101,11 @@ function initRouteMap(pattern){
 					title: stops[i].name
 				});
 				var routes_served = "";
+				//Sort the routes by route name, so they show up in order when the user clicks on the marker
+				stops[i].routes_serving_stop.sort(function(a,b){
+					return parseInt(a.route_name) - parseInt(b.route_name);
+				});
+
 				for(var j = 0; j < stops[i].routes_serving_stop.length; j++){
 					routes_served += stops[i].routes_serving_stop[j].route_name;
 					if(j < stops[i].routes_serving_stop.length - 1){
