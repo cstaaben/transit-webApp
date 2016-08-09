@@ -6,7 +6,7 @@ function getStop(lat, lon, submitDate, submitTime){
 	if(!isNaN(lat) && !isNaN(lon)){
 		$.getJSON("./services/stops.php", {lat: lat, lon:lon, r:250 }, function(data){
 				
-				// Paragraph version of parsing data
+				// Paragraph version of parsing data 
 				$("#stopList tbody").empty();
 				$.each(data.stops, function(index, value) {
 						//console.log(value);
