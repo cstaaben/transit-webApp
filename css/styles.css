@@ -285,8 +285,14 @@ tr.favesRow:hover{
 	position:absolute;
 	right:5px;
 	top:10px;
+	background-color: gray;
 }
 
 .btnAddFave{
 	padding-bottom: 1em;
 }
+
+#starIcon {
+	color:yellow;
+}
+

@@ -25,21 +25,34 @@ function getTrips_departAt(origin, dest, date, time){
 							
 							for(var j = 0; j < results.routes.length; j++){
 								$("#routes").append(makeRoutes(results,j));
+								if(j == 0){	
+									directionsDisplay = new google.maps.DirectionsRenderer();
+									$("#map").empty();
+									map = new google.maps.Map(document.getElementById('map'), {
+										zoom: 12, center: {lat: 47.6588, lng: -117.4260}, scrollwheel: false
+									});
+									$("#map").hide();
+									directionsDisplay.setMap(map);
+									directionsDisplay.setDirections(results);
+									$("#map").show();
+									
+								}
+								$('#rr'+j).click(function(){
+									v = $.parseJSON($(this).attr("value"));
+									directionsDisplay = new google.maps.DirectionsRenderer();
+									$("#map").empty();
+									map = new google.maps.Map(document.getElementById('map'), {
+										zoom: 12, center: {lat: 47.6588, lng: -117.4260}, scrollwheel: false
+									});
+									$("#map").hide();
+									directionsDisplay.setMap(map);
+									directionsDisplay.setDirections(v);
+									$("#map").show();
+									
+								});
 							}
 							$("#routesList").show();
-							
-							$(".pRoutesRow").click(function(){
-								v = $.parseJSON($(this).attr("value"));
-								directionsDisplay = new google.maps.DirectionsRenderer();
-								$("#map").empty();
-								map = new google.maps.Map(document.getElementById('map'), {
-									zoom: 12, center: {lat: 47.6588, lng: -117.4260}, scrollwheel: false
-								});
-								$("#map").hide();
-								directionsDisplay.setMap(map);
-								directionsDisplay.setDirections(v);
-								$("#map").show();
-							});
+
 							
 						} else{
 							window.alert("Houston we have a problem");
@@ -63,7 +76,7 @@ function makeRoutes(results,j){
 					'<p class="routeDist">' + result.legs[0].distance.text + '</p>'+
 					'<p class="routeDur">' + result.legs[0].duration.text + '</p>'+
 					'<button value="'+result+'" id="pRoutesAddFave" class="ui icon button">'+
-						'<i class="ui large star icon"></i>\
+						'<i class="ui large star icon" id="starIcon"></i>\
 					</button>\
 			   </div><br>';
 	return div;
@@ -74,6 +87,7 @@ function combineDateTime(date, time){
 	var splitDate = date.split("-");
 	var year = splitDate[0];
 	var month = splitDate[1];
+	month--;
 	var day = splitDate[2];
 	
 	var splitTime = time.split(":");
@@ -82,6 +96,7 @@ function combineDateTime(date, time){
 	
 	var D = new Date(year,month,day,hour,min);
 	return D;
+	console.log(D);
 
 }
 
