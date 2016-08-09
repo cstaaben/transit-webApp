@@ -5,10 +5,26 @@
 function getStop(lat, lon, submitDate, submitTime){
 	if(!isNaN(lat) && !isNaN(lon)){
 		$.getJSON("./services/stops.php", {lat: lat, lon:lon, r:250 }, function(data){
-				$("#stopList").empty();
+				
+				// Paragraph version of parsing data
+				$("#stopList tbody").empty();
 				$.each(data.stops, function(index, value) {
+						//console.log(value);
+						$("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
+							" data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" + 
+							" class=\"viewStopBtn\"><br><table id=\"" + jq_id(value.onestop_id) + "\" border=\"1\">" +
+							"<thead><th>Route</th><th>Time</th></thead><tbody></tbody></table>");
 						
-						$("#stopList").append("<li id=\"" + value.onestop_id + "\">" + value.name + "</li>");
+						$(".viewStopBtn").click(function() {
+								var latLng = $(this).attr("data-coords");
+								var t = latLng.split(",");
+								
+								initMap();
+								moveMap(t);
+								//google.maps.event.trigger(map, "resize");
+								setMarker(t, stop.name);
+						});
+						
 						getDepartures(value, submitDate, submitTime);
 						
 				});
@@ -73,53 +89,53 @@ function getArrivals(stop, submitTime, submitDate) {
 
 function buildRouteList(data, stop) {
 	var dest;
-	var sublist;
 	var pid;
+	var rids = [];
 	
 	//console.log(stop);
 	//console.log(data);
 	
+	$.each(data.schedule_stop_pairs, function(i, p) {
+			if($.inArray(p.route_onestop_id, rids) < 0) {
+				rids.push(p.route_onestop_id);
+			}
+	});
+	
+	console.log($("#" + jq_id(stop.onestop_id)));
+	
 	$.each(stop.routes_serving_stop, function(i, route) {
 			
-			$.each(data.schedule_stop_pairs, function(j, pair) {
-					if(pair.route_onestop_id == route.route_onestop_id) {
-						dest = pair.trip_headsign;
-					}
-			});
+			pid = jq_id(route.route_onestop_id);
 			
-			sublist = "<ul><li>" + route.route_name + ": " + dest + "<ul>";
+			if($.inArray(pid, rids) != -1) {
 			
-			$.each(data.schedule_stop_pairs, function(j, pair) {
-					//debugger;
-					if(pair.route_onestop_id == route.route_onestop_id) {
-						sublist += "<li>" + pair.origin_arrival_time + " <input type=\"button\" data-coords=\"" + 
-						stop.geometry.coordinates + "\" value=\"View Map\" class=\"viewStopBtn\"></li>";
-						pid = pair.route_onestop_id; 
-					}
-			});
+				$.each(data.schedule_stop_pairs, function(j, pair) {
+						if(pair.route_onestop_id == route.route_onestop_id) {
+							dest = pair.trip_headsign;
+						}
+				});
+				
+				// Paragraph Version
+				$.each(data.schedule_stop_pairs, function(j, pair) {
+						if(pair.route_onestop_id == pid) {
+							$("table#" + jq_id(stop.onestop_id) + " tbody").append("<tr><td>" + route.route_name + ": " + dest + 
+							"</td><td>" + pair.origin_arrival_time + "</td><td> <input type=\"button\" class=\"routeViewBtn\" data-id=\"" +
+							pid + "\" value=\"View Route\"></td></tr>");
+						}
+				});
+				
+				$(".routeViewBtn").click(function() {
+						$("#stops").slideUp(500);
+						$(".getRouteMenu").trigger("click");
+						$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
+						$("#btnRouteSubmit").trigger("click");
+				});
+			} // end if inArray
 			
-			sublist += "</ul></li></ul>";
-			//console.log(stop.onestop_id + " -> " + sublist[i]);
-			$("li:contains(\"" + stop.name + "\")").append(" <input type=\"button\" class=\"routeViewBtn\" data-id=\"" +
-					pid + "\"" + (($("li:contains(\"" + stop.name + "\")").length > 0) ? "" : " disabled") + 
-					"value=\"View Route\">" + sublist);
-			
-			$(".routeViewBtn").click(function() {
-					$("#stops").slideUp(500);
-					$(".getRouteMenu").trigger("click");
-					$("#allRoutes").val($("option[value=\"" + pid + "\"]").val());
-					$("#btnRouteSubmit").trigger("click");
-			});
-			
-			$(".viewStopBtn").click(function() {
-					var latLng = $(this).attr("data-coords");
-					var t = latLng.split(",");
-					
-					$("#map").slideDown(500);
-					initMap(t);
-					google.maps.event.trigger(map, "resize");
-					setMarker(t, stop.name);
-			});
-			
-	});
+	}); // end .each(stop.routes)
+}
+
+function jq_id(id) {
+	var s = id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
+	return s.replace( /~/g, "_");
 }
