@@ -189,6 +189,7 @@ tr.favesRow:hover{
 }
 
 
+
 #stopList{
 	text-align: left;
 
@@ -204,6 +205,7 @@ tr.favesRow:hover{
 }
 
 
+
 .ui.form>.destination{
 	margin-right: 15em;
 }
@@ -214,3 +216,73 @@ tr.favesRow:hover{
 	display: inline-block;
 }
 
+#routesList {
+	margin-top:20px;
+	width: 100%;
+	max-height: 300px;
+	overflow:scroll;
+	overflow-x: hidden;
+}
+
+#routes {
+	margin-top:10px;
+	background-color:white;
+	border-radius: 10px;
+}
+
+.pRoutesRow, .pRoutesRow>p {
+	display:inline-block;
+	margin-bottom: 5px;
+}
+
+.pRoutesRow {
+	width: 400px;
+	height: 60px;
+	position: relative;
+	background-color: white;
+	border-radius: 10px;
+	width: 100%;
+	padding: 5px;
+	
+	color: black;
+
+	font-weight: bold;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.pRoutesRow:hover{
+	background-color: #f8f5f5;
+}
+
+.routeDtoA {
+	font-size: 1.2em;
+	margin-left:50px;
+}
+
+.routeDist {
+	margin-right: 2em;
+	font-size: 1em;
+	margin-left:50px;
+}
+
+.routeDur {
+	font-size: 1em;
+}
+
+.pRouteBusIcon{
+	position:absolute;
+	left:5px;
+	top:15px;
+	
+}
+
+
+#pRoutesAddFave {
+	padding-top: 11px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 14px;
+	position:absolute;
+	right:5px;
+	top:10px;
+}
