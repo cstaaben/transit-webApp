@@ -93,14 +93,14 @@ function buildRouteList(data, stop) {
 					//debugger;
 					if(pair.route_onestop_id == route.route_onestop_id) {
 						sublist += "<li>" + pair.origin_arrival_time + " <input type=\"button\" data-coords=\"" + 
-						stop.geometry.coordinates + "\" value=\"View Map\" class=\"viewStopBtn\"></li>";
+						stop.geometry.coordinates + "\" value=\"View Map\" class=\"viewStopBtn ui mini blue button\"></li>";
 						pid = pair.route_onestop_id; 
 					}
 			});
 			
 			sublist += "</ul></li></ul>";
 			//console.log(stop.onestop_id + " -> " + sublist[i]);
-			$("li:contains(\"" + stop.name + "\")").append(" <input type=\"button\" class=\"routeViewBtn\" data-id=\"" +
+			$("li:contains(\"" + stop.name + "\")").append(" <input type=\"button\" class=\"routeViewBtn ui mini blue button\" data-id=\"" +
 					pid + "\"" + (($("li:contains(\"" + stop.name + "\")").length > 0) ? "" : " disabled") + 
 					"value=\"View Route\">" + sublist);
 			
