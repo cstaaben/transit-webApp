@@ -32,6 +32,7 @@ function getStop(lat, lon, submitDate, submitTime){
 				
 		});
 	}
+	
 }
 
 function getDepartures(stop, submitDate, submitTime){
@@ -125,16 +126,16 @@ function buildRouteList(data, stop) {
 								" mini blue button\" data-id=\"" + pid + "\" value=\"View Route\"></td></tr>");
 						}
 				});
-				
-				$(".routeViewBtn").click(function() {
-						$("#stops").slideUp(500);
-						$(".getRouteMenu").trigger("click");
-						$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
-						$("#btnRouteSubmit").trigger("click");
-				});
 			} // end if inArray
 			
 	}); // end .each(stop.routes)
+	
+	$(".routeViewBtn").click(function() {
+			$("#stops").slideUp(500);
+			$(".getRouteMenu").trigger("click");
+			$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
+			$("#btnRouteSubmit").trigger("click");
+	});
 }
 
 function jq_id(id) {

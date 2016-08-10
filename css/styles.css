@@ -296,10 +296,10 @@ tr.favesRow:hover{
 	background-color: gray;
 }
 
-#starIcon {
-	color:yellow;
-}
-
 .btnAddFave{
 	padding-bottom: 1em;
+}
+
+#starIcon {
+	color:yellow;
 }
