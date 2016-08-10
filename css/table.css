@@ -38,6 +38,7 @@ h2{
 		border-bottom: 1px solid #eee; 
 		position: relative;
 		padding-left: 50%; 
+		position: relative;
 	}
 	
 	.tblFindStops td:before { 
@@ -51,6 +52,14 @@ h2{
 		white-space: nowrap;
 	}
 }
+
+.btnAddFave{
+	position: relative;
+	top: -8px;
+	left: 7px;
+
+}
+
 
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
