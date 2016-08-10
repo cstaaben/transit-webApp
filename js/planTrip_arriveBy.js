@@ -16,7 +16,6 @@ function getTrips_arriveBy(origin, destination, date, time){
 		if(status === 'OK'){
 			var now = new Date();
 			//If we're looking for times today, take out all of the routes that have already left.
-			debugger;
 			if(now.toDateString() === D.toDateString()){				
 				for(var i = 0; i < response.routes.length; i++){
 					if(response.routes[i].legs[0].departure_time < now){
@@ -24,8 +23,18 @@ function getTrips_arriveBy(origin, destination, date, time){
 					}
 				}
 			}
+			//Take out any outliers that arrive 3 hours before the desired time
+			for(var i = 0; i < response.routes.length; i++){
+				var routeArrivalTime = response.routes[i].legs[response.routes[i].legs.length - 1].arrival_time;
+				var test = (D - new Date(routeArrivalTime.value)) / (1000*60*60);
+				if(((D - new Date(routeArrivalTime.value)) / (1000*60*60)) > 3){
+					response.routes.splice(i, 1);
+				}
+			}
 			$("#map").show();
+			google.maps.event.trigger(map, 'resize');
 			directionsDisplay.setDirections(response);
+			$("#routes").empty();
 			for(var j = 0; j < response.routes.length; j++){
 				$("#routes").append(makeRoutes(response,j));
 			}
@@ -36,7 +45,7 @@ function getTrips_arriveBy(origin, destination, date, time){
 				directionsDisplay.setDirections(v);
 			});
 		} else{
-			window.alert("Houston we have a problem");
+			window.alert("Error: Unable to retrieve the data.");
 		}
 	});
 }
