@@ -2,20 +2,23 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href="css/semantic.min.css">
 		<link rel = "stylesheet" type = "text/css" href="css/styles.css">
+		<link rel = "stylesheet" type = "text/css" href="css/table.css">
 		<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+
 
 		<script src="js/date.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="js/jquery.cookie.js"></script>
 		<script src="js/semantic.min.js"></script>
 		<script src="js/busForm.js"></script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnnmS81Gsx73eGbCi7rt5ERc1XdUy7Vf8"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDp99DlHmrZdX07MWUddvAAkpcNj15B_o"></script>
 		<script src="js/geocodingStart.js"></script>
 		<script src="js/map.js"></script>
 		<script src="js/getDepartures.js"></script>
 		<script src="js/favorites.js"></script>
 		<script src="js/selectRoute.js"></script>
 		<script src="js/planTrip_arriveBy.js"></script>
+		<script src="js/planTrip_departAt.js"></script>
 		
 		<title>Transit App</title>
 	</head>
@@ -87,10 +90,15 @@
 			</div>
 		</div>
 		<button id = "btnTripSubmit" class = "ui huge blue button">Submit</button>
+		<button class="btnAddFave ui basic icon button"><i class="star icon"></i></button>
 	</div>
 </div>
 
-
+<div id="routesList" class="formBody">
+	<div id="routes">
+		
+	</div>
+</div>
 
 <div id ="getRoute" class="formBody">
 	<div id="getFullRoute" class="ui large form">
@@ -130,9 +138,8 @@
 		</table>
 
 		<div id="stops">
-			<ul id="stopList">
-			</ul>
 		</div>
+		
 		<div id="map"></div>
 
 	</body>

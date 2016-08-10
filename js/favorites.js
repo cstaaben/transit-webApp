@@ -157,12 +157,6 @@ $( document ).ready(function() {
 		
 	}
 	
-	$("#addFaveBtn").click(function(){
-	
-		//alert("You clicked me!");
-		
-	});
-	
 	$("#popFaves").click(function(){
 		populate();
 	});
