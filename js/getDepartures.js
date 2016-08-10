@@ -7,7 +7,7 @@ function getStop(lat, lon, submitDate, submitTime){
 		$.getJSON("./services/stops.php", {lat: lat, lon:lon, r:250 }, function(data){
 				
 				// Paragraph version of parsing data 
-				$("#stopList tbody").empty();
+				$("#stops").empty();
 				$.each(data.stops, function(index, value) {
 						//console.log(value);
 						$("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
@@ -63,7 +63,15 @@ function getDepartures(stop, submitDate, submitTime){
 	
 }
 
-function getDepartures(stop, submitDate) {
+function getAllStops(route, submitDate) {
+	if(!isNaN(route) && !isNaN(submitDate)) {
+		$.getJSON("./services/schedule_stop_pairs.php", {
+				route_onestop_id: route
+			}, function(data){}); 
+	}
+}
+
+function getAllDepartures(stop, submitDate) {
 	
 }
 
@@ -81,7 +89,7 @@ function buildRouteList(data, stop) {
 			}
 	});
 	
-	console.log($("#" + jq_id(stop.onestop_id)));
+	//console.log($("#" + jq_id(stop.onestop_id)));
 	
 	$.each(stop.routes_serving_stop, function(i, route) {
 			
