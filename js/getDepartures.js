@@ -63,30 +63,8 @@ function getDepartures(stop, submitDate, submitTime){
 	
 }
 
-function getArrivals(stop, submitTime, submitDate) {
-	var t = submitTime.split(":");
-	var e = parseInt(t[0]) + 3;
-	var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
-
-	var tempTimeInterval = "13:00:00,15:00:00";
+function getDepartures(stop, submitDate) {
 	
-	$.ajax({
-			method: "GET",
-			url: "./services/schedule_stop_pairs.php", 
-			data: 
-				{ 
-					origin_onestop_id: stop.onestop_id, 
-					total: true, 
-					date: submitDate, 
-					destination_arrival_between: tempTimeInterval
-				},
-			success: function(data) { 
-						//console.log(data);
-						buildRouteList(data, stop);
-				},
-			dataType: "json",
-			async: false
-	});
 }
 
 function buildRouteList(data, stop) {
