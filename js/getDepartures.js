@@ -53,8 +53,8 @@ function getStop(lat, lon, submitDate, submitTime){
 				});
 				
 				$(".routeViewBtn").click(function() {
-						console.log("click");
-						$("#stops").slideUp(500);
+						//console.log("click");
+						//$("#stops").slideUp(500);
 						$(".getRouteMenu").trigger("click");
 						$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
 						$("#btnRouteSubmit").trigger("click");
