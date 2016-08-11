@@ -25,6 +25,7 @@ h1{
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
+
 input{
 	opacity: 1;
 	color: green;	
@@ -88,8 +89,9 @@ input{
 }
 
 #map{
+	margin-top: 1.5em;
 	margin-bottom: 10%;
-	height: 600px;
+	height: 600`x;
 }
 
 #routeMap{
@@ -108,6 +110,7 @@ input{
 	padding-top: .5em;
 	overflow-x: hidden;
 	overflow-y: scroll;
+	margin-top: 1em;
 
 }
 
@@ -302,4 +305,12 @@ tr.favesRow:hover{
 
 .btnAddFave{
 	padding-bottom: 1em;
+}
+
+#timeType{
+	height: 43.11px;
+}
+
+#viewSchedule{
+	margin-bottom: -20px !important;
 }
