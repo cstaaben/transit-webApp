@@ -16,7 +16,7 @@ $(document).ready( function (){
 		$("body").addClass("background");
 	});
 
-	$(".close").click(function(){
+	$("a").click(function(){
 		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
 	});
 }); 

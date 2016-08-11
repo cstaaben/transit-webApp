@@ -13,7 +13,8 @@ $( document ).ready(function() {
 	$(".invalid").hide();
 	$(".formBody").hide();
 	$("#findStops").show();
-	
+	$("#viewSchedule").hide();
+	$("#warning").hide();
 	//initMap();
 	getRoutes();
 	initForm();
@@ -130,7 +131,7 @@ function setMenu(){
 		$(".invalid").hide();
 		$("#map").hide();
 		$("#routeMap").hide();
-		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+		
 	});
 
 	$(".planTripMenu").click(function(){
@@ -143,7 +144,7 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
-		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+		
 	});
 	
 	$(".favoritesMenu").click(function(){
@@ -155,7 +156,7 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
-		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+		
 	});
 
 	$(".getRouteMenu").click(function(){
@@ -167,7 +168,7 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
-		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+		
 	});
 }
 
