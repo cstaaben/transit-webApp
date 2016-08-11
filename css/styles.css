@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
 
-body{
+.background{
 	background: url(../img/plaza2.jpg) no-repeat center center fixed; 
   	-webkit-background-size: cover;
   	-moz-background-size: cover;
@@ -16,12 +16,21 @@ body{
  */
 
 h1{
-	font-family: 'Open Sans', sans-serif;
+	
 	padding: .25em;
+	text-align: center;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 5em;
 	color: white;
-	text-align: center;
 	background-color: hsla(82, 54%, 64%, 0.86);
+}
+
+.menuBar{
+	background-color: hsla(82,54%,64%,0.86);
+	padding: 1em;
+	position: relative;
+	margin-top: -33px;
+	margin-bottom: 1em;
 }
 
 input{
@@ -29,17 +38,50 @@ input{
 	color: green;	
 }
 
+#menu{
+	margin-left:23%;
+	margin-bottom: .9em;
+	width: 100%;
+}
+
+#menu li{
+	list-style: none;
+	display: inline;
+	background-color: hsla(82, 54%, 64%, 0.86);
+	color: white;
+	padding: 1em;
+	margin: auto;
+	margin-bottom: 0;
+	cursor: pointer;
+}
+
+#menu li:hover{
+	background-color: hsla(82, 54%, 50%, 0.86);
+}
+
+#menu .active{
+	background-color: hsla(82, 54%, 50%, 0.86);
+}
+
+}
 #location{
 	max-width: 100%;
 }
+
 #inputForm{
-	min-width: 25%;
-	max-width: 50%;
-	padding: 5em;
-	background-color: hsla(82, 54%, 64%, 0.86);
+	
+	/*background-color: hsla(82, 54%, 64%, 0.86);*/
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 10em;
+	margin-top: 10px;
+}
+
+#planRoute{
+	padding-top: 2.7em;
+	/*background-color: hsla(82, 54%, 64%, 0.86);*/
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
 }
 
 #map,#stops{
@@ -47,12 +89,252 @@ input{
 	margin-left: 25%;
 	margin-right: 25%;
 	width: 50%;
+}
+
+#stops{
 	height: 300px;
+}
+
+#map{
+	margin-top: 1.5em;
+	margin-bottom: 10%;
+	height: 600px;
+}
+
+#routeMap{
+	margin-top: 4em;
+	margin-left: 25%;
+	margin-right: 25%;
+	margin-bottom: 10%;
+	width: 50%;
+	height: 600px;
 }
 
 #stops{
 	background-color: hsla(82, 54%, 64%, 0.86);
 	font-family: 'Open Sans', sans-serif;
 	font-size: 1.5em;
-	padding-left: 5em;
+	padding-top: .5em;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	margin-top: 1em;
+
+}
+
+.formBody{
+	background: hsla(82, 54%, 64%, 0.86);
+	min-width: 25%;
+	max-width: 50%;
+	padding: 2em;
+	background-color: hsla(82, 54%, 64%, 0.86);
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0;
+	border: none;
+
+}
+
+
+#getFullRoute, #routeForm{
+	margin-top:10px;
+}
+
+
+#favorites{
+	max-height: 300px;
+	overflow:scroll;
+	overflow-x: hidden;
+	
+}
+
+#faves{
+	margin-top:10px;
+	background-color: white;
+	border-radius: 5px;
+	min-width:604px;
+}
+
+.ui.icon.button.stopbtn{
+	display:inline-block;
+	background-color: cornflowerblue;
+	position:absolute;
+	right:10px;
+	top:7px;
+}
+
+tr.favesRow{
+	display: inline-block;
+	height: 50px;
+	width: 100%;
+	border-radius: 10px;
+	padding-top:8px;
+	padding-bottom:8px;
+	position:relative;
+}
+
+td#buttonTd{
+	display: inline-block;
+	margin-left:12px;
+}
+
+.favName{
+	display: inline-block;
+	margin-left:30px;
+	width: 300;
+}
+
+.faveTd{
+	display: inline-block;
+	margin-left:30px;
+}
+
+tr.favesRow:hover{
+	background-color: #f8f5f5;
+}
+
+.buttonHolder{
+	position:relative;
+	
+}
+
+#fullRouteAddFave {
+	position:absolute;
+	top:1px;
+	left: 150px;
+}
+
+#addFavBtn{
+	display:inline-block;
+	margin-left: 5px;
+}
+
+.faveMessage {
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.25em;
+	padding: 5px;
+}
+
+#busArrows{
+	color: grey;
+	vertical-align: 0px;
+}
+
+
+
+#stopList{
+	text-align: left;
+
+}
+
+
+#stopList li{
+	list-style: none;
+}
+
+#stopList input{
+	margin: .2em;
+}
+
+
+
+.ui.form>.destination{
+	margin-right: 15em;
+}
+.invalid{
+	color: red;
+	font-size: 1em;
+	font-family: 'Open Sans', sans-serif;
+	display: inline-block;
+}
+
+#routesList {
+	margin-top:20px;
+	width: 100%;
+	max-height: 300px;
+	overflow:scroll;
+	overflow-x: hidden;
+}
+
+#routes {
+	margin-top:10px;
+	background-color:white;
+	border-radius: 10px;
+}
+
+.pRoutesRow, .pRoutesRow>p {
+	display:inline-block;
+	margin-bottom: 5px;
+}
+
+.pRoutesRow {
+	height: 60px;
+	position: relative;
+	background-color: white;
+	border-radius: 10px;
+	width: 100%;
+	padding: 5px;
+	color: black;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.pRoutesRow:hover{
+	background-color: #f8f5f5;
+}
+
+.routeDtoA {
+	font-size: 2em;
+	font-weight: lighter;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-left:70px;
+}
+
+.routeDist {
+	font-size: 1.3em;
+	position:absolute;
+	right:15px;
+	top:19px;
+}
+
+.routeDur {
+	font-size: 1.5em;
+	font-weight: bolder;
+	margin-left:40px;
+}
+
+.routeFare{
+	font-size: 1em;
+	margin-left:50px;
+}
+
+.pRouteBusIcon{
+	position:absolute;
+	left:15px;
+	top:15px;
+	
+}
+
+
+#pRoutesAddFave0,#pRoutesAddFave1,#pRoutesAddFave2,#pRoutesAddFave3 {
+	padding-top: 11px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 14px;
+	position:absolute !important;
+	right: 10px;
+	top: 10px;
+	background-color: light-gray;
+}
+
+.btnAddFave{
+	padding-bottom:10px;
+}
+
+#timeType{
+	height: 43.11px;
+}
+
+#viewSchedule{
+	margin-bottom: -20px !important;
 }

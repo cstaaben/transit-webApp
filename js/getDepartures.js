@@ -4,231 +4,205 @@
 //comment
 function getStop(lat, lon, submitDate, submitTime){
 	if(!isNaN(lat) && !isNaN(lon)){
-		$.getJSON("https://transit.land/api/v1/stops", {lat: lat, lon:lon, r:250 }, function(data){
-			for(var i = 0; i < data.stops.length; i++) {
-				var stop = data.stops[i];
+		$.getJSON("./services/stops.php", {lat: lat, lon:lon, r:250 }, function(data){
 				
-				getDepartures(stop, submitDate, submitTime);
+				// Paragraph version of parsing data 
+				$("#stops").empty();
+				$.each(data.stops, function(index, value) {
+						//console.log(value);
+						$("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
+							" data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" + 
+							" class=\"viewStopBtn ui mini blue button\">"+
+							'<button class="btnAddFave ui icon button" id="stopAddFave'+index+'"><i class="star icon"></i></button>'+
+							"<br><table id=\"" + 
+							jq_id(value.onestop_id) + "\" border=\"1\"" + " class=\"tblFindStops\">" +
+							"<thead><th>Route</th><th>Time</th><th></th></thead><tbody></tbody></table>");
+						
+						
+						$("#stopAddFave"+index).click(function() {
+								
+								var stopName = "Stop: ";
+								stopName += value.name;
+								var stopId = value.onestop_id;
+								
+								var fArray = getFavorites();
+								
+								if(fArray === undefined){//favorites is empty
+									addToFaves(stopName, stopId);
+								}else{
+									if(lookForFave(stopName)){//route exists in favorites already
+										alert(stopName +" is already in your favorites!");
+									}else{
+										addToFaves(stopName,stopId);
+									}
+								}
+						});
+						
+						getDepartures(value, submitDate, submitTime);
+						
+				});
+				$(".viewStopBtn").click(function() {
+
+						var latLng = $(this).attr("data-coords");
+						var t = latLng.split(",");
+						
+						initMap();
+						moveMap(t);
+						//google.maps.event.trigger(map, "resize");
+						setMarker(t, stop.name);
+				});
 				
-			}
+				$(".routeViewBtn").click(function() {
+						console.log("click");
+						$("#stops").slideUp(500);
+						$(".getRouteMenu").trigger("click");
+						$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
+						$("#btnRouteSubmit").trigger("click");
+				});
+				
+				$(".routeAddFave").click(function() {
+						var fArray = getFavorites();
+						var routeName = "Route: ";
+						routeName += $(this).attr("value");
+						var routeId = $(this).attr("data-id");
+						
+						if(fArray === undefined){//favorites is empty
+							addToFaves(routeName, routeId);
+						}else{
+							if(lookForFave(routeName)){//route exists in favorites already
+								alert(routeName +" is already in your favorites!");
+							}else{
+								addToFaves(routeName,routeId);
+							}
+						}
+				});
+				
 		});
 	}
+	
 }
 
 function getDepartures(stop, submitDate, submitTime){
-	//debugger;
-	//console.log(stop);
 	
 	var t = submitTime.split(":");
 	var e = parseInt(t[0]) + 3;
 	var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
-	//console.log(typeof(submitTime));
+
+	var tempTimeInterval = "13:00:00,15:00:00";
 	
-	//for(var i = 0; i < stop.routes_serving_stop.length; i++){
-		//var newTime = time;
-		//newTime.setHours(newTime.getHours + 1);
-		//var timeInterval = time + "," + newTime
-		var tempTimeInterval = "13:00:00,15:00:00";
-		
-		$.getJSON("https://transit.land/api/v1/schedule_stop_pairs", 
-		{//route_onestop_id: stop.routes_serving_stop[i].route_onestop_id, 
-			origin_onestop_id: stop.onestop_id, total: true, date: submitDate, origin_departure_between: tempTimeInterval}, function(data){				
-				var times = "";
-				
-				for(var j = 0; j < data.schedule_stop_pairs.length; j++) {
-					var pairs = data.schedule_stop_pairs[j];
-					var p = pairs.route_onestop_id.split("-");
-					if(times.indexOf(p[p.length-1]) >= 0) {
-						times += p[p.length-1] + " -> " + pairs.origin_arrival_time + "<br>";
-					}
-					else {
-						times += "<br>" + p[p.length-1] + " -> " + pairs.origin_arrival_time + "<br>";
-					}
-				}
-				//console.log(times);
-				
-				setMarker(stop.geometry.coordinates, stop.name, times);
-			});
-		
-		
-	//}
-}
-
-
-
-
-//getStopData.js
-//ahenry
-
-var departures = [];
-var arrivals = [];
-var numDepartures = 0;
-
-function getArrivalsDepartures(lat, lon){
-	if(!isNaN(lat) && !isNaN(lon)){
-		$.getJSON("https://transit.land/api/v1/stops", {lat: lat, lon:lon, r:250 }, function(data){
-			if(data.stops.length > 0){
-				//Pull in first stop, though if multiple stops, should test for nearest one.
-				var stop = data.stops[0];
-				getDepartures(stop);
-				getArrivals(stop);
-			}
-			else{
-			return null;
-			}
-		});
-	}
-}
-
-function updateDepartures(){
-	if(departures.length > 0){
-		departures.sort(function(a, b){
-			var x = Date.parse(a.origin_departure_time);
-			var y = Date.parse(b.origin_departure_time);
-			if(x < y) return -1;
-			else if(x > y) return 1;
-			else return 0;
-		});
-	}
-	refreshDepartureTable();
-}
-
-function updateArrivals(){
-	if(arrivals.length > 0){
-		arrivals.sort(function(a, b){
-			var x = Date.parse(a.destination_arrival_time);
-			var y = Date.parse(b.destination_arrival_time);
-			if(x < y) return -1;
-			else if(x > y) return 1;
-			else return 0;
-		});
-	}
-	refreshArrivalTable();
-}
-
-var getStopTitles = function(schedule_stop_pair){
-	return function(data){
-		this.destination_title = data.name;
-		departures.push(this);
-		updateDepartures();
-	}
-}
-
-function getDepartures(stop){
-	departures = [];
-	var time = "06:55:00";//Date.now().getHours();
-	//time += Date.now().toString(":mm:ss");
-	var date = Date.now().toString("yyyy-MM-dd");
-	for(var i = 0; i < stop.routes_serving_stop.length; i++){
-		
-		$.getJSON("https://transit.land/api/v1/schedule_stop_pairs", 
-		{route_onestop_id: stop.routes_serving_stop[i].route_onestop_id, origin_onestop_id: stop.onestop_id,
-			date: date, origin_departure_between: time}, function(data){
-				//For each route
-				$(data).each(function(){
-					//For each schedule stop pair
-					for(var j = 0; j < this.schedule_stop_pairs.length; j++){
-						var currentPair = this.schedule_stop_pairs[j];
-						currentPair.origin_departure_time_formatted = Date.parse(currentPair.origin_departure_time).toString("h:mm tt");
-						currentPair.origin_arrival_time_formatted = Date.parse(currentPair.origin_arrival_time).toString("h:mm tt");
-						currentPair.destination_departure_time_formatted = Date.parse(currentPair.destination_departure_time).toString("h:mm tt");
-						currentPair.destination_arrival_time_formatted = Date.parse(currentPair.destination_arrival_time).toString("h:mm tt");
-						$.getJSON("https://transit.land/api/v1/stops", {onestop_id: currentPair.origin_onestop_id}, (function(currentPair){ 
-							return function(data){
-								currentPair.origin_stop = data.stops[0].name;
-								$.getJSON("https://transit.land/api/v1/stops", {onestop_id: currentPair.destination_onestop_id}, function(data){
-									currentPair.destination_stop = data.stops[0].name;
-									$.getJSON("https://transit.land/api/v1/routes", {onestop_id: currentPair.route_onestop_id}, function(data){
-										currentPair.route_name = data.routes[0].name;
-										departures.push(currentPair);
-										updateDepartures();
-									});
-								});
-							};
-					}(currentPair)));
-					} 
-				});
-			});
-	}
-}
-
-function getArrivals(stop){
-	arrivals = [];
-	var time = Date.now().getHours();
-	time += Date.now().toString(":mm:ss");
-	var date = Date.now().toString("yyyy-MM-dd");
-	for(var i = 0; i < stop.routes_serving_stop.length; i++){
-		
-		$.getJSON("https://transit.land/api/v1/schedule_stop_pairs", 
-		{route_onestop_id: stop.routes_serving_stop[i].route_onestop_id, destination_onestop_id: stop.onestop_id,
-			date: date, destination_arrival_between: time}, function(data){
-				//For each route
-				$(data).each(function(){
-					//For each schedule stop pair
-					for(var j = 0; j < this.schedule_stop_pairs.length; j++){
-						var currentPair = this.schedule_stop_pairs[j];
-						currentPair.origin_departure_time_formatted = Date.parse(currentPair.origin_departure_time).toString("h:mm tt");
-						currentPair.origin_arrival_time_formatted = Date.parse(currentPair.origin_arrival_time).toString("h:mm tt");
-						currentPair.destination_departure_time_formatted = Date.parse(currentPair.destination_departure_time).toString("h:mm tt");
-						currentPair.destination_arrival_time_formatted = Date.parse(currentPair.destination_arrival_time).toString("h:mm tt");
-						$.getJSON("https://transit.land/api/v1/stops", {onestop_id: currentPair.origin_onestop_id}, (function(currentPair){ 
-							return function(data){
-								currentPair.origin_stop = data.stops[0].name;
-								$.getJSON("https://transit.land/api/v1/stops", {onestop_id: currentPair.destination_onestop_id}, function(data){
-									currentPair.destination_stop = data.stops[0].name;
-									$.getJSON("https://transit.land/api/v1/routes", {onestop_id: currentPair.route_onestop_id}, function(data){
-										currentPair.route_name = data.routes[0].name;
-										arrivals.push(currentPair);
-										updateArrivals();
-									});
-								});
-							};
-					}(currentPair)));
-					} 
-				});
-			});
-	}
-}
-
-function refreshDepartureTable(){
-	$("#tblDepartures").find("tr:gt(0)").remove();
-	var newRows = "";
-	for(var i = 0; i < departures.length; i++){
-		newRows += "<tr><td>";
-		newRows += departures[i].origin_departure_time_formatted;
-		newRows += "</td><td>";
-		newRows += departures[i].route_name;
-		newRows += "</td><td>";
-		newRows += departures[i].destination_stop;
-		newRows += "</td></tr>";
-	}
-	$("#tblDepartures").append(newRows);
-	$("#tblDepartures").show();
-}
-
-function refreshArrivalTable(){
-	$("#tblArrivals").find("tr:gt(0)").remove();
-	var newRows = "";
-	for(var i = 0; i < arrivals.length; i++){
-		if(Date.parse(arrivals[i].destination_arrival_time) > Date.now()){
-			newRows += "<tr><td>";
-			newRows += arrivals[i].destination_arrival_time_formatted;
-			newRows += "</td><td>";
-			newRows += arrivals[i].route_name;
-			newRows += "</td><td>";
-			newRows += arrivals[i].origin_stop;
-			newRows += "</td></tr>";
-		} 
-	}
-	$("#tblArrivals").append(newRows);
-	$("#tblArrivals").show();
-}
-
-$(document).ready(function(){
-	$("#btnGetDepartures").click(function(){
-		//Dummy data
-		var lat = 47.492708;
-		var lon = -117.5857637;
-		getArrivalsDepartures(lat, lon);
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php", 
+			data: 
+				{ 
+					origin_onestop_id: stop.onestop_id, 
+					total: true, 
+					date: submitDate, 
+					origin_departure_between: tempTimeInterval
+				},
+			success: function(data) { 
+						//console.log(data);
+						buildRouteList(data, stop);
+				},
+			dataType: "json",
+			async: false
 	});
-});
+	
+}
+
+function getAllStops(route, submitDate) {
+	if(!isNaN(route) && !isNaN(submitDate)) {
+		$.getJSON("./services/stops.php", {
+				served_by: route
+			}, 
+			function(data){
+					$("#tblAllStops").empty();
+					$.each(data.stops, function(i, stop) {
+							setAllDepartures(stop, submitDate);
+					});
+			}); 
+	}
+}
+
+function setAllDepartures(stop, submitDate) {
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php",
+			data: {
+					total: true,
+					origin_onestop_id: stop.onestop_id,
+					date: submitDate,
+					per_page: 1000
+			},
+			success: function(data) {
+					//buildSchedule(data, stop);
+					console.log(data);
+			},
+			dataType: "json",
+			async: false
+	});
+			
+}
+
+function buildRouteList(data, stop) {
+	var dest;
+	var pid;
+	var rids = [];
+	
+	//console.log(stop);
+	//console.log(data);
+	
+	$.each(data.schedule_stop_pairs, function(i, p) {
+			if($.inArray(p.route_onestop_id, rids) < 0) {
+				rids.push(p.route_onestop_id);
+			}
+	});
+
+	$.each(stop.routes_serving_stop, function(i, route) {
+			pid = jq_id(route.route_onestop_id);
+			
+			if($.inArray(pid, rids) != -1) {
+
+				$.each(data.schedule_stop_pairs, function(j, pair) {
+						if(pair.route_onestop_id == route.route_onestop_id) {
+							dest = pair.trip_headsign;
+						}
+				});
+				
+				// Paragraph Version
+				$.each(data.schedule_stop_pairs, function(j, pair) {
+						if(pair.route_onestop_id == pid) {
+							var rName = route.route_name + " - " + dest;
+							$("table#" + jq_id(stop.onestop_id) + " tbody").append("<tr><td>" + rName + "</td><td>" +
+								convertTime(pair.origin_arrival_time) + "</td><td> " +
+								"<input type=\"button\"" + " class=\"routeViewBtn  ui" +
+								" mini blue button\" data-id=\"" + pid + "\" value=\"View Route\">"+
+								"<button class='routeAddFave btnAddFave ui icon button' value=\""+ rName+"\" data-id=\"" + pid + "\"><i class='star icon'></i></button></td></tr>");
+						}
+				});
+			} // end if inArray
+			
+	}); // end .each(stop.routes)
+	
+}
+
+function buildSchedule(data, stop) {
+	
+}
+
+function jq_id(id) {
+	var s = id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
+	return s.replace( /~/g, "_");
+}
+
+function convertTime(time) { //credit to user HBP on StackOverflow for conversion code inspiration
+  // Check correct time format and split into components
+  time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+  if (time.length > 1) { // If time format correct
+    time = time.slice(1);  // Remove full string match value
+    time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+    time[0] = +time[0] % 12 || 12; // Adjust hours
+  }
+  return time.join(''); // return adjusted time or original string
+}
