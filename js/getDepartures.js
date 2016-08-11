@@ -104,8 +104,6 @@ function buildRouteList(data, stop) {
 			}
 	});
 	
-	console.log($("#" + jq_id(stop.onestop_id)));
-	
 	$.each(stop.routes_serving_stop, function(i, route) {
 			
 			pid = jq_id(route.route_onestop_id);

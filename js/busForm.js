@@ -24,7 +24,7 @@ $( document ).ready(function() {
 
 	$("#btnSubmit").click(submitClick);
 	$("#btnTripSubmit").click(tripSubmit);
-	$("#btnRouteSubmit").click(routeSubmit);
+	$("#btnRouteSubmit").click(getRoute);
 	
 	
 });
