@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
 
-body{
+.background{
 	background: url(../img/plaza2.jpg) no-repeat center center fixed; 
   	-webkit-background-size: cover;
   	-moz-background-size: cover;
@@ -25,6 +25,13 @@ h1{
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
+.menuBar{
+	background-color: hsla(82,54%,64%,0.86);
+	padding: 1em;
+	position: relative;
+	margin-top: -33px;
+	margin-bottom: 1em;
+}
 
 input{
 	opacity: 1;
