@@ -53,7 +53,8 @@ function getDepartures(stop, submitDate, submitTime){
 					origin_onestop_id: stop.onestop_id, 
 					total: true, 
 					date: submitDate, 
-					origin_departure_between: tempTimeInterval
+					origin_departure_between: tempTimeInterval,
+					per_page: 1000
 				},
 			success: function(data) { 
 						//console.log(data);
@@ -63,40 +64,6 @@ function getDepartures(stop, submitDate, submitTime){
 			async: false
 	});
 	
-}
-
-function getAllStops(route, submitDate) {
-	if(!isNaN(route) && !isNaN(submitDate)) {
-		$.getJSON("./services/stops.php", {
-				served_by: route
-			}, 
-			function(data){
-					$("#tblAllStops").empty();
-					$.each(data.stops, function(i, stop) {
-							setAllDepartures(stop, submitDate);
-					});
-			}); 
-	}
-}
-
-function setAllDepartures(stop, submitDate) {
-	$.ajax({
-			method: "GET",
-			url: "./services/schedule_stop_pairs.php",
-			data: {
-					total: true,
-					origin_onestop_id: stop.onestop_id,
-					date: submitDate,
-					per_page: 1000
-			},
-			success: function(data) {
-					//buildSchedule(data, stop);
-					console.log(data);
-			},
-			dataType: "json",
-			async: false
-	});
-			
 }
 
 function buildRouteList(data, stop) {
@@ -127,7 +94,7 @@ function buildRouteList(data, stop) {
 				
 				// Paragraph Version
 				$.each(data.schedule_stop_pairs, function(j, pair) {
-						if(pair.route_onestop_id == pid) {
+						if(jq_id(pair.route_onestop_id) == pid) {
 							$("table#" + jq_id(stop.onestop_id) + " tbody").append("<tr><td>" + route.route_name + 
 								": " + dest + "</td><td>" + convertTime(pair.origin_arrival_time) + "</td><td> " +
 								"<input type=\"button\"" + " class=\"routeViewBtn  ui" +
@@ -147,7 +114,84 @@ function buildRouteList(data, stop) {
 	});
 }
 
-function buildSchedule(data, stop) {
+function getAllStops(route, submitDate) {
+	
+	//if(!isNaN(route) && !isNaN(submitDate)) {
+		$.getJSON("./services/route_stop_patterns.php", { 
+				traversed_by: route
+			}, 
+			function(data){
+					var pat = data.route_stop_patterns[0];
+					setAllStops(pat, submitDate);
+			}); 
+	//}
+}
+
+function setAllStops(pat, submitDate) {
+	var stops = "";
+	
+	$.each(pat.stop_pattern, function(i, s) {
+			stops += s;
+			if(i < pat.stop_pattern.length - 1) {
+				stops += ",";
+			}
+	});
+	
+	$.getJSON("./services/stops.php", 
+			{onestop_id: stops}, 
+			function(data) {
+				$("#tblAllStops").find("tr:gt(0)").remove();
+				$.each(data.stops, function(i, stop) {
+						$("#tblAllStops").append("<tr id=\"" + jq_id(stop.onestop_id) +
+							"\"><td>" + stop.name + "</td></tr>");
+				});
+				
+				setAllDepartures(stops, submitDate);
+			}
+	);
+}
+
+function setAllDepartures(stops, submitDate) {
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php",
+			data: {
+					total: true,
+					origin_onestop_id: stops,
+					date: submitDate,
+					origin_departure_between: "00:00:00,23:59:59",
+					per_page: 1000
+			},
+			success: buildSchedule,
+			dataType: "json"
+	});
+			
+}
+
+function buildSchedule(data) {
+	var row;
+	var pairs = data.schedule_stop_pairs;
+	
+	pairs.sort(function(a,b) {
+			var x = parseInt(a.origin_arrival_time.split(":")[0]);
+			var y = parseInt(b.origin_arrival_time.split(":")[0]);
+			
+			if(x == y) {
+				var s = parseInt(a.origin_arrival_time.split(":")[1]);
+				var t = parseInt(b.origin_arrival_time.split(":")[1]);
+				
+				return s-t;
+			}
+			else {
+				return x-y;
+			}
+	});
+	
+	$.each(data.schedule_stop_pairs, function(i, pair) {
+			$("#" + jq_id(pair.origin_onestop_id)).append("<td>" + convertTime(pair.origin_departure_time) +
+				"</td>");
+	});
+	
 	
 }
 

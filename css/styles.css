@@ -320,3 +320,7 @@ tr.favesRow:hover{
 #viewSchedule{
 	margin-bottom: -20px !important;
 }
+
+#viewSchedules{
+	overflow: auto;
+}

@@ -14,6 +14,7 @@ $( document ).ready(function() {
 	$(".formBody").hide();
 	$("#findStops").show();
 	$("#viewSchedule").hide();
+	$("#dateForm").hide();
 	$("#warning").hide();
 	//initMap();
 	getRoutes();
@@ -25,8 +26,18 @@ $( document ).ready(function() {
 	$("#btnSubmit").click(submitClick);
 	$("#btnTripSubmit").click(tripSubmit);
 	$("#btnRouteSubmit").click(getRoute);
-	
-	
+	/*$("#btnScheduleSubmit").click(function() {
+			viewSchedule();
+			$("#viewSchedules").show();
+	});
+
+	$("#viewSchedule").click(function(){
+		$("#dateForm").toggle();
+		if($("#viewSchedules").is(":visible")) {
+			$("#viewSchedules").hide();
+		}
+	});
+	*/
 });
 
 function getDate() {
@@ -168,8 +179,14 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
+		populateRouteDate();
 		
 	});
+}
+
+function populateRouteDate(){
+	var date = getDate;
+	$("#routeDate").val(date);
 }
 
 function populateRouteForm(){
@@ -228,3 +245,9 @@ function routeSubmit(){
 
 }
 
+function viewSchedule(){
+	var date = $("#routeDate").val();
+	var route = $("#allRoutes").val();
+	
+	getAllStops(route, date);
+}
