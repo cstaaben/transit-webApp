@@ -19,15 +19,33 @@
 		<script src="js/selectRoute.js"></script>
 		<script src="js/planTrip_arriveBy.js"></script>
 		<script src="js/planTrip_departAt.js"></script>
+		<script src="js/sidebar.js"></script>
 		
 		<title>Transit App</title>
 	</head>
 
-<body>
-
-<!-- FORM -->
-
-	<h1 class="header">Plan Your Route!</h1><br>
+<body class="background">
+<h1 class="header">Plan Your Route!</h1><br>
+<!--<div class="menuBar"><i class="align justify icon" id="menuSlider"></i> <span id="menuSlider">Menu</span></div>
+  <div class="ui sidebar inverted vertical menu">
+  	<a class="item close">
+  		<i class="align justify icon"></i> Menu
+  	</a>
+    <a class="item findStopsMenu">
+      Find Stops
+    </a>
+    <a class="item planTripMenu">
+      Plan Trip
+    </a>
+    <a class="item getRouteMenu">
+      Find Full Route
+    </a>
+    <a class="item favoritesMenu">
+    	Favorites
+    </a>
+  </div>
+-->
+	
 
 <ul id = "menu">
 	<li class="findStopsMenu active">Find Stops</li>
@@ -37,6 +55,7 @@
 
 </ul>
 
+<div class="dimmed pusher">
 <div id = "findStops" class="formBody">
 
 	<div id="inputForm" class="ui large form">
@@ -79,24 +98,22 @@
 			<div class = "field">
 				<input id = "date2" type = "date">
 			</div>
-			<div class = "field">
-				<input type ="time" id="time2">
-			</div>
 			<div class="field">
 				<select class="ui dropdown" id="timeType">
 					<option value="departAt">Depart At</option>
 					<option value = "arriveBy">Arrive By</option>
 				</select>
 			</div>
+			<div class = "field">
+				<input type ="time" id="time2">
+			</div>
 		</div>
 		<button id = "btnTripSubmit" class = "ui huge blue button">Submit</button>
-		<button class="btnAddFave ui basic icon button"><i class="star icon"></i></button>
 	</div>
 </div>
 
 <div id="routesList" class="formBody">
 	<div id="routes">
-		
 	</div>
 </div>
 
@@ -106,9 +123,32 @@
 			<select class="ui dropdown" id="allRoutes">
 			</select>
 		</div>
-		<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
+		<div class="buttonHolder">
+			<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
+			<button class='btnAddFave ui huge icon button' id="fullRouteAddFave"><i class='star icon'></i></button>
+		</div>
 	</div>
+
+	<p id="viewSchedule"><u>View Schedule</u></p><br>
+ 	<div class="ui large form" id="dateForm">
+ 		<div class="two fields" type = "date">
+ 			<input id="routeDate" type="date">
+ 			<button class="ui large blue button" id="btnScheduleSubmit">Submit</button>
+ 		</div>
+ 	</div>
+	<p id="warning">* Routes and times may change on weekends, holidays, or for special events</p>
+
 </div>	
+
+	<div id = "viewSchedules" class="formBody">
+		
+		<table id="tblAllStops" border="1">
+			<tr>
+				<th>Stop</th>
+				<th>Time</th>
+			</tr>
+		</table>
+	</div>
 
 
 
@@ -118,29 +158,13 @@
 	</table>
 </div>
 
-
-
-<h3>Departures</h3>
-		<table border="2" id="tblDepartures" hidden="true">
-			<tr>
-				<th>Leaves At</th>
-				<th>Route</th>
-				<th>Next Stop</th>
-			</tr>
-		</table>
-		<h3>Arrivals</h3>
-		<table border="2" id="tblArrivals" hidden="true">
-			<tr>
-				<th>Arrives At</th>
-				<th>Route</th>
-				<th>Last Stop</th>
-			</tr>
-		</table>
-
 		<div id="stops">
 		</div>
 		
 		<div id="map"></div>
 
+
+
+	</div><!-- End Pusher Div -->
 	</body>
 </html>

@@ -13,7 +13,9 @@ $( document ).ready(function() {
 	$(".invalid").hide();
 	$(".formBody").hide();
 	$("#findStops").show();
-	
+	$("#viewSchedule").hide();
+	$("#dateForm").hide();
+	$("#warning").hide();
 	//initMap();
 	getRoutes();
 	initForm();
@@ -23,8 +25,36 @@ $( document ).ready(function() {
 
 	$("#btnSubmit").click(submitClick);
 	$("#btnTripSubmit").click(tripSubmit);
-	$("#btnRouteSubmit").click(routeSubmit);
+	$("#btnRouteSubmit").click(getRoute);
+		/*$("#btnScheduleSubmit").click(function() {
+ -			 +			viewSchedule();
+ 			$("#viewSchedules").show();
+	});
+ 
+ 	$("#viewSchedule").click(function(){
+ 		$("#dateForm").toggle();
+ 		if($("#viewSchedules").is(":visible")) {
+ 			$("#viewSchedules").hide();
+ 		}
+ 	});
+ 	*/
 	
+	$("#fullRouteAddFave").click(function(){
+		var fArray = getFavorites();
+		var routeName = "Route: ";
+		routeName += $("#allRoutes option:selected").text();
+		var routeId = $("#allRoutes").val();
+		
+		if(fArray === undefined){//favorites is empty
+			addToFaves(routeName, routeId);
+		}else{
+			if(lookForFave(routeName)){//route exists in favorites already
+				alert(routeName +" is already in your favorites!");
+			}else{
+				addToFaves(routeName,routeId);
+			}
+		}
+	});
 	
 });
 
@@ -130,6 +160,7 @@ function setMenu(){
 		$(".invalid").hide();
 		$("#map").hide();
 		$("#routeMap").hide();
+		
 	});
 
 	$(".planTripMenu").click(function(){
@@ -142,6 +173,7 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
+		
 	});
 	
 	$(".favoritesMenu").click(function(){
@@ -153,6 +185,7 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
+		
 	});
 
 	$(".getRouteMenu").click(function(){
@@ -164,9 +197,22 @@ function setMenu(){
 		$("#map").hide();
 		$("#routeMap").hide();
 		$("#stops").hide();
+		populateRouteDate();
 	});
 }
 
+function populateRouteDate(){
+ 	var date = getDate;
+ 	$("#routeDate").val(date);
+ }
+
+function viewSchedule(){
+	var date = $("#routeDate").val();
+	var route = $("#allRoutes").val();
+ 	
+	getAllStops(route, date);
+}
+ 
 function populateRouteForm(){
 	console.log("Route Clicked");
 	var date = new Date($.now());
