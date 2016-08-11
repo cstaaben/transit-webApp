@@ -44,15 +44,14 @@ function getRoutesDone(data){
 }// end getDone
 
 function getRoute(){
-	//Show Paragraph For Schedule
-	//$("#viewSchedule").show();
-	
 	var routeId = $("#allRoutes").val();
 	$.getJSON("./services/route_stop_patterns.php", {traversed_by: routeId}, function(data){
 		var pattern = data.route_stop_patterns[0];
+		console.log(data);
 		initRouteMap(pattern);
 	});
 }
+
 
 function initRouteMap(pattern){
 	//Estimate center of map as the center coordinates in the geometry.coordinates array

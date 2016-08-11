@@ -156,8 +156,10 @@ input{
 
 .ui.icon.button.stopbtn{
 	display:inline-block;
-	background-color: #33f3ea;
-
+	background-color: cornflowerblue;
+	position:absolute;
+	right:10px;
+	top:7px;
 }
 
 tr.favesRow{
@@ -167,6 +169,7 @@ tr.favesRow{
 	border-radius: 10px;
 	padding-top:8px;
 	padding-bottom:8px;
+	position:relative;
 }
 
 td#buttonTd{
@@ -176,8 +179,8 @@ td#buttonTd{
 
 .favName{
 	display: inline-block;
-	width:170px;
 	margin-left:30px;
+	width: 300;
 }
 
 .faveTd{
@@ -187,6 +190,17 @@ td#buttonTd{
 
 tr.favesRow:hover{
 	background-color: #f8f5f5;
+}
+
+.buttonHolder{
+	position:relative;
+	
+}
+
+#fullRouteAddFave {
+	position:absolute;
+	top:1px;
+	left: 150px;
 }
 
 #addFavBtn{
@@ -254,17 +268,13 @@ tr.favesRow:hover{
 }
 
 .pRoutesRow {
-	width: 400px;
 	height: 60px;
 	position: relative;
 	background-color: white;
 	border-radius: 10px;
 	width: 100%;
 	padding: 5px;
-	
 	color: black;
-
-	font-weight: bold;
 	font-family: 'Open Sans', sans-serif;
 }
 
@@ -273,46 +283,54 @@ tr.favesRow:hover{
 }
 
 .routeDtoA {
-	font-size: 1.2em;
-	margin-left:50px;
+	font-size: 2em;
+	font-weight: lighter;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-left:70px;
 }
 
 .routeDist {
-	margin-right: 2em;
-	font-size: 1em;
-	margin-left:50px;
+	font-size: 1.3em;
+	position:absolute;
+	right:15px;
+	top:19px;
 }
 
 .routeDur {
+	font-size: 1.5em;
+	font-weight: bolder;
+	margin-left:40px;
+}
+
+.routeFare{
 	font-size: 1em;
+	margin-left:50px;
 }
 
 .pRouteBusIcon{
 	position:absolute;
-	left:5px;
+	left:15px;
 	top:15px;
 	
 }
 
 
-#pRoutesAddFave {
+#pRoutesAddFave0,#pRoutesAddFave1,#pRoutesAddFave2,#pRoutesAddFave3 {
 	padding-top: 11px;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 14px;
-	position:absolute;
-	right:5px;
-	top:10px;
-	background-color: gray;
+	position:absolute !important;
+	right: 10px;
+	top: 10px;
+	background-color: light-gray;
 }
 
 .btnAddFave{
-	padding-bottom: 1em;
+	padding-bottom:10px;
 }
 
-#starIcon {
-	color:yellow;
-}
 #timeType{
 	height: 43.11px;
 }
@@ -322,5 +340,5 @@ tr.favesRow:hover{
 }
 
 #viewSchedules{
-	overflow: auto;
-}
+ 	overflow: auto;
+ }

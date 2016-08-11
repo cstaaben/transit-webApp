@@ -98,14 +98,14 @@
 			<div class = "field">
 				<input id = "date2" type = "date">
 			</div>
-			<div class = "field">
-				<input type ="time" id="time2">
-			</div>
 			<div class="field">
 				<select class="ui dropdown" id="timeType">
 					<option value="departAt">Depart At</option>
 					<option value = "arriveBy">Arrive By</option>
 				</select>
+			</div>
+			<div class = "field">
+				<input type ="time" id="time2">
 			</div>
 		</div>
 		<button id = "btnTripSubmit" class = "ui huge blue button">Submit</button>
@@ -125,17 +125,17 @@
 		</div>
 		<div class="buttonHolder">
 			<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
-			<button class='btnAddFave ui mini icon button'><i class='star icon'></i></button>
+			<button class='btnAddFave ui huge icon button' id="fullRouteAddFave"><i class='star icon'></i></button>
 		</div>
 	</div>
 
 	<p id="viewSchedule"><u>View Schedule</u></p><br>
-	<div class="ui large form" id="dateForm">
-		<div class="two fields" type = "date">
-			<input id="routeDate" type="date">
-			<button class="ui large blue button" id="btnScheduleSubmit">Submit</button>
-		</div>
-	</div>
+ 	<div class="ui large form" id="dateForm">
+ 		<div class="two fields" type = "date">
+ 			<input id="routeDate" type="date">
+ 			<button class="ui large blue button" id="btnScheduleSubmit">Submit</button>
+ 		</div>
+ 	</div>
 	<p id="warning">* Routes and times may change on weekends, holidays, or for special events</p>
 
 </div>	

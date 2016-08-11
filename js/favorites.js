@@ -1,6 +1,40 @@
 //Kevin Ungerecht
 //Favorites with cookies!
 
+function addToFaves(rName, rID){
+	console.log(rName);
+	console.log(rID);
+	
+	var faveArr1 = getFavorites();
+	
+	if(faveArr1 === undefined){
+		faveArr1 = new Array();
+	}
+	
+	var route = {routeID: rID, name: rName};
+	faveArr1.push(route);
+	cleanFavorites();
+	createFavorites(faveArr1);
+	printFavorites(getFavorites());
+	
+	$(".delfavebtn").click(function(){
+		var ddata = parseInt($(this).attr("value"));
+		delBtnClick(ddata);
+	});
+	
+}
+
+function lookForFave(rName){
+	var faveArr = getFavorites();
+	for(var i = 0; i < faveArr.length; i++){
+		if(faveArr[i]["name"] === rName){
+			return true;
+		}
+	}
+	return false;
+}
+
+
 function delBtnClick(id){
 
 	var faveArr = getFavorites();
@@ -19,7 +53,7 @@ function delBtnClick(id){
 			k++;
 		}
 		console.log(newFaves);
-		if(confirm("Are you sure you want to delete \""+deleting["fname"]+"\" from your favorites?")){
+		if(confirm("Are you sure you want to delete \""+deleting["name"]+"\" from your favorites?")){
 			if(newFaves.length > 0){
 				createFavorites(newFaves);
 				cleanFavorites();
@@ -64,13 +98,18 @@ function createFavorites(faveArr){
 function getFavorites(){
 	
 	//Decode JSON string from cookie to array
-	var favOut = $.parseJSON($.cookie('Favorites'));
-	return favOut;
+	if(jQuery.isEmptyObject($.cookie('Favorites'))){
+		return undefined;
+	}else{
+		var favOut = $.parseJSON($.cookie('Favorites'));
+		//console.log(favOut);
+		return favOut;
+	}
 	
 }
 
 function printFavorites(favOut){
-	
+
 	//Creates divs from favorites objects
 	makeFaves = function(favOut) {
 		
@@ -80,20 +119,12 @@ function printFavorites(favOut){
 								<i class="small remove icon"></i>\
 							</button>\
 						</td>\
-						<td class="favName"><span>'+ favOut["fname"] + '</span></td>';
-		
-		var numRts = favOut["route"]["num"];
-		var stp;
-		for(var i = 1; i <= numRts; i++){
-			stop = favOut["route"]["stop"+i];
-			div += ('<td class="faveTd">\
-						<button class="ui icon button stopBtn" value="'+stop+'">\
-							<i class="bus icon"></i>\
-						</button></td>');
-			if(i != numRts){
-				div += '<td class="faveTd"><i id="busArrows" class="large right arrow icon"></i></td>';
-			}
-		}
+						<td class="favName"><span>'+ favOut["name"] + '</span></td>';
+
+		div += ('<td class="faveTd">\
+				<button id="'+favOut["name"]+'" data-id="'+favOut["routeID"]+'" class="ui icon button stopBtn">\
+					<i class="bus icon"></i>\
+				</button></td>');
 		div+="</tr>";
 		return div;
 	}
@@ -103,16 +134,27 @@ function printFavorites(favOut){
 		$("#faves").append(makeFaves(favOut[j]));
 	}
 	
+	$(".stopbtn").unbind("click");
+	
+	$(".stopbtn").click(function(){
+		var stopID = $(this).attr("data-id");
+		var stopName = $(this).attr("id");
+		console.log(stopID);
+		console.log(stopName);
+	});
+	
 }
 
 function noFavesMsg(){
-	$("#favorites").append("<p class='faveMessage'>You have no favorite routes!<br>Create a route then save to your favorites.</p>");
+	$("#favorites").append("<p class='faveMessage'>You have no favorite routes or stops!<br>Find stops, plan a trip, or view a route then save it to your favorites.</p>");
+	/*
 	$("#favorites").append("<button id='popFaves' class='ui positive button'>Populate..</button>");
 	
 	$("#popFaves").click(function(){
 		populate();
-	});
+	});*/
 }
+
 
 function populate(){
 	//this function is only used for debug purposes. 
@@ -143,7 +185,7 @@ function populate(){
 
 
 $( document ).ready(function() {
-	
+	//$.cookie('Favorites', "", -1);
 	if(jQuery.isEmptyObject($.cookie('Favorites'))){ //if favorites cookie doesn't exist
 		
 		$.cookie('Favorites', "", -1);//kill the cookie
@@ -157,13 +199,12 @@ $( document ).ready(function() {
 		
 	}
 	
-	$("#popFaves").click(function(){
-		populate();
-	});
-	
+	$(".stopbtn").unbind("click");
 	$(".stopbtn").click(function(){
-		var stopData = $(this).attr("value");
-		alert(stopData);
+		var stopID = $(this).attr("data-id");
+		var stopName = $(this).attr("id");
+		console.log(stopID);
+		console.log(stopName);
 	});
 	
 	$(".delfavebtn").click(function(){
