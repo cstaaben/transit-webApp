@@ -72,7 +72,7 @@ function getAllStops(route, submitDate) {
 			}, 
 			function(data){
 					$("#tblAllStops").empty();
-					#.each(data.stops, function(i, stop) {
+					$.each(data.stops, function(i, stop) {
 							setAllDepartures(stop, submitDate);
 					});
 			}); 
@@ -90,7 +90,8 @@ function setAllDepartures(stop, submitDate) {
 					per_page: 1000
 			},
 			success: function(data) {
-					buildSchedule(data, stop);
+					//buildSchedule(data, stop);
+					console.log(data);
 			},
 			dataType: "json",
 			async: false
@@ -144,6 +145,10 @@ function buildRouteList(data, stop) {
 			$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
 			$("#btnRouteSubmit").trigger("click");
 	});
+}
+
+function buildSchedule(data, stop) {
+	
 }
 
 function jq_id(id) {
