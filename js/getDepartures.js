@@ -99,7 +99,7 @@ function getDepartures(stop, submitDate, submitTime){
 					total: true, 
 					date: submitDate, 
 					origin_departure_between: tempTimeInterval,
-					per_page:1000;
+					per_page:1000
 				},
 			success: function(data) { 
 						//console.log(data);
