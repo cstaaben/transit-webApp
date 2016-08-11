@@ -1,6 +1,7 @@
 .tblFindStops{
-	width: 100%;
+	width: 95%;
 	border-color: red;
+	margin: auto;
 	/*border-collapse: collapse;*/
 }
 
@@ -13,6 +14,7 @@
 h2{
 	display: inline-block;
 	margin-right: .5em;
+	margin-left: 1em;
 }
 /*TESTING OUT MEDIA QUERIES THANKS, CSS -TRICKS */
 
