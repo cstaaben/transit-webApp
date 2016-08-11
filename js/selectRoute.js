@@ -40,7 +40,6 @@ function getRoutesDone(data){
 		$("#allRoutes").append(str);
 		
 	}//End For Loop
-	$("#btnRouteSubmit").click(getRoute);
 
 }// end getDone
 

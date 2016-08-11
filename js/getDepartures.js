@@ -12,7 +12,9 @@ function getStop(lat, lon, submitDate, submitTime){
 						//console.log(value);
 						$("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
 							" data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" + 
-							" class=\"viewStopBtn ui mini blue button\"><br><table id=\"" + 
+							" class=\"viewStopBtn ui mini blue button\">"+
+							"<button class='btnAddFave ui mini icon button'><i class='star icon'></i></button>"+
+							"<br><table id=\"" + 
 							jq_id(value.onestop_id) + "\" border=\"1\"" + " class=\"tblFindStops\">" +
 							"<thead><th>Route</th><th>Time</th><th></th></thead><tbody></tbody></table>");
 						
@@ -109,9 +111,7 @@ function buildRouteList(data, stop) {
 				rids.push(p.route_onestop_id);
 			}
 	});
-	
-	//console.log($("#" + jq_id(stop.onestop_id)));
-	
+
 	$.each(stop.routes_serving_stop, function(i, route) {
 			
 			pid = jq_id(route.route_onestop_id);
@@ -130,7 +130,8 @@ function buildRouteList(data, stop) {
 							$("table#" + jq_id(stop.onestop_id) + " tbody").append("<tr><td>" + route.route_name + 
 								": " + dest + "</td><td>" + convertTime(pair.origin_arrival_time) + "</td><td> " +
 								"<input type=\"button\"" + " class=\"routeViewBtn  ui" +
-								" mini blue button\" data-id=\"" + pid + "\" value=\"View Route\"></td></tr>");
+								" mini blue button\" data-id=\"" + pid + "\" value=\"View Route\">"+
+								"<button class='btnAddFave ui mini icon button'><i class='star icon'></i></button></td></tr>");
 						}
 				});
 			} // end if inArray

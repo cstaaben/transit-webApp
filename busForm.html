@@ -19,15 +19,33 @@
 		<script src="js/selectRoute.js"></script>
 		<script src="js/planTrip_arriveBy.js"></script>
 		<script src="js/planTrip_departAt.js"></script>
+		<script src="js/sidebar.js"></script>
 		
 		<title>Transit App</title>
 	</head>
 
-<body>
+<body class="background">
+<h1 class="header">Plan Your Route!</h1><br>
+<div class="menuBar"><i class="align justify icon" id="menuSlider"></i> <span id="menuSlider">Menu</span></div>
+  <div class="ui sidebar inverted vertical menu">
+  	<a class="item close">
+  		<i class="align justify icon"></i> Menu
+  	</a>
+    <a class="item findStopsMenu">
+      Find Stops
+    </a>
+    <a class="item planTripMenu">
+      Plan Trip
+    </a>
+    <a class="item getRouteMenu">
+      Find Full Route
+    </a>
+    <a class="item favoritesMenu">
+    	Favorites
+    </a>
+  </div>
 
-<!-- FORM -->
-
-	<h1 class="header">Plan Your Route!</h1><br>
+	
 
 <ul id = "menu">
 	<li class="findStopsMenu active">Find Stops</li>
@@ -37,6 +55,7 @@
 
 </ul>
 
+<div class="dimmed pusher">
 <div id = "findStops" class="formBody">
 
 	<div id="inputForm" class="ui large form">
@@ -90,7 +109,6 @@
 			</div>
 		</div>
 		<button id = "btnTripSubmit" class = "ui huge blue button">Submit</button>
-		<button class="btnAddFave ui basic icon button"><i class="star icon"></i></button>
 	</div>
 </div>
 
@@ -106,9 +124,26 @@
 			<select class="ui dropdown" id="allRoutes">
 			</select>
 		</div>
-		<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
+		<div class="buttonHolder">
+			<button id ="btnRouteSubmit" class="ui huge blue button">Submit</button>
+			<button class='btnAddFave ui mini icon button'><i class='star icon'></i></button>
+		</div>
 	</div>
+
+	<p id="viewSchedule">View Schedule</p>
+	<p id="warning">* Routes and times may change on weekends, holidays, or for special events</p>
+
 </div>	
+
+	<div id = "viewSchedules" class="formBody">
+		
+		<table id="tblAllStops">
+			<tr>
+				<th>Stop</th>
+				<th>Time</th>
+			</tr>
+		</table>
+	</div>
 
 
 
@@ -123,5 +158,8 @@
 		
 		<div id="map"></div>
 
+
+
+	</div><!-- End Pusher Div -->
 	</body>
 </html>
