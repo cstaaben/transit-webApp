@@ -33,6 +33,9 @@ if(isset($_GET["onestop_id"])){
 if(isset($_GET["total"])) {
 	$url .= "&total=" . $_GET["total"];
 }
+if(isset($_GET["per_page"])) {
+	$url .= "&per_page=" . $_GET["per_page"];
+}
 
 
 $ch = curl_init();

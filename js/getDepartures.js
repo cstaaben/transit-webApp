@@ -65,14 +65,35 @@ function getDepartures(stop, submitDate, submitTime){
 
 function getAllStops(route, submitDate) {
 	if(!isNaN(route) && !isNaN(submitDate)) {
-		$.getJSON("./services/schedule_stop_pairs.php", {
-				route_onestop_id: route
-			}, function(data){}); 
+		$.getJSON("./services/stops.php", {
+				served_by: route
+			}, 
+			function(data){
+					$("#tblAllStops").empty();
+					#.each(data.stops, function(i, stop) {
+							setAllDepartures(stop, submitDate);
+					});
+			}); 
 	}
 }
 
-function getAllDepartures(stop, submitDate) {
-	
+function setAllDepartures(stop, submitDate) {
+	$.ajax({
+			method: "GET",
+			url: "./services/schedule_stop_pairs.php",
+			data: {
+					total: true,
+					origin_onestop_id: stop.onestop_id,
+					date: submitDate,
+					per_page: 1000
+			},
+			success: function(data) {
+					buildSchedule(data, stop);
+			},
+			dataType: "json",
+			async: false
+	});
+			
 }
 
 function buildRouteList(data, stop) {
