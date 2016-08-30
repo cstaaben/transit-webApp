@@ -86,20 +86,30 @@ function makeRoutes(results,j){
 
 	var res = {geocoded_waypoints: results.geocoded_waypoints, request: results.request, routes: [result], status: "OK"};
 	var rD = JSON.stringify(res);
-	
+	var stepString = "";
+	for(var i = 0; i < results.routes[j].legs[0].steps.length; i++){
+		if(results.routes[j].legs[0].steps[i].travel_mode === "TRANSIT"){
+			stepString += '<i class="ui big bus icon pRouteBusIcon"></i><p> ' + results.routes[j].legs[0].steps[i].transit.line.short_name + ' </p>';
+			if(i < results.routes[j].legs[0].steps.length - 1 && results.routes[j].legs[0].steps[i+1].travel_mode === "TRANSIT"){
+				stepString += '<i class="arrow right icon"></i>';
+			}
+		}
+
+	}
 	var tmpstr = "rr"+j+"";
 	
-	console.log(res);
-	
-	var div = '<div class="pRoutesRow" id="'+ tmpstr +'" value=\''+ rD +'\' >\
-					<i class="ui big bus icon pRouteBusIcon"></i>\
-					<p class="routeDtoA">' + result.legs[0].departure_time.text + ' - '+ result.legs[0].arrival_time.text + '</p>'+
+	var div = '<div class="pRoutesRow" id="'+ tmpstr +'" value=\''+ rD +'\' >' +
+					stepString + 
+					'<p class="routeDtoA">' + result.legs[0].departure_time.text + ' - '+ result.legs[0].arrival_time.text + '</p><br>'+
+					'<p class="routeDist">' + result.legs[0].distance.text + '</p>'+
 					'<p class="routeDur">' + result.legs[0].duration.text + '</p>'+
 					'<p class="routeFare">Fare: ' + res.routes[0].fare.text + '</p>'+
 					'<p class="routeDist">' + result.legs[0].distance.text + '</p>'+
 			   '</div><br>';
 	return div;
 }
+
+//<i class="ui big bus icon pRouteBusIcon"></i>\
 
 function combineDateTime(date, time){
 	
