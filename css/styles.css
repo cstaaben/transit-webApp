@@ -156,7 +156,7 @@ input{
 	min-width:604px;
 }
 
-.ui.icon.button.stopbtn{
+.ui.icon.button.btnFave{
 	display:inline-block;
 	background-color: cornflowerblue;
 	position:absolute;
