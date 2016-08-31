@@ -5,12 +5,13 @@ var COOKIE_DURATION = 30; //cookies last 30 days
 
 $(document).ready(function() {
     cleanFavorites();
-    var favoriteCookie = $.cookie('Favorites');
-    if (favoriteCookie == undefined || $.isEmptyObject(favoriteCookie)) { 	//if favorites cookie doesn't exist or is empty
+    var favorites = getFavorites();
+    console.log(favorites);
+    if (favorites == undefined) { 	//if favorites cookie doesn't exist or is empty
         $.cookie('Favorites', "", -1);					//kill the cookie
         setNoFavesMsg();
     } else { 											//favorites cookie does already exist
-        printFavorites(getFavorites());
+        printFavorites(favorites);
     }
 
     //TODO: implement favorites usage
@@ -73,7 +74,7 @@ function onFavoriteDelBtnClick(favoriteId) {
         } else {
             deleting = favorites[f];
         }
-    } while (f++ < favorites.length);
+    } while (f++ < favorites.length-1);
 
     if (confirm("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?")) {
         cleanFavorites();
