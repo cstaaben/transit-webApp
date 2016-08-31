@@ -1,7 +1,6 @@
 //planTrip
 //Kevin Ungerecht
 //audrey henry
-//refined and upgraded by TGB
 
 var SPOKANE_COORDINATES = {
     lat: 47.6588,
@@ -18,20 +17,20 @@ function getTrips(origin, dest, date, time, sortArrivingElseDeparting) {
         modes: ['BUS'],
         routingPreference: 'LESS_WALKING'
     };
-    (sortArrivingElseDeparting)? options.arrivalTime = timeFormatted: options.departureTime = timeFormatted;
+    (sortArrivingElseDeparting) ? options.arrivalTime = timeFormatted : options.departureTime = timeFormatted;
 
     var request = {
-            origin: origin,
-            destination: dest,
-            travelMode: 'TRANSIT',
-            transitOptions: options,
-            provideRouteAlternatives: true
-        };
+        origin: origin,
+        destination: dest,
+        travelMode: 'TRANSIT',
+        transitOptions: options,
+        provideRouteAlternatives: true
+    };
 
     directionsService.route(request, onDirectionsReceived);
 }
 
-function onDirectionsReceived(results, status){
+function onDirectionsReceived(results, status) {
     if (status !== 'OK') {
         window.alert("Houston we have a problem");
         console.error("directionsResult status: " + status);
@@ -56,7 +55,7 @@ function onDirectionsReceived(results, status){
         $("#routes").append(buildRouteHTML(routeResult.routes[0], r));
 
         //add handlers to route rows
-        $('#rr' + r).click(function () {
+        $('#rr' + r).click(function() {
             var routeRowId = $(this).attr("id");
             routeRowId = parseInt(routeRowId.slice(-1));
 
@@ -76,7 +75,7 @@ function onDirectionsReceived(results, status){
 }
 
 //builds a route object from a given index and set of results
-function buildRouteFromIndex(results, index){
+function buildRouteFromIndex(results, index) {
     return {
         geocoded_waypoints: results.geocoded_waypoints,
         request: results.request,
@@ -85,7 +84,7 @@ function buildRouteFromIndex(results, index){
     };
 }
 
-function initializeGMap(){
+function initializeGMap() {
     return new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: SPOKANE_COORDINATES,
@@ -106,7 +105,7 @@ function buildRouteHTML(routeResult, routeIndex) {
     }
 
     var routeRowId = "rr" + routeIndex + "";
-    var fare = (routeResult.legs[0].hasOwnProperty("fare"))? '<p class="routeFare">Fare: ' + routeResult.fare.text + '</p>' : '';
+    var fare = (routeResult.legs[0].hasOwnProperty("fare")) ? '<p class="routeFare">Fare: ' + routeResult.fare.text + '</p>' : '';
     var routeRow = '<div class="pRoutesRow" id="' + routeRowId + '">' +
         stepString +
         '<p class="routeDtoA">' + routeResult.legs[0].departure_time.text + ' - ' + routeResult.legs[0].arrival_time.text + '</p>' +
@@ -118,7 +117,7 @@ function buildRouteHTML(routeResult, routeIndex) {
 }
 
 //TODO: implement saving routes
-function onRouteFavorited(){
+function onRouteFavorited() {
     var routeRowRoute = $.parseJSON($(this).attr("value"));
     console.log("route favorited: " + routeRowRoute);
     //var routeRow = $(this).attr("id");

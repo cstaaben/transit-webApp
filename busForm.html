@@ -1,31 +1,32 @@
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="css/semantic.min.css">
-		<link rel = "stylesheet" type = "text/css" href="css/styles.css">
-		<link rel = "stylesheet" type = "text/css" href="css/table.css">
-		<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+    <link rel = "stylesheet" type = "text/css" href="css/styles.css">
+    <link rel = "stylesheet" type = "text/css" href="css/table.css">
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
 
 
-		<script src="js/date.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script src="js/jquery.cookie.js"></script>
-		<script src="js/semantic.min.js"></script>
-		<script src="js/busForm.js"></script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDp99DlHmrZdX07MWUddvAAkpcNj15B_o"></script>
-		<script src="js/geocodingStart.js"></script>
-		<script src="js/map.js"></script>
-		<script src="js/getDepartures.js"></script>
-		<script src="js/favorites.js"></script>
-		<script src="js/selectRoute.js"></script>
-		<script src="js/planTrip.js"></script>
-		<script src="js/sidebar.js"></script>
-		
-		<title>Transit App</title>
-	</head>
+    <script src="js/date.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/semantic.min.js"></script>
+    <script src="js/busForm.js"></script>
+    <!-- TODO: protect API keys, see: https://support.google.com/cloud/answer/6310037?hl=en -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDp99DlHmrZdX07MWUddvAAkpcNj15B_o"></script>
+    <script src="js/geocodingStart.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/getDepartures.js"></script>
+    <script src="js/favorites.js"></script>
+    <script src="js/selectRoute.js"></script>
+    <script src="js/planTrip.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <title>Transit App</title>
+</head>
 
 <body class="background">
 	<h1 class="header">Plan Your Route!</h1><br>
-	<div class="menuBar"><i class="align justify icon" id="menuSlider"></i> <span id="menuSlider">Menu</span></div>
+	<div class="menuBar"><i class="align justify icon" ></i> <span id="menuSlider">Menu</span></div>
 	  <div class="ui sidebar inverted vertical menu">
 		<a class="item close">
 			<i class="align justify icon"></i> Menu
@@ -52,11 +53,11 @@
 	</ul>
 
 	<div class="dimmed pusher">
-		<div id = "findStops" class="formBody">
+		<div id="findStops" class="formBody">
 
 			<div id="inputForm" class="ui large form">
 				<div class="field">
-					<p class="invalid">* Please Enter Your Location</p>
+					<p class="invalid" style="display: none;">* Please Enter Your Location</p>
 					<input type="text" id="location" placeholder="Location" autofocus><br>
 				</div>
 
@@ -73,9 +74,9 @@
 
 		</div>
 
-		<div id = "planTrip" class="formBody">
+		<div id="planTrip" class="formBody">
 
-			<div id = "routeForm" class = "ui large form">
+			<div id="routeForm" class = "ui large form">
 				<p class="invalid start">* Please Enter Starting Point</p>
 				<p class="invalid destination">* Please Enter A Destination</p>
 				<div class = "two fields">
@@ -123,9 +124,6 @@
 				</div>
 			</div>
 
-			<p id="viewSchedule">View Schedule</p>
-			<p id="warning">* Routes and times may change on weekends, holidays, or for special events</p>
-
 		</div>
 
 		<div id = "viewSchedules" class="formBody">
@@ -141,10 +139,10 @@
 			<table id="faves"></table>
 		</div>
 
-		<div id="stops">
+		<div id="stops" class="formBody">
 		</div>
 
-		<div id="map"></div>
+		<div id="map" class="formBody"></div>
 
 	</div><!-- End Pusher Div -->
 

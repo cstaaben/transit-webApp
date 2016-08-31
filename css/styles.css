@@ -129,7 +129,11 @@ input{
 	margin-right: auto;
 	margin-top: 0;
 	border: none;
+}
 
+/*all hidden by default except the one which will be displayed first*/
+.formBody:not(#findStops) {
+	display: none;
 }
 
 

@@ -1,20 +1,13 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
     //initForm();
-    $("#map").slideUp();
+    $("#map").hide();
     $(".menu .item").tab();
     $("p").css("padding", "10px");
-    $("#routeMap").slideUp();
-    $("#stops").slideUp();
+    $("#routeMap").hide();
+    $("#stops").hide();
     $("h3").hide();
 
-    $(".invalid").hide();
-    $(".formBody").hide();
-    $("#findStops").show();
-    $("#viewSchedule").hide();
-    $("#dateForm").hide();
-    $("#warning").hide();
-    //initMap();
     getRoutes();
     initForm();
     setMenu();
@@ -24,23 +17,7 @@ $(document).ready(function () {
     $("#btnSubmit").click(submitClick);
     $("#btnTripSubmit").click(tripSubmit);
     $("#btnRouteSubmit").click(getRoute);
-
-    $("#fullRouteAddFave").click(function () {
-        var fArray = getFavorites();
-        var routeName = "Route: ";
-        routeName += $("#allRoutes option:selected").text();
-        var routeId = $("#allRoutes").val();
-
-        if (fArray === undefined) {//favorites is empty
-            addToFaves(routeName, routeId);
-        } else {
-            if (lookForFave(routeName)) {//route exists in favorites already
-                alert(routeName + " is already in your favorites!");
-            } else {
-                addToFaves(routeName, routeId);
-            }
-        }
-    });
+    $("#fullRouteAddFave").click(saveFavoriteRoute);
 
 });
 
@@ -88,10 +65,7 @@ function submitClick() {
     if ($("#location").val() == "") {
         console.log("empty Location");
         stopsValidation();
-    }
-
-    else {
-
+    } else {
         $(".invalid").hide();
         $("#stops").slideDown(500);
         //clearMarkers();
@@ -103,28 +77,22 @@ function submitClick() {
 
         var date = new Date($.now());
         var time = $("#time").val() + ":" + date.getSeconds();
-        var location = $("#location").val();
         var submitDate = $("#date").val();
-        //debugger;
-        // console.log(location);
-        //  console.log(time);
-        //  console.log(submitDate);
-
         getGeoCoding(location, submitDate, time);
     }//end else
 }
 
 function tripSubmit() {
     $(".invalid").hide();
+    var origin = $("#starting").val();
+    var destination = $("#destination").val();
 
-    if ($("#starting").val() == "" || $("#destination").val() == "") {
+    if (origin == "" || destination == "") {
         routeValidation();
         return;
     }
 
     $("#routes").empty();
-    var origin = $("#starting").val();
-    var destination = $("#destination").val();
     var date = $("#date2").val();
     var time = $("#time2").val();
     var sortBy = $("#timeType").val() === "arriveBy";
@@ -133,53 +101,43 @@ function tripSubmit() {
 
 
 function setMenu() {
-    $(".findStopsMenu").click(function () {
+    $(".findStopsMenu").click(function() {
         $("li").removeClass("active");
-        $(".formBody").hide();
-        $("#findStops").show();
         $(".findStopsMenu").addClass("active");
-        $(".invalid").hide();
-        $("#map").hide();
-        $("#routeMap").hide();
-
+        hideForms();
+        $("#findStops").show();
     });
 
-    $(".planTripMenu").click(function () {
+    $(".planTripMenu").click(function() {
         $("li").removeClass("active");
-        $(".formBody").hide();
+        $(".planTripMenu").addClass("active");
+        hideForms();
         $("#planTrip").show();
         populateRouteForm();
-        $(".planTripMenu").addClass("active");
-        $(".invalid").hide();
-        $("#map").hide();
-        $("#routeMap").hide();
-        $("#stops").hide();
-
     });
 
-    $(".favoritesMenu").click(function () {
+    $(".favoritesMenu").click(function() {
         $("li").removeClass("active");
-        $(".formbody").hide();
-        $("#favorites").show();
         $(".favoritesMenu").addClass("active");
-        $(".invalid").hide();
-        $("#map").hide();
-        $("#routeMap").hide();
-        $("#stops").hide();
-
+        hideForms();
+        $("#favorites").show();
     });
 
-    $(".getRouteMenu").click(function () {
+    $(".getRouteMenu").click(function() {
         $("li").removeClass("active");
-        $(".formbody").hide();
-        $("#getRoute").show();
         $(".getRouteMenu").addClass("active");
-        $(".invalid").hide();
-        $("#map").hide();
-        $("#routeMap").hide();
-        $("#stops").hide();
+        hideForms();
+        $("#getRoute").show();
         populateRouteDate();
     });
+}
+
+function hideForms() {
+    $(".formbody").hide();
+    $(".invalid").hide();
+    $("#map").hide();
+    $("#routeMap").hide();
+    $("#stops").hide();
 }
 
 function populateRouteDate() {
@@ -187,42 +145,39 @@ function populateRouteDate() {
     $("#routeDate").val(date);
 }
 
-function viewSchedule() {
-    var date = $("#routeDate").val();
-    var route = $("#allRoutes").val();
-
-    getAllStops(route, date);
-}
-
 function populateRouteForm() {
     console.log("Route Clicked");
-    var date = new Date($.now());
+    var dateTime = new Date($.now());
 
-//SET TIME AND DATE DATA TO WORK FOR INPUT FIELDS	
-    var month = date.getMonth() + 1;
-    if (month < 10)
-        month = "0" + month;
+    //POPULATE FORM
+    $("#time2").val(getTimeFormatted(dateTime));
+    $("#date2").val(getDateFormatted(dateTime));
+}
 
-    var day = date.getDate();
-    if (day < 10)
-        day = "0" + day;
-
-    var hour = date.getHours();
+//format time data to work for input fields
+function getTimeFormatted(dateTime) {
+    var hour = dateTime.getHours();
     if (hour < 10)
         hour = "0" + hour;
 
-    var minutes = date.getMinutes();
+    var minutes = dateTime.getMinutes();
     if (minutes < 10)
         minutes = "0" + minutes;
 
-//SET TIME AND DATE TO CORRECT FORMAT
+    return hour + ":" + minutes;
+}
 
-    var currentTime = hour + ":" + minutes;
-    var currentDate = date.getFullYear() + "-" + month + "-" + day;
+//format date data to work for input fields
+function getDateFormatted(dateTime) {
+    var month = dateTime.getMonth() + 1;
+    if (month < 10)
+        month = "0" + month;
 
-    //POPULATE FORM
-    $("#time2").val(currentTime);
-    $("#date2").val(currentDate);
+    var day = dateTime.getDate();
+    if (day < 10)
+        day = "0" + day;
+
+    return dateTime.getFullYear() + "-" + month + "-" + day;
 }
 
 
@@ -232,19 +187,31 @@ function stopsValidation() {
 }
 
 function routeValidation() {
-    if ($("#starting").val() == "") {
+    var origin = $("#starting").val();
+    var destination = $("#destination").val();
+
+    if (origin == "") {
         console.log("Starting Fucked");
         $(".start").show();
     }
-    else if ($("#destination").val() == "") {
+    else if (destination == "") {
         $(".destination").show();
     }
-    if ($("#destination").val() == "" && $("#starting").val() == "") {
+    if (origin == "" && destination == "") {
         $(".invalid").show();
     }
 }
 
-function routeSubmit() {
-    var data = $("#allRoutes").val();
-}
+//TODO: replace alert() with alerts as in https://getbootstrap.com/components/#alerts
+function saveFavoriteRoute() {
+    var routeName = "Route: ";
+    routeName += $("#allRoutes").find("option:selected").text();
+    var routeId = $("#allRoutes").val();
 
+    if (getFavorites() !== undefined && faveExists(routeName)) {
+        alert(routeName + " is already in your favorites!");
+    } else {
+        addToFaves(routeName, routeId);
+        alert("favorite saved: " + routeName);
+    }
+}
