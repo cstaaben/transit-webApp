@@ -63,7 +63,6 @@ input{
 	background-color: hsla(82, 54%, 50%, 0.86);
 }
 
-}
 #location{
 	max-width: 100%;
 }
@@ -126,7 +125,6 @@ input{
 	min-width: 25%;
 	max-width: 50%;
 	padding: 2em;
-	background-color: hsla(82, 54%, 64%, 0.86);
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 0;
@@ -324,7 +322,7 @@ tr.favesRow:hover{
 	position:absolute !important;
 	right: 10px;
 	top: 10px;
-	background-color: light-gray;
+	background-color: lightgray;
 }
 
 .btnAddFave{
