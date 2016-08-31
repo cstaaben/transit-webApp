@@ -231,6 +231,7 @@ function buildSchedule(data) {
 	});
 }
 
+//???
 function jq_id(id) {
 	var s = id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
 	return s.replace( /~/g, "_");

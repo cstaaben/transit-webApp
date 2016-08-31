@@ -26,19 +26,7 @@ $( document ).ready(function() {
 	$("#btnSubmit").click(submitClick);
 	$("#btnTripSubmit").click(tripSubmit);
 	$("#btnRouteSubmit").click(getRoute);
-		/*$("#btnScheduleSubmit").click(function() {
- -			 +			viewSchedule();
- 			$("#viewSchedules").show();
-	});
- 
- 	$("#viewSchedule").click(function(){
- 		$("#dateForm").toggle();
- 		if($("#viewSchedules").is(":visible")) {
- 			$("#viewSchedules").hide();
- 		}
- 	});
- 	*/
-	
+
 	$("#fullRouteAddFave").click(function(){
 		var fArray = getFavorites();
 		var routeName = "Route: ";
@@ -212,7 +200,7 @@ function viewSchedule(){
  	
 	getAllStops(route, date);
 }
- 
+
 function populateRouteForm(){
 	console.log("Route Clicked");
 	var date = new Date($.now());
@@ -221,7 +209,7 @@ function populateRouteForm(){
 	var month = date.getMonth()+1;
 	if(month < 10)
 		month = "0"+month;
-	
+
 	var day = date.getDate();
 	if(day < 10)
 		day = "0"+day;
@@ -266,6 +254,5 @@ function routeValidation(){
 
 function routeSubmit(){
 	var data = $("#allRoutes").val();
-
 }
 

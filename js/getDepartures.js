@@ -53,8 +53,6 @@ function getStop(lat, lon, submitDate, submitTime){
 				});
 				
 				$(".routeViewBtn").click(function() {
-						//console.log("click");
-						//$("#stops").slideUp(500);
 						$(".getRouteMenu").trigger("click");
 						$("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
 						$("#btnRouteSubmit").trigger("click");
@@ -99,7 +97,7 @@ function getDepartures(stop, submitDate, submitTime){
 					total: true, 
 					date: submitDate, 
 					origin_departure_between: tempTimeInterval,
-					per_page:1000
+					per_page:1000										//TODO: consider paging in 100 at a time instead
 				},
 			success: function(data) { 
 						//console.log(data);
@@ -147,21 +145,23 @@ function setAllStops(pat, submitDate) {
 	);
 }
 
-function setAllDepartures(stops, submitDate) {
+function setAllDepartures(stop, submitDate) {
 	$.ajax({
 			method: "GET",
 			url: "./services/schedule_stop_pairs.php",
 			data: {
 					total: true,
-					origin_onestop_id: stops.onestop_id,
+					origin_onestop_id: stop.onestop_id,
 					date: submitDate,
-					origin_departure_between: "00:00:00,23:59:59",
 					per_page: 1000
 			},
-			success: buildSchedule,
-			dataType: "json"
+			success: function(data) {
+					//buildSchedule(data, stop);
+					console.log(data);
+			},
+			dataType: "json",
+			async: false
 	});
-			
 }
 
 function buildRouteList(data, stop) {
@@ -231,6 +231,7 @@ function buildSchedule(data) {
 	});
 }
 
+//???
 function jq_id(id) {
 	var s = id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
 	return s.replace( /~/g, "_");
