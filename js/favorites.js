@@ -6,7 +6,6 @@ var COOKIE_DURATION = 30; //cookies last 30 days
 $(document).ready(function() {
     cleanFavorites();
     var favorites = getFavorites();
-    console.log(favorites);
     if (favorites == undefined) { 	//if favorites cookie doesn't exist or is empty
         $.cookie('Favorites', "", -1);					//kill the cookie
         setNoFavesMsg();
