@@ -1,11 +1,12 @@
+var map;
+
 $(document).ready(function() {
 
-    //initForm();
-    $("#map").hide();
+    $("#divMap").hide();
     $(".menu .item").tab();
     $("p").css("padding", "10px");
     $("#routeMap").hide();
-    $("#stops").hide();
+    $("#divStops").hide();
     $("h3").hide();
 
     getRoutes();
@@ -62,17 +63,17 @@ function initForm() {
 }
 
 function submitClick() {
-    var locationToSearch = $("#location").val();
+    var locationToSearch = $("#inputLocation").val();
     if (locationToSearch == "") {
         console.log("empty Location");
         stopsValidation();
     } else {
         $(".invalid").hide();
-        $("#stops").slideDown(500);
+        $("#divStops").slideDown(500);
         //clearMarkers();
         // automatically scroll down to stops div
         $('html,body').animate({
-                scrollTop: $("#stops").offset().top
+                scrollTop: $("#divStops").offset().top
             },
             'slow');
 
@@ -85,8 +86,8 @@ function submitClick() {
 
 function tripSubmit() {
     $(".invalid").hide();
-    var origin = $("#starting").val();
-    var destination = $("#destination").val();
+    var origin = $("#inputTripStarting").val();
+    var destination = $("#inputTripDestination").val();
 
     if (origin == "" || destination == "") {
         routeValidation();
@@ -106,14 +107,14 @@ function setMenu() {
         $("li").removeClass("active");
         $(".findStopsMenu").addClass("active");
         hideForms();
-        $("#findStops").show();
+        $("#divFindStops").show();
     });
 
     $(".planTripMenu").click(function() {
         $("li").removeClass("active");
         $(".planTripMenu").addClass("active");
         hideForms();
-        $("#planTrip").show();
+        $("#divPlanTrip").show();
         populateRouteForm();
     });
 
@@ -121,14 +122,14 @@ function setMenu() {
         $("li").removeClass("active");
         $(".favoritesMenu").addClass("active");
         hideForms();
-        $("#favorites").show();
+        $("#divFavorites").show();
     });
 
     $(".getRouteMenu").click(function() {
         $("li").removeClass("active");
         $(".getRouteMenu").addClass("active");
         hideForms();
-        $("#getRoute").show();
+        $("#divGetRoute").show();
         populateRouteDate();
     });
 }
@@ -136,9 +137,8 @@ function setMenu() {
 function hideForms() {
     $(".formbody").hide();
     $(".invalid").hide();
-    $("#map").hide();
-    $("#routeMap").hide();
-    $("#stops").hide();
+    $("#divMap").hide();
+    $("#divStops").hide();
 }
 
 function populateRouteDate() {
@@ -147,7 +147,6 @@ function populateRouteDate() {
 }
 
 function populateRouteForm() {
-    console.log("Route Clicked");
     var dateTime = new Date($.now());
 
     //POPULATE FORM

@@ -52,13 +52,13 @@ function initRouteMap(patterns) {
     //Estimate center of map as the center coordinates in the geometry.coordinates array
     var centerLon = patterns[0].geometry.coordinates[Math.floor(patterns[0].geometry.coordinates.length / 2)][0];
     var centerLat = patterns[0].geometry.coordinates[Math.floor(patterns[0].geometry.coordinates.length / 2)][1];
-    var mapDiv = document.getElementById('map');
-    var map = new google.maps.Map(mapDiv, {
+    var mapDiv = document.getElementById('divMap');
+    map = new google.maps.Map(mapDiv, {
         center: {lat: centerLat, lng: centerLon},
         zoom: 12
     });
 
-    $("#map").slideDown(500, function() {
+    $("#divMap").slideDown(500, function() {
         google.maps.event.trigger(map, 'resize');
         var bounds = new google.maps.LatLngBounds();
         var routeCoords = [];

@@ -30,10 +30,12 @@ function getTrips(origin, dest, date, time, sortArrivingElseDeparting) {
     directionsService.route(request, onDirectionsReceived);
 }
 
+//TODO: change to bootstrap alert or validation message
 function onDirectionsReceived(results, status) {
     if (status !== 'OK') {
         window.alert("Houston we have a problem");
         console.error("directionsResult status: " + status);
+        console.error(results);
         return;
     }
 
@@ -44,11 +46,10 @@ function onDirectionsReceived(results, status) {
 
     var selectedRoute = 0;
     var firstResult = buildRouteFromIndex(results, 0);
-    var GMap = initializeGMap();
+    map = initializeGMap();
     var directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(GMap);
+    directionsRenderer.setMap(map);
     directionsRenderer.setDirections(firstResult);
-    $("#map").show();
 
     for (var r = 0; r < results.routes.length; r++) {
         var routeResult = buildRouteFromIndex(results, r);
@@ -65,13 +66,18 @@ function onDirectionsReceived(results, status) {
 
             directionsRenderer.setDirections(buildRouteFromIndex(results, routeRowId));
             selectedRoute = routeRowId;
+
+            $(".pRoutesRow").removeClass('selected');
+            $(this).addClass('selected');
         });
 
         //add handlers to route "favorite" buttons
         $('#pRoutesAddFave' + r).click(onRouteFavorited);
     }
+    $("#rr"+ selectedRoute).addClass('selected');
 
-    $("#routesList").show();
+    $("#divRoutesList").show();
+    $("#divMap").show();
 }
 
 //builds a route object from a given index and set of results
@@ -85,7 +91,7 @@ function buildRouteFromIndex(results, index) {
 }
 
 function initializeGMap() {
-    return new google.maps.Map(document.getElementById('map'), {
+    return new google.maps.Map(document.getElementById('divMap'), {
         zoom: 12,
         center: SPOKANE_COORDINATES,
         scrollwheel: false
@@ -93,14 +99,10 @@ function initializeGMap() {
 }
 
 function buildRouteHTML(routeResult, routeIndex) {
-    console.log(routeResult);
     var stepString = "";
     for (var step = 0; step < routeResult.legs[0].steps.length; step++) {
         if (routeResult.legs[0].steps[step].travel_mode === "TRANSIT") {
             stepString += '<i class="ui big bus icon pRouteBusIcon"></i>'; //<p> ' + routeResult.legs[0].steps[i].transit.line.short_name + ' </p> //TODO: integrate into display; make it look nice
-            if (step < routeResult.legs[0].steps.length - 1 && routeResult.legs[0].steps[step + 1].travel_mode === "TRANSIT") {
-                stepString += '<i class="arrow right icon"></i>';
-            }
         }
     }
 

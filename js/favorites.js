@@ -93,7 +93,7 @@ function onFavoriteDelBtnClick(favoriteId) {
 
 //cleans the favorites table
 function cleanFavorites() {
-    $(" #favorites ")
+    $(" #divFavorites ")
         .empty()
         .append('<table id="faves"></table>');
 }
@@ -153,7 +153,7 @@ function printFavorites(favorites) {
 }
 
 function setNoFavesMsg() {
-    $("#favorites").append("<p class='faveMessage'>You have no favorite routes or stops!<br>Find stops, plan a trip, or view a route then save it to your favorites.</p>");
+    $("#divFavorites").append("<p class='faveMessage'>You have no favorite routes or stops!<br>Find stops, plan a trip, or view a route then save it to your favorites.</p>");
 }
 
 
