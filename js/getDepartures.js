@@ -1,6 +1,8 @@
 //getStopData.js
 //ahenry
 //comment
+
+//TODO: clean megafunction
 function getStop(lat, lon, submitDate, submitTime) {
     if (!isNaN(lat) && !isNaN(lon)) {
         $.getJSON("./services/stops.php", {lat: lat, lon: lon, r: 250}, function(data) {
@@ -160,6 +162,7 @@ function setAllDepartures(stops, submitDate) {
     });
 }
 
+//TODO: clean megafunction
 function buildRouteList(data, stop) {
     var dest;
     var pid;
@@ -233,14 +236,15 @@ function jq_id(id) {
     return s.replace(/~/g, "_");
 }
 
-function convertTime(time) { //credit to user HBP on StackOverflow for conversion code inspiration
-                             // Check correct time format and split into components
+//credit to user HBP on StackOverflow for conversion code inspiration
+function convertTime(time) {
+    //Checks correct time format and splits into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
-    if (time.length > 1) { // If time format correct
-        time = time.slice(1);  // Remove full string match value
-        time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
-        time[0] = +time[0] % 12 || 12; // Adjust hours
+    if (time.length > 1) {                      // If time format correct
+        time = time.slice(1);                   // Remove full string match value
+        time[5] = +time[0] < 12 ? 'AM' : 'PM';  // Set AM/PM
+        time[0] = +time[0] % 12 || 12;          // Adjust hours
     }
-    return time.join(''); // return adjusted time or original string
+    return time.join('');                       // return adjusted time or original string
 }

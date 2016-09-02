@@ -62,7 +62,8 @@ function initForm() {
 }
 
 function submitClick() {
-    if ($("#location").val() == "") {
+    var locationToSearch = $("#location").val();
+    if (locationToSearch == "") {
         console.log("empty Location");
         stopsValidation();
     } else {
@@ -78,7 +79,7 @@ function submitClick() {
         var date = new Date($.now());
         var time = $("#time").val() + ":" + date.getSeconds();
         var submitDate = $("#date").val();
-        getGeoCoding(location, submitDate, time);
+        getGeocoding(locationToSearch, submitDate, time);
     }//end else
 }
 
