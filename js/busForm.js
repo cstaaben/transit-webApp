@@ -192,7 +192,6 @@ function routeValidation() {
     var destination = $("#destination").val();
 
     if (origin == "") {
-        console.log("Starting Fucked");
         $(".start").show();
     }
     else if (destination == "") {
