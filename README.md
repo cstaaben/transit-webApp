@@ -4,7 +4,7 @@
 ### Setup:
 1. Get two browser API key from [console.developers.google.com](https://console.developers.google.com)
 2. Configure one key to only accept requests from your domain
-3. Create a file in the _js_ directory called _apiKey.js_ containing the two variables:
+3. Create a file in the _js_ directory called _apiKeys.js_ containing the two variables:
 
 
     var API_KEY = '(YOUR API KEY WITH REFERER RESTRICTIONS)';
@@ -14,6 +14,7 @@
     + Google Maps Javascript API
     + Google Maps Directions API
     + Google Maps Geocoding API
+    + Google Places API Web Service
 
 
 If it doesn't work and you get error messages in the console, you may just need to wait a few minutes for your settings to propagate.

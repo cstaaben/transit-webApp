@@ -1,12 +1,11 @@
-function initMap(coords) {
-	
-	$("#map").show();
-	
-	var mapDiv = document.getElementById('map');
+function initMap() {
+	var mapDiv = document.getElementById('divMap');
 	map = new google.maps.Map(mapDiv, {
 		  center: {lat: 47.658779, lng: -117.426048},
 		  zoom: 10
 	});
+
+	$("#divMap").show();
 }
 
 function moveMap(latLng) {
@@ -21,10 +20,8 @@ function moveMap(latLng) {
 }
 
 function setMarker(latLng, name) {
-	
-	//console.log(info);
-	
-	var m = new google.maps.Marker({
+
+	var marker = new google.maps.Marker({
 		map: map,
 		position: {lat: parseFloat(latLng[1]), lng: parseFloat(latLng[0])},
 		draggable: false,
@@ -33,24 +30,10 @@ function setMarker(latLng, name) {
 	});
 	
 	
-	var infowindow = new google.maps.InfoWindow();
-	m.addListener("click", function() {
-			infowindow.close();
-			infowindow.setContent(name);
-			infowindow.open(map, marker);
+	var infoWindow = new google.maps.InfoWindow();
+	marker.addListener("click", function() {
+			infoWindow.close();
+			infoWindow.setContent(name);
+			infoWindow.open(map, marker);
 	});
-}
-
-function closeWindows() {
-	for(var i = 0; i < windows.length; i++) {
-		windows[i].close();
-	}
-}
-
-function clearMarkers() {
-	for(var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
-	}
-	
-	markers = [];
 }

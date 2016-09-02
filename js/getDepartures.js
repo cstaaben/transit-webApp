@@ -8,10 +8,10 @@ function getStop(lat, lon, submitDate, submitTime) {
         $.getJSON("./services/stops.php", {lat: lat, lon: lon, r: 250}, function(data) {
 
             // Paragraph version of parsing data
-            $("#stops").empty();
+            $("#divStops").empty();
             $.each(data.stops, function(index, value) {
                 //console.log(value);
-                $("#stops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
+                $("#divStops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
                     " data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" +
                     " class=\"viewStopBtn ui mini blue button\">" +
                     '<button class="btnAddFave ui icon button" id="stopAddFave' + index + '"><i class="star icon"></i></button>' +
@@ -55,7 +55,7 @@ function getStop(lat, lon, submitDate, submitTime) {
 
             $(".routeViewBtn").click(function() {
                 console.log("click");
-                $("#stops").slideUp(500);
+                $("#divStops").slideUp(500);
                 $(".getRouteMenu").trigger("click");
                 $("#allRoutes").val($("option[value=\"" + $(this).attr("data-id") + "\"]").val());
                 $("#btnRouteSubmit").trigger("click");
