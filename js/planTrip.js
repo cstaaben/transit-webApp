@@ -46,6 +46,7 @@ function onDirectionsReceived(results, status) {
 
     var selectedRoute = 0;
     var firstResult = buildRouteFromIndex(results, 0);
+    $("#divMap").empty().show();
     map = initializeGMap();
     var directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
@@ -77,7 +78,6 @@ function onDirectionsReceived(results, status) {
     $("#rr"+ selectedRoute).addClass('selected');
 
     $("#divRoutesList").show();
-    $("#divMap").show();
 }
 
 //builds a route object from a given index and set of results
