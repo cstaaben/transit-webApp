@@ -32,6 +32,8 @@ function getTrips(origin, dest, date, time, sortArrivingElseDeparting) {
 
 //TODO: change to bootstrap alert or validation message
 function onDirectionsReceived(results, status) {
+    console.log("results");
+    console.log(results);
     if (status !== 'OK') {
         window.alert("Houston we have a problem");
         console.error("directionsResult status: " + status);
@@ -66,6 +68,7 @@ function onDirectionsReceived(results, status) {
                 return;
 
             directionsRenderer.setDirections(buildRouteFromIndex(results, routeRowId));
+            console.log(directionsRenderer.getDirections());
             selectedRoute = routeRowId;
 
             $(".pRoutesRow").removeClass('selected');
@@ -109,11 +112,21 @@ function buildTripFavId(req, r) {
 
 //builds a route object from a given index and set of results
 function buildRouteFromIndex(results, index) {
+    console.log("buildRouteFromIndex: " + index);
+    console.log(results);
+
+    var lat_lngs = results.routes[index].legs[0].steps[0].lat_lngs;
+    var lat_lng_str = "";
+    for (var ll = 0; ll < lat_lngs.length; ll++)
+        lat_lng_str += lat_lngs[ll].lat() + ", " + lat_lngs[ll].lng() + "\n";
+
+    console.info(lat_lng_str);
+
     return {
         geocoded_waypoints: results.geocoded_waypoints,
-        request: results.request,
         routes: [results.routes[index]],
-        status: results.status
+        status: results.status,
+        request: results.request
     };
 }
 
@@ -127,9 +140,9 @@ function initializeGMap() {
 
 function buildRouteHTML(routeResult, routeIndex) {
     var stepString = "";
-    for (var step = 0; step < routeResult.legs[0].steps.length; step++) {
-        if (routeResult.legs[0].steps[step].travel_mode === "TRANSIT") {
-            stepString += '<i class="ui big bus icon pRouteBusIcon"></i>'; //<p> ' + routeResult.legs[0].steps[i].transit.line.short_name + ' </p> //TODO: integrate into display; make it look nice
+    for (var s = 0; s < routeResult.legs[0].steps.length; s++) {
+        if (routeResult.legs[0].steps[s].travel_mode === "TRANSIT") {
+            stepString += '<i class="ui big bus icon pRouteBusIcon"></i>';// <p> ' + routeResult.legs[0].steps[s].transit.line.short_name + ' </p>'; //TODO: integrate into display; make it look nice
         }
     }
 

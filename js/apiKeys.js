@@ -1,2 +1,0 @@
-var API_KEY = 'AIzaSyCQbrbu0rw2Amb8bMGQsBFuNxFiBWU6eLk';
-var API_KEY_UNRESTRICTED = 'AIzaSyDWa1Q7hATy1go8nY0qcGKGaibaZZl7wls';

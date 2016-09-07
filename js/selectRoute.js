@@ -1,50 +1,48 @@
 function getRoutes() {
     var link = "https://transit.land/api/v1/routes?operated_by=o-c2kx-spokanetransitauthority";
     $.getJSON(link, "", onRoutesReceived);
-
 }
 
 function onRoutesReceived(data) {
     var routes = data.routes;
-    var stops = [];
+    var necessaryRouteData = [];
 
     //Iterates through the array to get all of the route numbers & names
-    for (var x = 0; x < routes.length; x++) {
-        var num = routes[x].name;
-        var longName = routes[x].tags.route_long_name;
-        var id = routes[x].onestop_id;
+    for (var r = 0; r < routes.length; r++) {
+        var num = routes[r].name;
+        var longName = routes[r].tags.route_long_name;
+        var id = routes[r].onestop_id;
 
         //Fills Array with all stops
-        stops[x] = {
+        necessaryRouteData[r] = {
             "num": num,
             "longName": longName,
             "id": id
         };
-
     }
 
     //Sort the Array
-    stops.sort(function(a, b) {
+    necessaryRouteData.sort(function(a, b) {
         return a.num - b.num;
     });
 
     //Populates the Form
-    for (var x = 0; x < stops.length; x++) {
-        var str = "<option value = '" + stops[x].id + "'>" + stops[x].num + " - " + stops[x].longName + "</option>";
+    for (var x = 0; x < necessaryRouteData.length; x++) {
+        var str = "<option value = '" + necessaryRouteData[x].id + "'>" + necessaryRouteData[x].num + " - " + necessaryRouteData[x].longName + "</option>";
         $("#allRoutes").append(str);
-
     }
 
 }// end onRoutesReceived
 
 function getRoute() {
     var routeId = $("#allRoutes").val();
-    $.getJSON("./services/route_stop_patterns.php", {traversed_by: routeId}, function(data) {
-        console.log(data);
-        var patterns = selectBestRouteStopPattern(data);
-        console.log(patterns);
-        initRouteMap(patterns);
-    });
+    $.get(
+        "https://transit.land/api/v1/route_stop_patterns?&traversed_by=" +routeId,
+        function(data) {
+            var patterns = selectBestRouteStopPattern(data);
+            initRouteMap(patterns);
+        }
+    );
 }
 
 //TODO: tame this megafunction
@@ -79,45 +77,47 @@ function initRouteMap(patterns) {
         stopIds = stopIds.slice(0, stopIds.length-1);   //remove trailing comma
 
         //Request data for all of the stops in the route
-        $.getJSON("./services/stops.php", {onestop_id: stopIds}, function(data) {
-            var stops = data.stops;
-            var infoWindow = new google.maps.InfoWindow();
+        $.getJSON("https://transit.land/api/v1/stops?onestop_id=" + stopIds,
+            function(data) {
+                var stops = data.stops;
+                var infoWindow = new google.maps.InfoWindow();
 
-            //Create a marker for each of the stops and add it to the map.
-            for (var i = 0; i < stops.length; i++) {
-                var newMarker = new google.maps.Marker({
-                    position: {lat: stops[i].geometry.coordinates[1], lng: stops[i].geometry.coordinates[0]},
-                    map: map,
-                    title: stops[i].name
-                });
+                //Create a marker for each of the stops and add it to the map.
+                for (var i = 0; i < stops.length; i++) {
+                    var newMarker = new google.maps.Marker({
+                        position: {lat: stops[i].geometry.coordinates[1], lng: stops[i].geometry.coordinates[0]},
+                        map: map,
+                        title: stops[i].name
+                    });
 
-                //Sort the routes by route name, so they show up in order when the user clicks on the marker
-                stops[i].routes_serving_stop.sort(function(a, b) {
-                    return parseInt(a.route_name) - parseInt(b.route_name);
-                });
+                    //Sort the routes by route name, so they show up in order when the user clicks on the marker
+                    stops[i].routes_serving_stop.sort(function(a, b) {
+                        return parseInt(a.route_name) - parseInt(b.route_name);
+                    });
 
-                //get the routes served by a stop
-                var routes_served = "";
-                for (var j = 0; j < stops[i].routes_serving_stop.length; j++) {
-                    routes_served += stops[i].routes_serving_stop[j].route_name;
-                    if (j < stops[i].routes_serving_stop.length - 1) {
-                        routes_served += ", ";
+                    //get the routes served by a stop
+                    var routes_served = "";
+                    for (var j = 0; j < stops[i].routes_serving_stop.length; j++) {
+                        routes_served += stops[i].routes_serving_stop[j].route_name;
+                        if (j < stops[i].routes_serving_stop.length - 1) {
+                            routes_served += ", ";
+                        }
                     }
+
+                    //add marker content
+                    var content = '<div id="content"><h3 id="firstHeading" class="firstHeading">' + stops[i].name + '</h3><p>Connects with routes: ' + routes_served + ' </p></div>';
+                    google.maps.event.addListener(newMarker, 'click', (function(newMarker, map, content) {
+                        return function() {
+                            infoWindow.close();
+                            infoWindow.setContent(content);
+                            infoWindow.open(map, newMarker);
+                        };
+                    }(newMarker, map, content)));
+
+                    newMarker.setMap(map);
                 }
-
-                //add marker content
-                var content = '<div id="content"><h3 id="firstHeading" class="firstHeading">' + stops[i].name + '</h3><p>Connects with routes: ' + routes_served + ' </p></div>';
-                google.maps.event.addListener(newMarker, 'click', (function(newMarker, map, content) {
-                    return function() {
-                        infoWindow.close();
-                        infoWindow.setContent(content);
-                        infoWindow.open(map, newMarker);
-                    };
-                }(newMarker, map, content)));
-
-                newMarker.setMap(map);
             }
-        });
+        );
 
         //Initialize the route path using the routeCoords
         var routePath = new google.maps.Polyline({
@@ -141,7 +141,7 @@ function initRouteMap(patterns) {
 }
 
 //chooses the "most correct" route_stop_pattern from a list of results, based on a set of criteria
-//TODO: decide what to do about different schedules for a route
+//TODO: choose route based on schedule for date input
 function selectBestRouteStopPattern(data){
     var routeStopPatterns = data.route_stop_patterns;
     if (routeStopPatterns.length === 1)
