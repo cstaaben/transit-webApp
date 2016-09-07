@@ -71,6 +71,26 @@ function onDirectionsReceived(results, status) {
             $(".pRoutesRow").removeClass('selected');
             $(this).addClass('selected');
         });
+        
+        var req = JSON.stringify(results.request) + "";
+        var fi = buildTripFavId(req, r);
+        var favId = JSON.stringify(fi);
+        $('#rr' + r + 'FavBtn').attr({
+        		   "data-id": favId,
+        		   "data-name": results.request["origin"] + " to " + results.request["destination"]
+        });
+        $('#rr' + r + 'FavBtn').click(function() {
+        		   var j = $.parseJSON($(this).attr("data-id"));
+        		   var name = "Trip: " + $(this).attr("data-name");
+        		   console.log(j);
+        		   if(faveExists(name)) {
+        		   	   $('#favExistsMsg').empty().append(name + ' is already in your favorites!');
+        		   	   $('.ui.small.modal').modal('show');
+        		   }
+        		   else {
+        		   	   addToFaves(name, j);
+        		   }
+        });
 
         //add handlers to route "favorite" buttons
         $('#pRoutesAddFave' + r).click(onRouteFavorited);
@@ -78,6 +98,13 @@ function onDirectionsReceived(results, status) {
     $("#rr"+ selectedRoute).addClass('selected');
 
     $("#divRoutesList").show();
+}
+
+function buildTripFavId(req, r) {
+	return {
+		request: req,
+		trip_index: r
+	};
 }
 
 //builds a route object from a given index and set of results
@@ -107,12 +134,15 @@ function buildRouteHTML(routeResult, routeIndex) {
     }
 
     var routeRowId = "rr" + routeIndex + "";
+    var res = JSON.stringify(routeResult.request);
+    //console.log(routeResult);
     var fare = (routeResult.legs[0].hasOwnProperty("fare")) ? '<p class="routeFare">Fare: ' + routeResult.fare.text + '</p>' : '';
     var routeRow = '<div class="pRoutesRow" id="' + routeRowId + '">' +
         stepString +
-        '<p class="routeDtoA">' + routeResult.legs[0].departure_time.text + ' - ' + routeResult.legs[0].arrival_time.text + '</p>' +
-        '<p class="routeDur">' + routeResult.legs[0].duration.text + '</p>' +
-        fare +
+        '<p class="routeDtoA">' + routeResult.legs[0].departure_time.text + ' - ' + routeResult.legs[routeResult.legs.length-1].arrival_time.text + 
+        '</p><p class="routeDur">' + routeResult.legs[0].duration.text + '</p>' +
+        '<p class="tripFavBtn"><button class="btnAddFave ui icon button" id="' + routeRowId + 'FavBtn"' +
+        '><i class="star icon"></i></button></p>' +
         '<p class="routeDist">' + routeResult.legs[0].distance.text + '</p>' +
         '</div><br>';
     return routeRow;

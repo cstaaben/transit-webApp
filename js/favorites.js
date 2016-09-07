@@ -31,14 +31,16 @@ $(document).ready(function() {
 });
 
 function addToFaves(routeName, routeId) {
-    console.log(routeName);
+//    console.log(routeName);
     console.log(routeId);
 
     var favorites = getFavorites();
     if (favorites === undefined)
         favorites = [];
+   
+   var rid = JSON.stringify(routeId);
 
-    var route = {routeID: routeId, name: routeName};
+    var route = {id: rid, name: routeName};
     favorites.push(route);
     cleanFavorites();
     saveFavorites(favorites);
@@ -53,6 +55,9 @@ function addToFaves(routeName, routeId) {
 
 function faveExists(routeName) {
     var favorites = getFavorites();
+    
+    if(favorites === undefined) { return false; }
+    
     for (var i = 0; i < favorites.length; i++)
         if (favorites[i]["name"] === routeName)
             return true;
@@ -130,7 +135,7 @@ function printFavorites(favorites) {
 						<td class="favName"><span>' + favorites["name"] + '</span></td>';
 
         div += ('<td class="faveTd">\
-				<button id="' + favorites["name"] + '" data-id="' + favorites["routeID"] + '" class="ui icon button btnFave">\
+				<button id="' + favorites["name"] + '" data-id="' + favorites["id"] + '" class="ui icon button btnFave">\
 					<i class="bus icon"></i>\
 				</button></td>');
         div += "</tr>";

@@ -333,7 +333,7 @@ tr.favesRow:hover{
 }
 
 .btnAddFave{
-	padding-bottom:10px;
+	padding-bottom: 10px;
 }
 
 #timeType{
@@ -342,4 +342,8 @@ tr.favesRow:hover{
 
 #viewSchedule{
 	margin-bottom: -20px !important;
+}
+
+.tripFavBtn{
+	padding-bottom: 50px;
 }

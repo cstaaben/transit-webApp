@@ -21,22 +21,17 @@ function getStop(lat, lon, submitDate, submitTime) {
 
 
                 $("#stopAddFave" + index).click(function() {
-
                     var stopName = "Stop: ";
                     stopName += value.name;
                     var stopId = value.onestop_id;
 
-                    var fArray = getFavorites();
-
-                    if (fArray === undefined) {//favorites is empty
-                        addToFaves(stopName, stopId);
-                    } else {
-                        if (faveExists(stopName)) {//route exists in favorites already
-                            alert(stopName + " is already in your favorites!");
-                        } else {
-                            addToFaves(stopName, stopId);
-                        }
-                    }
+			    if (faveExists(stopName)) {//route exists in favorites already
+				   //alert(stopName + " is already in your favorites!");
+				   $('.ui.modal').modal('show');
+			    } else {
+				   addToFaves(stopName, stopId);
+			    }
+                    
                 });
 
                 getDepartures(value, submitDate, submitTime);
@@ -196,7 +191,8 @@ function buildRouteList(data, stop) {
                         convertTime(pair.origin_arrival_time) + "</td><td> " +
                         "<input type=\"button\"" + " class=\"routeViewBtn  ui" +
                         " mini blue button\" data-id=\"" + pid + "\" value=\"View Route\">" +
-                        "<button class='routeAddFave btnAddFave ui icon button' value=\"" + rName + "\" data-id=\"" + pid + "\"><i class='star icon'></i></button></td></tr>");
+                        "<button class='routeAddFave btnAddFave ui icon button' value=\"" + rName + "\" data-id=\"" + 
+                        pid + "\"><i class='star icon'></i></button></td></tr>");
                 }
             });
         } // end if inArray
@@ -230,13 +226,13 @@ function buildSchedule(data) {
     });
 }
 
-//???
+// cleans any "troublesome" characters from onestop_ids and escapes them, or replaces "~" with "_"
 function jq_id(id) {
     var s = id.replace(/(:|\.|\[|\]|,)/g, "\\$1");
     return s.replace(/~/g, "_");
 }
 
-//credit to user HBP on StackOverflow for conversion code inspiration
+//credit to user HBP on StackOverflow for conversion code base
 function convertTime(time) {
     //Checks correct time format and splits into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];

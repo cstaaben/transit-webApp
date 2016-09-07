@@ -4,10 +4,11 @@ $(document).ready(function() {
 
     $("#divMap").hide();
     $(".menu .item").tab();
-    $("p").css("padding", "10px");
+    //$("p").css("padding", "10px");
     $("#routeMap").hide();
     $("#divStops").hide();
     $("h3").hide();
+    $(".ui.modal").modal('hide');
 
     getRoutes();
     initForm();
@@ -19,7 +20,7 @@ $(document).ready(function() {
     $("#btnTripSubmit").click(tripSubmit);
     $("#btnRouteSubmit").click(getRoute);
     $("#fullRouteAddFave").click(saveFavoriteRoute);
-
+    $("#favExistsBtn").click(function() { $(".ui.small.modal").modal('hide'); });
 });
 
 function getDate() {
@@ -208,7 +209,9 @@ function saveFavoriteRoute() {
     var routeId = $("#allRoutes").val();
 
     if (getFavorites() !== undefined && faveExists(routeName)) {
-        alert(routeName + " is already in your favorites!");
+        //alert(routeName + " is already in your favorites!");
+        $("#favExistsMsg").empty().append($("#allRoutes").find("option:selected").text() + " is already in your favorites!");
+        $('.ui.small.modal').modal('show');
     } else {
         addToFaves(routeName, routeId);
         alert("favorite saved: " + routeName);
