@@ -1,7 +1,12 @@
 <html>
 	<head>
-		<!--TODO: protect API keys, see: https://support.google.com/cloud/answer/6310037?hl=en -->
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnnmS81Gsx73eGbCi7rt5ERc1XdUy7Vf8"></script>
+		<script src="js/apiKeys.js"></script>
+		<script>
+			(function(){
+				var googleMapsAPIsrc = '<script src="https://maps.googleapis.com/maps/api/js?key=' + API_KEY + '" async defer><\/script>';
+				document.write(googleMapsAPIsrc);
+			})();
+		</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="js/map.js"></script>
 	<style>
@@ -13,11 +18,7 @@
 	</head>
 	
 	<body>
-		<div id="map"></div>
+		<div id="divMap"></div>
 		<input type="button" value="BTN" id="btn">
-		
-		<script>
-		
-		</script>
 	</body>
 </html>

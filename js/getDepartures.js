@@ -4,27 +4,31 @@
 
 //TODO: clean megafunction
 function getStop(lat, lon, submitDate, submitTime) {
+
+    var STOP_SEARCH_RADIUS = 250;   //search within 250 meters of given GPS coords
+
     if (!isNaN(lat) && !isNaN(lon)) {
-        $.getJSON("./services/stops.php", {lat: lat, lon: lon, r: 250}, function(data) {
+        var url = "https://transit.land/api/v1/stops?lat=" + lat + "&lon=" + lon + "&r=" + STOP_SEARCH_RADIUS;
+        $.getJSON(url,
+            function(data) {
 
             // Paragraph version of parsing data
             $("#divStops").empty();
-            $.each(data.stops, function(index, value) {
-                //console.log(value);
-                $("#divStops").append("<h2>" + value.name + "</h2><input type=\"button\"" +
-                    " data-coords=\"" + value.geometry.coordinates + "\" value=\"View Map\"" +
+            $.each(data.stops, function(index, stop) {
+                $("#divStops").append("<h2>" + stop.name + "</h2><input type=\"button\"" +
+                    " data-coords=\"" + stop.geometry.coordinates + "\" value=\"View Map\"" +
                     " class=\"viewStopBtn ui mini blue button\">" +
                     '<button class="btnAddFave ui icon button" id="stopAddFave' + index + '"><i class="star icon"></i></button>' +
                     "<br><table id=\"" +
-                    jq_id(value.onestop_id) + "\" border=\"1\"" + " class=\"tblFindStops\">" +
+                    jq_id(stop.onestop_id) + "\" border=\"1\"" + " class=\"tblFindStops\">" +
                     "<thead><th>Route</th><th>Time</th><th></th></thead><tbody></tbody></table>");
 
 
                 $("#stopAddFave" + index).click(function() {
 
                     var stopName = "Stop: ";
-                    stopName += value.name;
-                    var stopId = value.onestop_id;
+                    stopName += stop.name;
+                    var stopId = stop.onestop_id;
 
                     var fArray = getFavorites();
 
@@ -39,9 +43,9 @@ function getStop(lat, lon, submitDate, submitTime) {
                     }
                 });
 
-                getDepartures(value, submitDate, submitTime);
-
+                getDepartures(stop, submitDate, submitTime);
             });
+
             $(".viewStopBtn").click(function() {
 
                 var latLng = $(this).attr("data-coords");
@@ -85,24 +89,18 @@ function getStop(lat, lon, submitDate, submitTime) {
 
 function getDepartures(stop, submitDate, submitTime) {
 
+    /*
     var t = submitTime.split(":");
     var e = parseInt(t[0]) + 3;
     var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
+    */
 
-    var tempTimeInterval = "13:00:00,15:00:00";
+    var url = "https://transit.land/api/v1/schedule_stop_pairs?operator_onestop_id=o-c2kx-spokanetransitauthority&origin_onestop_id=" +
+            stop.onestop_id + "&date=" + submitDate;
 
-    $.ajax({
-        method: "GET",
-        url: "./services/schedule_stop_pairs.php",
-        data: {
-            origin_onestop_id: stop.onestop_id,
-            total: true,
-            date: submitDate,
-            origin_departure_between: tempTimeInterval,
-            per_page: 1000										//TODO: consider paging in 100 at a time instead
-        },
+    $.get({
+        url: url,
         success: function(data) {
-            //console.log(data);
             buildRouteList(data, stop);
         },
         dataType: "json",
@@ -111,65 +109,11 @@ function getDepartures(stop, submitDate, submitTime) {
 
 }
 
-function getAllStops(route, submitDate) {
-    if (!isNaN(route) && !isNaN(submitDate)) {
-        $.getJSON("./services/route_stop_patterns.php", {
-                served_by: route
-            },
-            function(data) {
-                var pat = data.route_stop_patterns[0];
-                setAllStops(pat, submitDate);
-            });
-    }
-}
-
-function setAllStops(pat, submitDate) {
-    var stops = "";
-
-    $.each(pat.stop_pattern, function(i, s) {
-        stops += s;
-        if (i < pat.stop_pattern.length - 1) {
-            stops += ",";
-        }
-    });
-
-    $.getJSON("./services/stops.php",
-        {onestop_id: stops},
-        function(data) {
-            $("#tblAllStops").find("tr:gt(0)").remove();
-            $.each(data.stops, function(i, stop) {
-                $("#tblAllStops").append("<tr id=\"" + jq_id(stop.onestop_id) +
-                    "\"><td>" + stop.name + "</td></tr>");
-            });
-
-            setAllDepartures(stops, submitDate);
-        }
-    );
-}
-
-function setAllDepartures(stops, submitDate) {
-    $.ajax({
-        method: "GET",
-        url: "./services/schedule_stop_pairs.php",
-        data: {
-            total: true,
-            origin_onestop_id: stops.onestop_id,
-            date: submitDate,
-            per_page: 1000
-        },
-        success: buildSchedule,
-        dataType: "json"
-    });
-}
-
 //TODO: clean megafunction
 function buildRouteList(data, stop) {
     var dest;
     var pid;
     var rids = [];
-
-    //console.log(stop);
-    //console.log(data);
 
     $.each(data.schedule_stop_pairs, function(i, p) {
         if ($.inArray(p.route_onestop_id, rids) < 0) {
@@ -203,31 +147,6 @@ function buildRouteList(data, stop) {
 
     }); // end .each(stop.routes)
 
-}
-
-function buildSchedule(data) {
-    var row;
-    var pairs = data.schedule_stop_pairs;
-
-    pairs.sort(function(a, b) {
-        var x = parseInt(a.origin_arrival_time.split(":")[0]);
-        var y = parseInt(b.origin_arrival_time.split(":")[0]);
-
-        if (x == y) {
-            var s = parseInt(a.origin_arrival_time.split(":")[1]);
-            var t = parseInt(b.origin_arrival_time.split(":")[1]);
-
-            return s - t;
-        }
-        else {
-            return x - y;
-        }
-    });
-
-    $.each(data.schedule_stop_pairs, function(i, pair) {
-        $("#" + jq_id(pair.origin_onestop_id)).append("<td>" + convertTime(pair.origin_departure_time) +
-            "</td>");
-    });
 }
 
 //???
