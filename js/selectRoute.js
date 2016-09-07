@@ -4,6 +4,7 @@ function getRoutes() {
 }
 
 function onRoutesReceived(data) {
+    console.log(data);
     var routes = data.routes;
     var necessaryRouteData = [];
 
