@@ -1,4 +1,3 @@
 # Temporary files #
 ###################
 *~
-js/apiKeys.js
