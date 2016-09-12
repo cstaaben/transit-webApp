@@ -2,6 +2,8 @@
 namespace transit_webApp;
 require_once 'DatabaseAccessLayer.php';
 
+//region database functions
+
 function getLocationOfBusOnRoute(string $route_onestop_id) {
     $postBody = buildPostBody($route_onestop_id);
     $json = json_decode(getRealTimeManagerData($postBody), true);
@@ -21,21 +23,61 @@ function buildPostBody(string $route_onestop_id) {
     return '{"version":"1.1","method":"GetTravelPoints","params":{"travelPointsReqs":[{"lineDirId":"' . $lineDirId . '","callingApp":"RMD"}],"interval":10}}';
 }
 
-function getRealTimeManagerData(string $postBody) {
-    $ch = curl_init("http://tripplanner.spokanetransit.com:8007/RealTimeManager");
+//endregion
+
+//region STA request functions
+
+function getRealTimeManagerData(string $request) {
+    return makeSTArequest($request, 'RealTimeManager');
+}
+
+function getInfoWebData(string $request){
+    return makeSTArequest($request, 'InfoWeb');
+}
+
+function makeSTArequest(string $request, string $subdir){
+    $ch = curl_init("http://tripplanner.spokanetransit.com:8007/$subdir");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($ch);
     curl_close($ch);
-    print($result);
     return $result;
 }
 
-if (!array_key_exists("route_onestop_id", $_GET) || empty($_GET["route_onestop_id"]))
-    print('missing variable: route_onestop_id');
-else {
-    $route_onestop_id = DatabaseAccessLayer::sanitizeStr($_GET['route_onestop_id']);
-    getLocationOfBusOnRoute($route_onestop_id);
+function validateRequest($request, $resource) {
+    if (!$request) {
+        http_response_code(400);
+        die('missing variable: request');
+    }
+
+    if (!$resource) {
+        http_response_code(400);
+        die('missing variable: STA_resource');
+    }
+
+    if ($resource !== 'RealTimeManager' && $resource !== 'InfoWeb') {
+        http_response_code(400);
+        die("invalid STA_resource: $resource");
+    }
 }
+
+function processRequest() {
+
+    $post = json_decode(file_get_contents('php://input'), true);
+    $request = json_encode($post['request']);
+    $resource = $post['resource'];
+
+    validateRequest($request, $resource);
+
+    header('Content-Type: application/json');
+
+    if ($resource === 'InfoWeb')
+        echo getInfoWebData($request);
+    if ($resource === 'RealTimeManager')
+        echo getRealTimeManagerData($request);
+}
+
+processRequest();
+//endregion
