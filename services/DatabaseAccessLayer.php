@@ -14,9 +14,10 @@ require_once 'NoResultsException.php';
 class DatabaseAccessLayer {
     private static $db_username, $db_password;
 
-    static function getDatabaseConnection() {
+    //region database calls
+    static function getDatabaseConnection(string $credentialsFilename='creds.ini') {
         try {
-            self::loadCredentials();
+            self::loadCredentials($credentialsFilename);
             return new PDO('mysql:host=localhost;dbname=sta_webapp', self::$db_username, self::$db_password);
         } catch (PDOException $exception) {
             print("Database error: " . $exception->getMessage() . "\n");
@@ -29,17 +30,29 @@ class DatabaseAccessLayer {
         $clean_id = self::sanitizeStr($route_onestop_id);
         $query = 'CALL `GETLINEDIRID`(:id);';
 
-        return self::convert_id($clean_id, $query, PDO::PARAM_INT);
+        return self::queryById($clean_id, $query, PDO::PARAM_INT);
     }
 
     static function convert_lineDirId(int $lineDirId) {
         $clean_id = self::sanitizeInt($lineDirId);
         $query = 'CALL `GETROUTEID`(:id);';
 
-        return self::convert_id($clean_id, $query, PDO::PARAM_STR);
+        return self::queryById($clean_id, $query, PDO::PARAM_STR);
     }
 
-    static function convert_id($id, $query, $type) {
+    static function getNumberOfProxies() {
+        $query = 'CALL `GETNUMBEROFPROXIES`;';
+        return self::queryParameterless($query);
+    }
+
+    static function getProxyById($id) {
+        $clean_id = self::sanitizeInt($id);
+        $query = 'CALL `GETPROXYBYID`(:id);';
+
+        return self::queryById($clean_id, $query, PDO::PARAM_INT);
+    }
+
+    private static function queryById($id, $query, $type) {
         $pdo = self::getDatabaseConnection();
 
         $statement = $pdo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -47,21 +60,35 @@ class DatabaseAccessLayer {
         $statement->execute();
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-        if ($result == false)
+        if (!$result)
             throw new NoResultsException("result not found for id $id");
         return $result;
     }
 
-    static function sanitizeInt(int $int) {
+    private static function queryParameterless($query){
+        $pdo = self::getDatabaseConnection();
+
+        $statement = $pdo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        if (!$result)
+            throw new NoResultsException("results not found");
+        return $result;
+    }
+
+    //endregion
+
+    private static function sanitizeInt(int $int) {
         return filter_var($int, FILTER_SANITIZE_NUMBER_INT);
     }
 
-    static function sanitizeStr(string $str) {
+    private static function sanitizeStr(string $str) {
         return filter_var($str, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_AMP | FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
     }
 
-    private static function loadCredentials() {
-        $config = parse_ini_file('creds.ini');
+    private static function loadCredentials(string $credentialsFilename) {
+        $config = parse_ini_file($credentialsFilename);
         self::$db_username = $config['db_username'];
         self::$db_password = $config['db_password'];
     }

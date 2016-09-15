@@ -11,6 +11,9 @@ define('CONFIG_FILE', 'config.ini');
 /**
  * For testing the database setup and databaseAccessLayer
  */
+
+//TODO: test proxy table
+
 class TestDatabaseAccessLayer {
 
     private static $bHasRunBefore = false;                //Don't run it multiple times

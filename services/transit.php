@@ -17,33 +17,79 @@ function buildCoordsFromResult(string $json) {
     return "{lat: $lat, lon: $lon}";
 }
 
-function buildPostBody(string $route_onestop_id) {
-    $lineDirId = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
-    var_dump($lineDirId);
-    return '{"version":"1.1","method":"GetTravelPoints","params":{"travelPointsReqs":[{"lineDirId":"' . $lineDirId . '","callingApp":"RMD"}],"interval":10}}';
-}
-
 //endregion
 
 //region STA request functions
 
 function getRealTimeManagerData(string $request) {
-    return makeSTArequest($request, 'RealTimeManager');
+    return makeRequestThroughProxy($request, 'RealTimeManager');
 }
 
 function getInfoWebData(string $request){
-    return makeSTArequest($request, 'InfoWeb');
+    return makeRequestThroughProxy($request, 'InfoWeb');
 }
 
-function makeSTArequest(string $request, string $subdir){
+function makeRequestThroughProxy(string $request, string $resource){
+    $response = $proxy = "";
+
+    do {
+        $proxy = getNextProxy($proxy);
+        makeSTArequest($request, $resource, $proxy);
+    } while (empty($response) || $response['statusCode'] != 200);
+
+    return $proxy;
+}
+
+function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy=""){
+    print('making request');
+    $requestHeaders = ['Content-Type: application/json',
+                       'Host: tripplanner.spokanetransit.com:8007',
+                       'Origin: http://tripplanner.spokanetransit.com:8007',
+                       'Referer: http://tripplanner.spokanetransit.com:8007/'];
+
     $ch = curl_init("http://tripplanner.spokanetransit.com:8007/$subdir");
+    if (!empty($IPv4_Proxy)) {
+        curl_setopt($ch, CURLOPT_PROXY, $IPv4_Proxy);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+    }
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
+    curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+
+    $response = curl_exec($ch);
     curl_close($ch);
-    return $result;
+
+    $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $headers = substr($response, 0, $header_size);
+    $body = substr($response, $header_size);
+
+    print("response:");
+    var_dump($response);
+
+    return $body;
+}
+
+function getNextProxy(string $lastProxy){
+    $newProxy = "";
+    $oldId = $newId = -1;
+    $numProxies = DatabaseAccessLayer::getNumberOfProxies();
+    do {
+        $oldId = $newId;
+        $newId = getRandomInt(0, $numProxies, $oldId);
+        $newProxy = DatabaseAccessLayer::getProxyById($newId);
+    } while ($newProxy != $lastProxy);
+    return $newProxy;
+}
+
+function getRandomInt(int $min, int $max, int $exclude){
+    $newInt = -1;
+    do {
+        $newInt = rand($min, $max);
+    } while ($newInt != $exclude);
+    return $newInt;
 }
 
 function validateRequest($request, $resource) {
@@ -64,7 +110,6 @@ function validateRequest($request, $resource) {
 }
 
 function processRequest() {
-
     $post = json_decode(file_get_contents('php://input'), true);
     $request = json_encode($post['request']);
     $resource = $post['resource'];
@@ -72,11 +117,12 @@ function processRequest() {
     validateRequest($request, $resource);
 
     header('Content-Type: application/json');
-
+    print('about to make request');
     if ($resource === 'InfoWeb')
         echo getInfoWebData($request);
     if ($resource === 'RealTimeManager')
         echo getRealTimeManagerData($request);
+    print('request made');
 }
 
 processRequest();

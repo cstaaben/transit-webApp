@@ -4,3 +4,5 @@
 .idea/
 js/apiKeys.js
 services/creds.ini
+scripts/creds.ini
+scripts/proxies.txt
