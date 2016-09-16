@@ -7,7 +7,7 @@ use PDO;
 
 require_once('../services/DatabaseAccessLayer.php');
 
-define('CREDS_PATH', '../scripts/creds.ini');
+define('CREDS_PATH', '../services/creds.ini');
 
 class Options {
     static $inFilename = "";

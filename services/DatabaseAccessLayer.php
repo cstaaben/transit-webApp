@@ -7,6 +7,8 @@ use PDOException;
 
 require_once 'NoResultsException.php';
 
+define('CREDS_INI', 'creds.ini');
+
 /**
  * An instance of the Repository pattern; a single point of communication for interacting with the database
  */
@@ -14,9 +16,9 @@ class DatabaseAccessLayer {
     private static $db_name, $db_username, $db_password;
 
     //region database calls
-    static function getDatabaseConnection(string $credentialsFilename='creds.ini') : PDO {
+    static function getDatabaseConnection(string $section="credentials") : PDO {
         try {
-            self::loadCredentials($credentialsFilename);
+            self::loadCredentials($section);
             $db_name = self::$db_name;
             $pdo = new PDO("mysql:host=localhost;dbname=$db_name;", self::$db_username, self::$db_password, array(
                 PDO::ATTR_PERSISTENT => true
@@ -116,10 +118,10 @@ class DatabaseAccessLayer {
         return filter_var($str, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_AMP | FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
     }
 
-    private static function loadCredentials(string $credentialsFilename) {
-        $config = parse_ini_file($credentialsFilename);
-        self::$db_name = $config['db_name'];
-        self::$db_username = $config['db_username'];
-        self::$db_password = $config['db_password'];
+    private static function loadCredentials(string $section) {
+        $config = parse_ini_file(CREDS_INI, true);
+        self::$db_name = $config['credentials']['db_name'];
+        self::$db_username = $config[$section]['db_username'];
+        self::$db_password = $config[$section]['db_password'];
     }
 }

@@ -6,14 +6,11 @@ use Exception;
 
 require_once '../services/DatabaseAccessLayer.php';
 
-define('CONFIG_FILE', 'testing_config.ini');
+define('CONFIG_INI', '../services/config.ini');
 
 /**
  * For testing the database setup and databaseAccessLayer
  */
-
-//TODO: add flag to allow skipping proxy checks
-
 function main() {
     if (php_sapi_name( ) !== 'cli')                         //only run from the command line
         die();
@@ -58,7 +55,7 @@ function testDatabaseConnection() {
 function testDatabaseTables() {
     $dbh = DatabaseAccessLayer::getDatabaseConnection();
     echo('testing existence of tables...');
-    $tables = parse_ini_file(CONFIG_FILE)['tables'];
+    $tables = parse_ini_file(CONFIG_INI, true)['required_tables']['tables'];
 
     foreach ($tables as $table) {
         $results = $dbh->query("SELECT * FROM $table;");
@@ -77,15 +74,7 @@ function testPreparedStatements() {
 
     echo("testing prepared statements...\n");
 
-    echo("   testing GETNUMBEROFPROXIES...");
-    $numProxies = DatabaseAccessLayer::getNumberOfProxies();
-    echo("$numProxies\n");
-    if ($numProxies == 0)
-        throw new Exception("Table \"proxies\" needs 2+ proxies to continue testing");
-
-    echo("   testing GETPROXYBYID...");
-    $proxy = DatabaseAccessLayer::getNextProxy();
-    echo("\t$proxy\n");
+    testProxySetup();
 
     echo("   testing GETROUTEID... ");
     try {
@@ -104,6 +93,24 @@ function testPreparedStatements() {
         echo("\twarning: $msg\n\t\t\t");
     }
     echo("\tPASSED\n");
+}
+
+function testProxySetup(){
+    $useProxies = parse_ini_file(CONFIG_INI, true)['general']['use_proxies'];
+    if (strtolower($useProxies) === 'false') {
+        echo("   proxy tests disabled; \tSKIPPED\n");
+        return;
+    }
+
+    echo("   testing GETNUMBEROFPROXIES...");
+    $numProxies = DatabaseAccessLayer::getNumberOfProxies();
+    echo("$numProxies\n");
+    if ($numProxies == 0)
+        throw new Exception("Table \"proxies\" needs 2+ proxies to continue testing");
+
+    echo("   testing GETPROXYBYID...");
+    $proxy = DatabaseAccessLayer::getNextProxy();
+    echo("\t$proxy\n");
 }
 
 /**

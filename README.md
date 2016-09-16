@@ -34,15 +34,21 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
     db_name = "<YOUR_DATABASE_NAME_HERE>"
     db_username = "<USERNAME>"
     db_password = "<PASSWORD>"
-    
-5. Finally, run _php testDatabaseAccessLayer.php_ to check your setup
 
 #
 
 #### loadProxies.php setup:
-##### _this is only required if your server can't make requests to tripplanner.spokanetransit.com_
-1. Check to see if this is necessary with _python3 Proxytester.py -d_. If the request goes through, you're all set.
+1. Check to see if this is necessary with _python3 Proxytester.py -d_.
+    1. if test passes, set _use_proxies = 'false'_ in _config.ini_ and you're done!
+    2. else, continue below
+2. Set _use_proxies = 'true'_ in _config.ini_
 2. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, DROP, EXECUTE**
-3. Repeat steps 3 and 4 above, except this time in the _transit-webApp/scripts_ directory
+3. Add the following section to _transit-webApp/services/creds.ini_:
+
+
+    [test_credentials]
+    db_username = "<YOUR_TEST_USERNAME_HERE>"
+    db_password = "<YOUR_TEST_USERNAME_HERE>"
+
 4. Use ProxyTester.py to build a list of proxies that work for you
 5. Use loadProxies.php to upload those proxies to the database

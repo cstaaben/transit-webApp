@@ -1,16 +1,29 @@
 <?php
+
 namespace transit_webApp;
+
 require_once 'DatabaseAccessLayer.php';
 
-//region database functions
+define('CONFIG_INI', 'config.ini');
 
-function getLocationOfBusOnRoute(string $route_onestop_id) {
-    $postBody = buildPostBody($route_onestop_id);
-    $json = json_decode(getRealTimeManagerData($postBody), true);
+//region higher level functions
+
+function getLocationOfBusOnRoute(string $route_onestop_id) : string {
+    $request = buildTravelPointsRequest($route_onestop_id);
+    $json = json_decode(getRealTimeManagerData($request), true);
     return buildCoordsFromResult($json);
 }
 
-function buildCoordsFromResult(string $json) {
+
+//TODO: fetch from STA
+function buildTravelPointsRequest(string $route_onestop_id) : string {
+    $lineDirId = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
+    var_dump($lineDirId);
+    return '{"version":"1.1","method":"GetTravelPoints","params":{"travelPointsReqs":[{"lineDirId":"' . $lineDirId . '","callingApp":"RMD"}],"interval":10}}';
+}
+
+
+function buildCoordsFromResult(string $json) : string {
     $location = $json["result"]["travelPoints"][0];
     $lat = $location["Lat"];
     $lon = $location["Lon"];
@@ -21,26 +34,33 @@ function buildCoordsFromResult(string $json) {
 
 //region STA request functions
 
-function getRealTimeManagerData(string $request) {
-    return makeRequestThroughProxy($request, 'RealTimeManager');
+function makeRequest(string $request, string $resource) : string {
+    $use_proxy = parse_ini_file(CONFIG_INI, true)['general']['use_proxy'];
+    if ($use_proxy)
+        return makeRequestThroughProxy($request, $resource);
+    else
+        return makeSTArequest($request, $resource);
 }
 
-function getInfoWebData(string $request){
-    return makeRequestThroughProxy($request, 'InfoWeb');
+function getRealTimeManagerData(string $request) : string {
+    return makeRequest($request, 'RealTimeManager');
 }
 
-function makeRequestThroughProxy(string $request, string $resource){
-    $response = $proxy = "";
+function getInfoWebData(string $request) : string {
+    return makeRequest($request, 'InfoWeb');
+}
 
+function makeRequestThroughProxy(string $request, string $resource) : string {
+    $proxy = "";
     do {
         $proxy = DatabaseAccessLayer::getNextProxy($proxy);
-        makeSTArequest($request, $resource, $proxy);
+        $response = makeSTArequest($request, $resource, $proxy);
     } while (empty($response) || $response['statusCode'] != 200);
 
-    return $proxy;
+    return $response;
 }
 
-function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy=""){
+function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy="") : string {
     print('making request');
     $requestHeaders = ['Content-Type: application/json',
                        'Host: tripplanner.spokanetransit.com:8007',
@@ -89,6 +109,7 @@ function validateRequest($request, $resource) {
     }
 }
 
+//TODO: convert to only accept higher-level functions instead of request/resource scheme
 function processRequest() {
     $post = json_decode(file_get_contents('php://input'), true);
     $request = json_encode($post['request']);
@@ -97,12 +118,7 @@ function processRequest() {
     validateRequest($request, $resource);
 
     header('Content-Type: application/json');
-    print('about to make request');
-    if ($resource === 'InfoWeb')
-        echo getInfoWebData($request);
-    if ($resource === 'RealTimeManager')
-        echo getRealTimeManagerData($request);
-    print('request made');
+    makeRequest($request, $resource);
 }
 
 processRequest();

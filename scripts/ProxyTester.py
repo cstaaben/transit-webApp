@@ -1,4 +1,5 @@
 import sys
+import socket
 import requests
 from time import time
 from multiprocessing.dummy import Pool as ThreadPool
@@ -14,38 +15,25 @@ class Options:
 
     # program options
     print_addresses_only = False
+    dummy_mode = False
     summarize = False
     num_threads = 100
     verbose_mode = False
 
 
+class Results:
+    num_successful = 0
+    time_elapsed = 0
+
+
 def main():
     args = sys.argv[1:]
     process_arguments(args)
+    addresses = get_addresses(args)
 
-    # process addresses
-    f = open(args[0])
-    text = f.read()
-    addresses = text.split('\n')
+    test_proxies(addresses)
 
-    # Make the Pool of workers
-    pool = ThreadPool(Options.num_threads)
-
-    start_time = time()
-
-    # Open the urls in their own threads
-    results = pool.map(make_request, addresses)
-
-    # close the pool and wait for the work to finish
-    pool.close()
-    pool.join()
-
-    # calculate stats
-    end_time = time()
-    time_elapsed = end_time - start_time
-    successful = len(results) - results.count(None)
-
-    summarize(len(addresses), successful, time_elapsed)
+    print_summary(len(addresses), Results.num_successful, Results.time_elapsed)
 
 
 def print_usage(message=""):
@@ -69,8 +57,11 @@ def process_arguments(args):
         print_usage()
 
     if args.count('-d'):
-        print('not yet implemented')
-        sys.exit(1)
+        Options.dummy_mode = True
+        Options.num_threads = 1
+        Options.summarize = True
+        Options.verbose_mode = True
+        return
 
     if args.count('-t') > 0:
         t_index = args.index('-t')
@@ -89,7 +80,39 @@ def process_arguments(args):
         Options.verbose_mode = True
 
 
-def summarize(num_addresses, num_successful, time_elapsed):
+# process addresses
+def get_addresses(args):
+    if not Options.dummy_mode:
+        f = open(args[0])
+        text = f.read()
+        addresses = text.split('\n')
+    else:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('google.com', 0))
+        addresses = [s.getsockname()[0]]
+    return addresses
+
+
+def test_proxies(addresses):
+    # Make the Pool of workers
+    pool = ThreadPool(Options.num_threads)
+
+    start_time = time()
+
+    # Open the urls in their own threads
+    results = pool.map(make_request, addresses)
+
+    # close the pool and wait for the work to finish
+    pool.close()
+    pool.join()
+
+    # calculate stats
+    end_time = time()
+    Results.time_elapsed = end_time - start_time
+    Results.num_successful = len(results) - results.count(None)
+
+
+def print_summary(num_addresses, num_successful, time_elapsed):
     if not Options.summarize or Options.print_addresses_only:
         return
 
@@ -105,13 +128,17 @@ def make_request(address):
             print('invalid address: ' + address)
         return
 
-    proxy_dict = {
-        "http": "http://" + address + ":80"
-    }
+    proxy_dict = False
+    if not Options.dummy_mode:
+        proxy_dict = {
+            "http": "http://" + address + ":80"
+        }
 
     start_time = time()
 
     try:
+        # send request
+        # timeout just below default TCP retransmission threshold
         response = requests.request("POST",
                                     Options.url,
                                     data=Options.payload,
@@ -140,6 +167,9 @@ def make_request(address):
             else:
                 print(address + "\t\t" + str(time_elapsed) + "s")
             return address
+        else:
+            if Options.verbose_mode:
+                print(address + "\t\tstatus code " + response.status_code)
     return None
 
 
