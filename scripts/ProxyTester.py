@@ -50,10 +50,11 @@ def main():
 
 def print_usage(message=""):
 
-    usage = '''usage: ProxyTester filename.txt [-a] [-s] [-t NUM_THREADS] [-v])
+    usage = '''usage: ProxyTester [filename.txt] [-a] [-d] [-s] [-t NUM_THREADS] [-v])
 optional arguments:
     -h              print this help message and exit
     -a              [only output successful addresses; precludes -s and -v]
+    -d              [dummy mode; make the request without proxies]
     -s              [print summary]
     -t NUM_THREADS  [set the amount of threads to use; default = 100]
     -v              [verbose mode]'''
@@ -66,6 +67,10 @@ optional arguments:
 def process_arguments(args):
     if not args or args.count('-h') > 0:
         print_usage()
+
+    if args.count('-d'):
+        print('not yet implemented')
+        sys.exit(1)
 
     if args.count('-t') > 0:
         t_index = args.index('-t')

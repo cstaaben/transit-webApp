@@ -33,7 +33,7 @@ function makeRequestThroughProxy(string $request, string $resource){
     $response = $proxy = "";
 
     do {
-        $proxy = getNextProxy($proxy);
+        $proxy = DatabaseAccessLayer::getNextProxy($proxy);
         makeSTArequest($request, $resource, $proxy);
     } while (empty($response) || $response['statusCode'] != 200);
 
@@ -70,26 +70,6 @@ function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy=""){
     var_dump($response);
 
     return $body;
-}
-
-function getNextProxy(string $lastProxy){
-    $newProxy = "";
-    $oldId = $newId = -1;
-    $numProxies = DatabaseAccessLayer::getNumberOfProxies();
-    do {
-        $oldId = $newId;
-        $newId = getRandomInt(0, $numProxies, $oldId);
-        $newProxy = DatabaseAccessLayer::getProxyById($newId);
-    } while ($newProxy != $lastProxy);
-    return $newProxy;
-}
-
-function getRandomInt(int $min, int $max, int $exclude){
-    $newInt = -1;
-    do {
-        $newInt = rand($min, $max);
-    } while ($newInt != $exclude);
-    return $newInt;
 }
 
 function validateRequest($request, $resource) {

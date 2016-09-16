@@ -2,11 +2,6 @@
 /**
  * A script for backing up and loading proxies to the database
  */
-
-/*
- * save all existing proxies to timestamped file
- * load proxies from hardcoded filename
- */
 namespace transit_webApp;
 use PDO;
 
@@ -26,8 +21,24 @@ class Options {
 main();
 
 function main(){
-    parseOptions();
-    execute();
+    validateArguments();
+    loadOptions();
+    backupAddresses();
+    loadAddresses();
+}
+
+function validateArguments(){
+    //abort if not running from command line
+    if (php_sapi_name( ) !== 'cli')
+        die();
+
+    global $argc, $argv;
+
+    if ($argc < 2)
+        printUsage('missing arguments');
+
+    if (array_key_exists('-h', $argv) || array_key_exists('--help', $argv))
+        printUsage();
 }
 
 function printUsage(string $message=""){
@@ -50,13 +61,6 @@ EOF;
     die($usage);
 }
 
-function execute(){
-    backupAddresses();
-    loadAddresses();
-
-
-}
-
 function backupAddresses(){
     $currentProxies = getCurrentProxies();
 
@@ -64,7 +68,7 @@ function backupAddresses(){
         echo('backing up proxies... ');
 
     if (empty(Options::$outFilename))
-        Options::$outFilename = getTimestampedOutputFilename();
+        Options::$outFilename = "proxies_backup_" . time() . ".txt";
 
     file_put_contents(Options::$outFilename, implode("\n", $currentProxies));
 
@@ -72,15 +76,11 @@ function backupAddresses(){
         echo("DONE\n");
 }
 
-function getCurrentProxies(){
+function getCurrentProxies() : array {
     $pdo = DatabaseAccessLayer::getDatabaseConnection(CREDS_PATH);
     $statement = $pdo->query('SELECT address FROM proxies;');
     $result = $statement->fetchAll(PDO::FETCH_COLUMN);
     return $result;
-}
-
-function getTimestampedOutputFilename(){
-    return "proxies_backup_" . time() . ".txt";
 }
 
 function loadAddresses(){
@@ -95,13 +95,13 @@ function loadAddresses(){
 
     $addresses = loadAddressFile();
     $values = buildValuesFromAddresses($addresses);
-    loadAddressesIntoDatabase($values);
+    insertAddressesIntoDatabase($values);
 
     if (Options::$verboseMode)
         echo("DONE\n");
 }
 
-function buildValuesFromAddresses($addresses){
+function buildValuesFromAddresses(array $addresses) : string {
     $values = "";
     foreach ($addresses as $address)
         $values .= "('$address'),";
@@ -109,7 +109,7 @@ function buildValuesFromAddresses($addresses){
     return $values;
 }
 
-function loadAddressFile(){
+function loadAddressFile() : string {
     $addresses = "";
     if (!empty(Options::$inFilename)) {
         $fin = file_get_contents(Options::$inFilename);
@@ -128,7 +128,7 @@ function loadAddressFile(){
     return $addresses;
 }
 
-function loadAddressesIntoDatabase($values){
+function insertAddressesIntoDatabase(string $values) : \PDOStatement {
     $pdo = DatabaseAccessLayer::getDatabaseConnection(CREDS_PATH);
 
     if (!Options::$appendMode) {
@@ -141,25 +141,9 @@ function loadAddressesIntoDatabase($values){
 
     $query = "INSERT INTO proxies (address) VALUES $values ON DUPLICATE KEY UPDATE address=address;";
     $statement = $pdo->query($query);
-    if (!$statement)
+    if ($statement === False)
         echo("ERROR: database INSERT failed ");
     return $statement;
-}
-
-function parseOptions(){
-    //abort if not running from command line
-    if (php_sapi_name( ) !== 'cli')
-        die();
-
-    global $argc, $argv;
-
-    if ($argc < 2)
-        printUsage('missing arguments');
-
-    if (array_key_exists('-h', $argv) || array_key_exists('--help', $argv))
-        printUsage();
-
-    loadOptions();
 }
 
 function loadOptions(){
