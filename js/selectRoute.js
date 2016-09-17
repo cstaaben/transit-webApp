@@ -44,6 +44,18 @@ function getRoute() {
             initRouteMap(patterns);
         }
     );
+
+    //TODO: change to polling function to update every 10s
+    getLocations(routeId, addBusesToMap(busCoords));
+}
+
+function addBusesToMap(busCoords){
+    var busMarker = new google.maps.Marker({
+        position: {lat: busCoords.lat, lng: busCoords.lng},
+        map: map,
+        icon: "../img/ic_directions_bus.png"
+    });
+    busMarker.setMap(map);
 }
 
 //TODO: tame this megafunction

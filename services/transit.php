@@ -8,9 +8,10 @@ define('CONFIG_INI', 'config.ini');
 
 //region higher level functions
 
-function getLocationOfBusOnRoute(string $route_onestop_id) : string {
+function getBusLocations(string $route_onestop_id) : callable {
     $request = buildTravelPointsRequest($route_onestop_id);
     $json = json_decode(getRealTimeManagerData($request), true);
+    var_dump($json);
     return buildCoordsFromResult($json);
 }
 
@@ -24,10 +25,11 @@ function buildTravelPointsRequest(string $route_onestop_id) : string {
 
 
 function buildCoordsFromResult(string $json) : string {
+    //TODO: iterate through travelPoints
     $location = $json["result"]["travelPoints"][0];
     $lat = $location["Lat"];
-    $lon = $location["Lon"];
-    return "{lat: $lat, lon: $lon}";
+    $lng = $location["Lon"];
+    return "{lat: $lat, lng: $lng}";
 }
 
 //endregion
@@ -110,6 +112,7 @@ function validateRequest($request, $resource) {
 }
 
 //TODO: convert to only accept higher-level functions instead of request/resource scheme
+/*
 function processRequest() {
     $post = json_decode(file_get_contents('php://input'), true);
     $request = json_encode($post['request']);
@@ -119,7 +122,27 @@ function processRequest() {
 
     header('Content-Type: application/json');
     makeRequest($request, $resource);
+}*/
+
+function processRequest(){
+    //data: '{"method":"getBusLocations","params":"' + route_onestop_id + '"}',
+    $post = json_decode(file_get_contents('php://input'), true);
+    var_dump($post);
+    $method = $post['method'];
+    //TODO!: validate input
+    $params = $post['params'];
+    //var_dump(getBusLocations($params));
+    $response = call_user_func($method, $params);
+
+    var_dump($response);
+    return $response;
 }
 
 processRequest();
 //endregion
+
+/*acceptable functions:
+getBusLocations(route_onestop_id)
+getRouteGeometry(route_onestop_id)
+
+*/

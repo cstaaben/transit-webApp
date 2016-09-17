@@ -1,5 +1,6 @@
+//TODO: encapsulate in singleton scope
 /**
- * Encapsulates calls to STA
+ * Encapsulates calls to transit.php
  */
 
 var listOfRoutes = {};
@@ -60,4 +61,17 @@ function getStopsForLine(lineDirId){
     }
 
     return stopsForLine[lineDirId];
+}
+
+function getBusLocations(route_onestop_id, callback){
+    var busCoords = {};
+    $.ajax({
+        type: "POST",
+        url: '../services/transit.php',
+        dataType: 'application/json',
+        data: '{"method":"getBusLocations","params":"' + route_onestop_id + '"}',
+        success: function(data){ callback(data); },
+        async: false
+    });
+    return busCoords;
 }
