@@ -25,30 +25,25 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
 
 #### Database setup:
 1. Import database.sql with phpMyAdmin
-2. Create a database user with **SELECT** and **EXECUTE** privileges
-3. Create a file in the _transit-webApp/services_ directory called _creds.ini_
-4. Format the file like so:
+2. Create a database user with **SELECT** and **EXECUTE** privileges. These credentials will be used by server responses.
+3. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, EXECUTE**. These credentials will be used by command-line scripts.
+4. Create a file in the _transit-webApp/services_ directory called _creds.ini_
+5. Format the file like so:
 
 
     [credentials]
     db_name = "<YOUR_DATABASE_NAME_HERE>"
     db_username = "<USERNAME>"
     db_password = "<PASSWORD>"
-
-#
-
-#### loadProxies.php setup:
-1. Check to see if this is necessary with _python3 Proxytester.py -d_.
-    1. if test passes, set _use_proxies = 'false'_ in _config.ini_ and you're done!
-    2. else, continue below
-2. Set _use_proxies = 'true'_ in _config.ini_
-2. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, DROP, EXECUTE**
-3. Add the following section to _transit-webApp/services/creds.ini_:
-
-
-    [test_credentials]
+    
+    [script_credentials]
     db_username = "<YOUR_TEST_USERNAME_HERE>"
     db_password = "<YOUR_TEST_USERNAME_HERE>"
 
-4. Use ProxyTester.py to build a list of proxies that work for you
-5. Use loadProxies.php to upload those proxies to the database
+6. Use _php testDatabaseAccessLayer.php_ to test the database and fix any problems.
+7. Run _php loadRoute_ids.php_ to load the route_ids table
+8. Check to see if proxies are necessary with _python3 Proxytester.py -d_.
+    1. if test passes, set _use_proxies = 'false'_ in _config.ini_ and you're done!
+    2. else, set _use_proxies = 'true'_ and continue
+9. Use ProxyTester.py to build a list of proxies that work for you
+10. Use loadProxies.php to upload those proxies to the database 

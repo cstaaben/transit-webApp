@@ -14,11 +14,12 @@ define('CREDS_INI', 'creds.ini');
  */
 class DatabaseAccessLayer {
     private static $db_name, $db_username, $db_password;
+    private static $testMode;
 
     //region database calls
-    static function getDatabaseConnection(string $section="credentials") : PDO {
+    static function getDatabaseConnection() : PDO {
         try {
-            self::loadCredentials($section);
+            self::loadCredentials();
             $db_name = self::$db_name;
             $pdo = new PDO("mysql:host=localhost;dbname=$db_name;", self::$db_username, self::$db_password, array(
                 PDO::ATTR_PERSISTENT => true
@@ -32,7 +33,7 @@ class DatabaseAccessLayer {
         }
     }
 
-    static function convert_route_onestop_id(string $route_onestop_id) : int {
+    static function convert_route_onestop_id(string $route_onestop_id) : array {
         $clean_id = self::sanitizeStr($route_onestop_id);
         $query = 'CALL `GETLINEDIRID`(:id);';
 
@@ -80,7 +81,7 @@ class DatabaseAccessLayer {
         $statement->bindValue(':id', $id, $type);
         $statement->execute();
 
-        $result = $statement->fetch()[0];
+        $result = $statement->fetchAll();
         if (!$result)
             throw new NoResultsException("result not found for id $id");
         return $result;
@@ -96,6 +97,18 @@ class DatabaseAccessLayer {
         if (!$result)
             throw new NoResultsException("results not found");
         return $result;
+    }
+
+    static function updateRouteId(string $route_onestop_id, string $lineDirId, string $routeNum, string $dirName){
+        $pdo = self::getDatabaseConnection();
+        $query = "CALL `UPDATEROUTEID`(:route_id, :lineDirId, :routeNum, :dirName);";
+
+        $statement = $pdo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $statement->bindValue(':route_id', $route_onestop_id);
+        $statement->bindValue(':lineDirId', $lineDirId);
+        $statement->bindValue(':routeNum', $routeNum);
+        $statement->bindValue(':dirName', $dirName);
+        $statement->execute();
     }
 
     //endregion
@@ -118,10 +131,18 @@ class DatabaseAccessLayer {
         return filter_var($str, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_AMP | FILTER_FLAG_ENCODE_LOW | FILTER_FLAG_ENCODE_HIGH);
     }
 
-    private static function loadCredentials(string $section) {
+    private static function loadCredentials() {
+        $section = "credentials";
+        if (self::$testMode)
+            $section = "script_credentials";
+
         $config = parse_ini_file(CREDS_INI, true);
         self::$db_name = $config['credentials']['db_name'];
         self::$db_username = $config[$section]['db_username'];
         self::$db_password = $config[$section]['db_password'];
+    }
+
+    static function setTestMode(bool $mode){
+        self::$testMode = $mode;
     }
 }

@@ -21,6 +21,7 @@ function main() {
 function testAll() {
 
     set_error_handler('\transit_webApp\warning_handler');   //manually handle warnings
+    DatabaseAccessLayer::setTestMode(true);
 
     $testMethods = [
         function() { testDatabaseConnection(); },
@@ -54,17 +55,24 @@ function testDatabaseConnection() {
 
 function testDatabaseTables() {
     $dbh = DatabaseAccessLayer::getDatabaseConnection();
-    echo('testing existence of tables...');
+    echo("testing existence of tables...\n");
     $tables = parse_ini_file(CONFIG_INI, true)['required_tables']['tables'];
+    $useProxies = strtolower(parse_ini_file(CONFIG_INI, true)['general']['use_proxies']) == 'true';
 
     foreach ($tables as $table) {
+        echo("   table \"$table\": ");
+        if ($table == 'proxies' && !$useProxies) {
+            echo("\t\tSKIPPED\n");
+            continue;
+        }
+
         $results = $dbh->query("SELECT * FROM $table;");
 
         if ($results === False)
             throw new Exception("Table missing: $table");
+        else
+            echo("\t\tEXISTS\n");
     }
-
-    echo("\tPASSED\n");
 }
 
 /**
@@ -78,7 +86,7 @@ function testPreparedStatements() {
 
     echo("   testing GETROUTEID... ");
     try {
-        DatabaseAccessLayer::convert_lineDirId(12345);
+        DatabaseAccessLayer::convert_lineDirId(53210);
     } catch  (NoResultsException $nex) {
         $msg = $nex->getMessage();
         echo("\twarning: $msg\n\t\t\t");
@@ -87,11 +95,17 @@ function testPreparedStatements() {
 
     echo("   testing GETLINEDIRID...");
     try {
-        DatabaseAccessLayer::convert_route_onestop_id('r-asdfasd-00');
+        DatabaseAccessLayer::convert_route_onestop_id('r-c2krpu-1');
     } catch  (NoResultsException $nex) {
         $msg = $nex->getMessage();
         echo("\twarning: $msg\n\t\t\t");
     }
+    echo("\tPASSED\n");
+
+    echo("   testing UPDATEROUTEID...");
+    DatabaseAccessLayer::updateRouteId("r-asdfgh-00", "12345", "00", "TESTING");
+    $dbo = DatabaseAccessLayer::getDatabaseConnection();
+    $dbo->query("DELETE FROM route_ids WHERE route_onestop_id='r-asdfgh-00';");
     echo("\tPASSED\n");
 }
 

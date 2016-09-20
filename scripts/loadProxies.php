@@ -77,7 +77,8 @@ function backupAddresses(){
 }
 
 function getCurrentProxies() : array {
-    $pdo = DatabaseAccessLayer::getDatabaseConnection(CREDS_PATH);
+    DatabaseAccessLayer::setTestMode(true);
+    $pdo = DatabaseAccessLayer::getDatabaseConnection();
     $statement = $pdo->query('SELECT address FROM proxies;');
     $result = $statement->fetchAll(PDO::FETCH_COLUMN);
     return $result;
@@ -129,7 +130,8 @@ function loadAddressFile() : string {
 }
 
 function insertAddressesIntoDatabase(string $values) : \PDOStatement {
-    $pdo = DatabaseAccessLayer::getDatabaseConnection(CREDS_PATH);
+    DatabaseAccessLayer::setTestMode(true);
+    $pdo = DatabaseAccessLayer::getDatabaseConnection();
 
     if (!Options::$appendMode) {
         $statement = $pdo->query('TRUNCATE TABLE proxies;');
@@ -139,7 +141,7 @@ function insertAddressesIntoDatabase(string $values) : \PDOStatement {
             echo ("truncated table proxies... ");
     }
 
-    $query = "INSERT INTO proxies (address) VALUES $values ON DUPLICATE KEY UPDATE address=address;";
+    $query = "INSERT INTO proxies (address) VALUE ($values) ON DUPLICATE KEY UPDATE address=address;";
     $statement = $pdo->query($query);
     if ($statement === False)
         echo("ERROR: database INSERT failed ");
