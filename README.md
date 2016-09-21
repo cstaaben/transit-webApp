@@ -6,9 +6,10 @@
 2. Configure one key to only accept requests from your domain
 3. Create a file in the _transit-webPapp/js_ directory called _apiKeys.js_ containing the two variables:
 
-
+```
     var API_KEY = '(YOUR API KEY WITH REFERER RESTRICTIONS)';
     var API_KEY_UNRESTRICTED = '(YOUR API KEY WITHOUT REFERER RESTRICTIONS)';
+```
     
 4. enable the following APIs:
     + Google Maps Javascript API
@@ -30,7 +31,7 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
 4. Create a file in the _transit-webApp/services_ directory called _creds.ini_
 5. Format the file like so:
 
-
+```
     [credentials]
     db_name = "<YOUR_DATABASE_NAME_HERE>"
     db_username = "<USERNAME>"
@@ -39,6 +40,7 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
     [script_credentials]
     db_username = "<YOUR_TEST_USERNAME_HERE>"
     db_password = "<YOUR_TEST_USERNAME_HERE>"
+```
 
 6. Use _php testDatabaseAccessLayer.php_ to test the database and fix any problems.
 7. Run _php loadRoute_ids.php_ to load the route_ids table
