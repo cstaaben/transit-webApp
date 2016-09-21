@@ -154,8 +154,15 @@ class TransitManager {
     }
 
     private static function buildGeometryFromResult(string $dirName, string $json) : string {
-        $lineData = json_decode($json, true)['result'][0]['GoogleMap'][0];
+        $lineData = json_decode($json, true)['result'][0]['GoogleMap'];
+        $points = [];
+        foreach ($lineData as $segment)
+            array_push($points, $segment['Points']);
+        $lineData[0]['Points'] = $points;
+        $lineData = $lineData[0];
         $lineData = json_encode($lineData);
+        $lineData = str_replace("Lat", "lat", $lineData);
+        $lineData = str_replace("Lon", "lng", $lineData);
         $returnJson = "\"$dirName\":$lineData";
         return $returnJson;
     }

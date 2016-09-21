@@ -23,7 +23,6 @@ function getListOfLines(){
 }
 
 function getLineTrace(lineDirId){
-    if (!lineTraces[lineDirId])
     $.ajax({
         type: "POST",
         url: '../services/transit.php',
@@ -36,7 +35,6 @@ function getLineTrace(lineDirId){
 }
 
 function getTravelPoints(lineDirId){
-    var travelPoints = '';
     $.ajax({
         type: "POST",
         url: '../services/transit.php',
@@ -48,30 +46,43 @@ function getTravelPoints(lineDirId){
     return travelPoints;
 }
 
-function getStopsForLine(lineDirId){
-    if (!stopsForLine[lineDirId]) {
-        $.ajax({
-            type: "POST",
-            url: '../services/transit.php',
-            dataType: 'application/json',
-            data: '{"request":{"version":"1.1","method":"GetStopsForLine","params":{"reqLineDirIds":[{"lineDirId":' + lineDirId + '}]}},"resource":"RealTimeManager"}',
-            success: function(data) { stopsForLine[lineDirId] = $.parseJSON(data).result.stops; },
-            async: false
-        });
-    }
-
-    return stopsForLine[lineDirId];
-}
-
-function getBusLocations(route_onestop_id, callback){
-    var busCoords = {};
+function getStopsForLineSTA(lineDirId){
     $.ajax({
         type: "POST",
         url: '../services/transit.php',
         dataType: 'application/json',
-        data: '{"method":"getBusLocations","params":"' + route_onestop_id + '"}',
-        success: function(data){ callback(data); },
+        data: '{"request":{"version":"1.1","method":"GetStopsForLine","params":{"reqLineDirIds":[{"lineDirId":' + lineDirId + '}]}},"resource":"RealTimeManager"}',
+        success: function(data) { stopsForLine[lineDirId] = $.parseJSON(data).result.stops; },
         async: false
     });
-    return busCoords;
+
+    return stopsForLine[lineDirId];
+}
+
+function getStopsForRoute(route_onestop_id){
+    var jqXHR = $.ajax({
+        url: "https://transit.land/api/v1/stops?served_by=" + route_onestop_id,
+        dataType: 'application/json',
+    });
+    return jqXHR;
+}
+
+function getBusData(route_onestop_id){
+    var jqXHR = $.ajax({
+        type: "POST",
+        url: '/transit-webApp/services/TransitManager.php',
+        dataType: 'application/json',
+        data: '{"method":"getBusData","params":"' + route_onestop_id + '"}',
+    });
+    return jqXHR;
+}
+
+function getRouteGeometry(route_onestop_id){
+    var jqXHR = $.ajax({
+        type: "POST",
+        url: '/transit-webApp/services/TransitManager.php',
+        dataType: 'application/json',
+        data: '{"method":"getRouteGeometry","params":"' + route_onestop_id + '"}',
+    });
+    return jqXHR;
 }
