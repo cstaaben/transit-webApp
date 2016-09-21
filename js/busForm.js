@@ -136,7 +136,7 @@ function setMenu() {
 }
 
 function hideForms() {
-    $(".formbody").hide();
+    $(".formBody").hide();
     $(".invalid").hide();
     $("#divMap").hide();
     $("#divStops").hide();
