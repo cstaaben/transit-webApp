@@ -47,7 +47,7 @@ input{
 #menu li{
 	list-style: none;
 	display: inline;
-	background-color: hsla(82, 54%, 64%, 0.86);
+	background-color: hsla(82, 54%, 50%, 0.86);
 	color: white;
 	padding: 1em;
 	margin: auto;
@@ -56,11 +56,11 @@ input{
 }
 
 #menu li:hover{
-	background-color: hsla(82, 54%, 50%, 0.86);
+	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
 #menu .active{
-	background-color: hsla(82, 54%, 50%, 0.86);
+	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
 #inputLocation {
@@ -88,6 +88,7 @@ input{
 	margin-left: 25%;
 	margin-right: 25%;
 	width: 50%;
+	padding: 0 0 0 0;
 }
 
 #divStops {
@@ -255,6 +256,7 @@ tr.favesRow:hover{
 	width: 100%;
 	max-height: 330px;
 	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 #routes {

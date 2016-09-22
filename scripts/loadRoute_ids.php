@@ -12,6 +12,7 @@ require_once '../services/TransitManager.php';
  */
 function updateTable_route_ids() {
     // Query STA
+    DatabaseAccessLayer::setTestMode(true);
     $postBody = '{"version":"1.1","method":"GetListOfLines"}';
     $STA_response = TransitManager::requestRealTimeManagerData($postBody);
     $result = json_decode($STA_response, true)['result']['retLineWithDirInfos'];

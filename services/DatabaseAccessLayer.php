@@ -14,7 +14,7 @@ define('CREDS_INI', 'creds.ini');
  */
 class DatabaseAccessLayer {
     private static $db_name, $db_username, $db_password;
-    private static $testMode;
+    private static $testMode = false;
 
     //region database calls
     static function getDatabaseConnection() : PDO {

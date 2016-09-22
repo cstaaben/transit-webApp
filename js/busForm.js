@@ -71,7 +71,7 @@ function submitClick() {
     } else {
         $(".invalid").hide();
         $("#divStops").slideDown(500);
-        //clearMarkers();
+
         // automatically scroll down to stops div
         $('html,body').animate({
                 scrollTop: $("#divStops").offset().top
@@ -105,34 +105,36 @@ function tripSubmit() {
 
 function setMenu() {
     $(".findStopsMenu").click(function() {
-        $("li").removeClass("active");
-        $(".findStopsMenu").addClass("active");
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
         hideForms();
         $("#divFindStops").show();
     });
 
     $(".planTripMenu").click(function() {
-        $("li").removeClass("active");
-        $(".planTripMenu").addClass("active");
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
         hideForms();
         $("#divPlanTrip").show();
         populateRouteForm();
     });
 
-    $(".favoritesMenu").click(function() {
-        $("li").removeClass("active");
-        $(".favoritesMenu").addClass("active");
-        hideForms();
-        $("#divFavorites").show();
-    });
-
-    $(".getRouteMenu").click(function() {
-        $("li").removeClass("active");
-        $(".getRouteMenu").addClass("active");
+    $(".showRoutesMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
         hideForms();
         $("#divGetRoute").show();
         populateRouteDate();
     });
+
+    $(".favoritesMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        hideForms();
+        $("#divFavorites").show();
+    });
+
+    $(".menuTab").click(function(){clearInterval(busDataIntervalId);});   //stop requesting bus data
 }
 
 function hideForms() {
