@@ -11,7 +11,7 @@
     var API_KEY_UNRESTRICTED = '(YOUR API KEY WITHOUT REFERER RESTRICTIONS)';
 ```
     
-4. enable the following APIs:
+* enable the following APIs:
     + Google Maps Javascript API
     + Google Maps Directions API
     + Google Maps Geocoding API
@@ -25,7 +25,7 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
 #
 
 #### Database setup:
-1. Import database.sql with phpMyAdmin
+1. Import sta_webapp.sql with phpMyAdmin
 2. Create a database user with **SELECT** and **EXECUTE** privileges. These credentials will be used by server responses.
 3. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, EXECUTE**. These credentials will be used by command-line scripts.
 4. Create a file in the _transit-webApp/services_ directory called _creds.ini_
@@ -44,8 +44,8 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
 
 6. Use _php testDatabaseAccessLayer.php_ to test the database and fix any problems.
 7. Run _php loadRoute_ids.php_ to load the route_ids table
-8. Check to see if proxies are necessary with _python3 Proxytester.py -d_.
-    1. if test passes, set _use_proxies = 'false'_ in _config.ini_ and you're done!
-    2. else, set _use_proxies = 'true'_ and continue
+8. Check to see if proxies are necessary with _python3 Proxytester.py -d_
+    + if test passes, set _use_proxies = 'false'_ in _config.ini_ and you're done!
+    + else, set _use_proxies = 'true'_ and continue
 9. Use ProxyTester.py to build a list of proxies that work for you
 10. Use loadProxies.php to upload those proxies to the database 
