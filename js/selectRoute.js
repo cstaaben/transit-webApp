@@ -37,55 +37,19 @@ function onRoutesReceived(data) {
 
 function getRoute() {
     var routeId = $("#allRoutes").val();
-    console.log(routeId);
-    var jqXHR1 = getRouteGeometry(routeId);
-    var jqXHR2 = getStopsForRoute(routeId);
-    var jqXHR3 = getBusData(routeId);
-
-    $(document).ajaxStop(function(){
-        var routeGeometry = $.parseJSON(jqXHR1.responseText);
-        var routeStops = $.parseJSON(jqXHR2.responseText);
-        var busData = $.parseJSON(jqXHR3.responseText);
-        initRouteMap(routeId, routeGeometry, routeStops, busData);
-    });
+    getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
-function addBusesToMap(busCoords){
-    var busMarker = new google.maps.Marker({
-        position: {lat: busCoords.lat, lng: busCoords.lng},
-        map: map,
-        icon: "../img/ic_directions_bus.png"
-    });
-    busMarker.setMap(map);
-}
-
-function initRouteMap(routeId, routeGeometry, routeStops, busData) {
+function initRouteMap(routeId, routeGeometry) {
     drawRoute(routeGeometry);
+    drawBuses(routeId);
     //TODO: draw stops
-    //TODO: draw bus and periodically update
 
     //TODO: scroll down to map
     //$("html, body").animate({scrollTop: $(document).height()}, 1000);
-
 }
 
-function drawRouteSegments(routeSegments, color){
-    var polylines = [];
-    for (var i = 0; i < routeSegments.length; i++) {
-        polylines.push(
-            new google.maps.Polyline({
-                path: routeSegments[i],
-                geodesic: true,
-                strokeColor: color,
-                strokeOpacity: 1.0,
-                strokeWeight: 2
-            })
-        );
-    }
-    return polylines;
-}
-
-function getBound(boundA, boundB){
+function getViewportBound(boundA, boundB){
     return (Math.abs(boundA) > Math.abs(boundB)) ? boundA : boundB;
 }
 
@@ -110,10 +74,89 @@ function drawRoute(routeGeometry){
     $.each(dir0lines, function(index, value){value.setMap(map);});
     $.each(dir1lines, function(index, value){value.setMap(map);});
 
-    var northBound = getBound(dir0['latNorth'], dir1['latNorth']);
-    var eastBound = getBound(dir0['lonEast'], dir1['lonEast']);
-    var southBound = getBound(dir0['latSouth'], dir1['latSouth']);
-    var westBound = getBound(dir0['lonWest'], dir1['lonWest']);
+    var northBound = getViewportBound(dir0['latNorth'], dir1['latNorth']);
+    var eastBound = getViewportBound(dir0['lonEast'], dir1['lonEast']);
+    var southBound = getViewportBound(dir0['latSouth'], dir1['latSouth']);
+    var westBound = getViewportBound(dir0['lonWest'], dir1['lonWest']);
     var bound = {north: northBound, east: eastBound, south: southBound, west: westBound};
     map.fitBounds(bound);
 }
+
+//region route functions
+
+function drawRouteSegments(routeSegments, color){
+    var polylines = [];
+    for (var i = 0; i < routeSegments.length; i++) {
+        polylines.push(
+            new google.maps.Polyline({
+                path: routeSegments[i],
+                geodesic: true,
+                strokeColor: color,
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            })
+        );
+    }
+    return polylines;
+}
+
+function buildBusMarkersForDirection(direction){
+    var busMarkers = [];
+    for (var i = 0; i < direction.length; i++) {
+        busMarkers.push(
+            new google.maps.Marker({
+                position: {lat: direction[i].lat, lng: direction[i].lng},
+                map: map,
+                icon: {url:"/transit-webApp/img/ic_directions_bus.png", anchor: new google.maps.Point(12,12)}
+            })
+        );
+
+        busMarkers.push(
+            new google.maps.Marker({
+                position: {lat: direction[i].lat, lng: direction[i].lng},
+                map: map,
+                icon: {
+                    anchor: new google.maps.Point(0,10),
+                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                    scale: 2,
+                    rotation: direction[i].heading}
+            })
+        );
+    }
+    return busMarkers;
+}
+
+//endregion
+
+//region bus functions
+
+var busDataIntervalId = -1;
+
+function drawBuses(routeId){
+    fetchBusData(routeId);
+    if (busDataIntervalId != -1)
+        clearInterval(busDataIntervalId);
+    busDataIntervalId = setInterval(function(){fetchBusData(routeId);}, 10 * 1000);     //update every 10 seconds
+}
+
+function fetchBusData(routeId){
+    getBusData(routeId).then(function(data){addBusMarkers(data);});
+}
+
+var busMarkers = [];
+
+function addBusMarkers(busCoords){
+    var bc_keys = Object.keys(busCoords);
+    var dir0 = busCoords[bc_keys[0]];
+    var dir1 = busCoords[bc_keys[1]];
+    var newBusMarkers = buildBusMarkersForDirection(dir0).concat(buildBusMarkersForDirection(dir1));
+
+    //clear existing markers before adding new ones
+    for (var m = 0; m < busMarkers.length; m++)
+        busMarkers[m].setMap(null);
+
+    $.each(newBusMarkers, function(index, value){value.setMap(map);});
+    busMarkers = newBusMarkers;
+}
+
+//endregion
