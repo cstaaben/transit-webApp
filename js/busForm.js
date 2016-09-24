@@ -13,6 +13,30 @@ $(document).ready(function() {
     getRoutes();
     initForm();
     setMenu();
+    
+    $("#divInputForm").form({
+    		    fields: {
+    		    	    location: {
+    		    	    	    identifier: 'location',
+    		    	    	    rules: [
+    		    	    	    	    {
+    		    	    	    	    	    type: 'empty',
+    		    	    	    	    	    prompt: 'Please enter a location'
+    		    	    	    	    }
+    		    	    	    ]
+    		    	    },
+    		    	    date: {
+				    identifier: 'stopDate',
+				    rules: [
+				    	    {
+				    	    	    type: 'empty',
+				    	    	    prompt: 'Please enter a date'
+				    	    }
+				    ]
+			    }
+    		    }
+    });
+    		    	    
 
     //console.log( "ready!" );
 
@@ -183,7 +207,6 @@ function getDateFormatted(dateTime) {
 
 
 function stopsValidation() {
-    console.log("stopsValidation");
     $(".invalid").show();
 }
 
@@ -202,7 +225,7 @@ function routeValidation() {
     }
 }
 
-//TODO: replace alert() with alerts as in https://getbootstrap.com/components/#alerts
+// saves route to cookie, displays modal error message from Semantic UI when necessary
 function saveFavoriteRoute() {
     var routeName = "Route: ";
     routeName += $("#allRoutes").find("option:selected").text();
