@@ -4,6 +4,7 @@ function getRoutes() {
 }
 
 function onRoutesReceived(data) {
+    console.log(data);
     var routes = data.routes;
     var necessaryRouteData = [];
 
@@ -36,173 +37,126 @@ function onRoutesReceived(data) {
 
 function getRoute() {
     var routeId = $("#allRoutes").val();
-    $.get(
-        "https://transit.land/api/v1/route_stop_patterns?&traversed_by=" +routeId,
-        function(data) {
-            var patterns = selectBestRouteStopPattern(data);
-            initRouteMap(patterns);
-        }
-    );
+    getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
-//TODO: tame this megafunction
-function initRouteMap(patterns) {
-    //Estimate center of map as the center coordinates in the geometry.coordinates array
-    var centerLon = patterns[0].geometry.coordinates[Math.floor(patterns[0].geometry.coordinates.length / 2)][0];
-    var centerLat = patterns[0].geometry.coordinates[Math.floor(patterns[0].geometry.coordinates.length / 2)][1];
+function initRouteMap(routeId, routeGeometry) {
+    drawRoute(routeGeometry);
+    drawBuses(routeId);
+    //TODO: draw stops
+
+    //TODO: scroll down to map
+    //$("html, body").animate({scrollTop: $(document).height()}, 1000);
+}
+
+function getViewportBound(boundA, boundB){
+    return (Math.abs(boundA) > Math.abs(boundB)) ? boundA : boundB;
+}
+
+function drawRoute(routeGeometry){
+    var rg_keys = Object.keys(routeGeometry);
+    var dir0 = routeGeometry[rg_keys[0]];
+    var dir1 = routeGeometry[rg_keys[1]];
+    var latCenter = dir0['latCenter'];
+    var lonCenter = dir1['lonCenter'];
+
     var mapDiv = document.getElementById('divMap');
     map = new google.maps.Map(mapDiv, {
-        center: {lat: centerLat, lng: centerLon},
+        center: {lat: latCenter, lng: lonCenter},
         zoom: 12
     });
 
-    $("#divMap").slideDown(500, function() {
-        google.maps.event.trigger(map, 'resize');
-        var bounds = new google.maps.LatLngBounds();
-        var routeCoords = [];
+    $("#divMap").slideDown(500);
 
-        var stopIds = "";
-        for (var p = 0; p < patterns.length; p++) {
-            //Extend the boundaries of the map to include all of the stops
-            //Also add each geometry point to the routeCoords, so we can draw the path
-            for (var c = 0; c < patterns[p].geometry.coordinates.length; c++) {
-                bounds.extend(new google.maps.LatLng(patterns[p].geometry.coordinates[c][1], patterns[p].geometry.coordinates[c][0]));
-                routeCoords.push({lat: patterns[p].geometry.coordinates[c][1], lng: patterns[p].geometry.coordinates[c][0]})
-            }
+    var dir0lines = drawRouteSegments(dir0['Points'], dir0['Color']);
+    var dir1lines = drawRouteSegments(dir1['Points'], dir1['Color']);
 
-            //Build a string of all of the onestop_ids for the request
-            for (var s = 0; s < patterns[p].stop_pattern.length; s++)
-                stopIds += patterns[p].stop_pattern[s] + ",";
-        }
-        stopIds = stopIds.slice(0, stopIds.length-1);   //remove trailing comma
+    $.each(dir0lines, function(index, value){value.setMap(map);});
+    $.each(dir1lines, function(index, value){value.setMap(map);});
 
-        //Request data for all of the stops in the route
-        $.getJSON("https://transit.land/api/v1/stops?onestop_id=" + stopIds,
-            function(data) {
-                var stops = data.stops;
-                var infoWindow = new google.maps.InfoWindow();
+    var northBound = getViewportBound(dir0['latNorth'], dir1['latNorth']);
+    var eastBound = getViewportBound(dir0['lonEast'], dir1['lonEast']);
+    var southBound = getViewportBound(dir0['latSouth'], dir1['latSouth']);
+    var westBound = getViewportBound(dir0['lonWest'], dir1['lonWest']);
+    var bound = {north: northBound, east: eastBound, south: southBound, west: westBound};
+    map.fitBounds(bound);
+}
 
-                //Create a marker for each of the stops and add it to the map.
-                for (var i = 0; i < stops.length; i++) {
-                    var newMarker = new google.maps.Marker({
-                        position: {lat: stops[i].geometry.coordinates[1], lng: stops[i].geometry.coordinates[0]},
-                        map: map,
-                        title: stops[i].name
-                    });
+//region route functions
 
-                    //Sort the routes by route name, so they show up in order when the user clicks on the marker
-                    stops[i].routes_serving_stop.sort(function(a, b) {
-                        return parseInt(a.route_name) - parseInt(b.route_name);
-                    });
+function drawRouteSegments(routeSegments, color){
+    var polylines = [];
+    for (var i = 0; i < routeSegments.length; i++) {
+        polylines.push(
+            new google.maps.Polyline({
+                path: routeSegments[i],
+                geodesic: true,
+                strokeColor: color,
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            })
+        );
+    }
+    return polylines;
+}
 
-                    //get the routes served by a stop
-                    var routes_served = "";
-                    for (var j = 0; j < stops[i].routes_serving_stop.length; j++) {
-                        routes_served += stops[i].routes_serving_stop[j].route_name;
-                        if (j < stops[i].routes_serving_stop.length - 1) {
-                            routes_served += ", ";
-                        }
-                    }
-
-                    //add marker content
-                    var content = '<div id="content"><h3 id="firstHeading" class="firstHeading">' + stops[i].name + '</h3><p>Connects with routes: ' + routes_served + ' </p></div>';
-                    google.maps.event.addListener(newMarker, 'click', (function(newMarker, map, content) {
-                        return function() {
-                            infoWindow.close();
-                            infoWindow.setContent(content);
-                            infoWindow.open(map, newMarker);
-                        };
-                    }(newMarker, map, content)));
-
-                    newMarker.setMap(map);
-                }
-            }
+function buildBusMarkersForDirection(direction){
+    var busMarkers = [];
+    for (var i = 0; i < direction.length; i++) {
+        busMarkers.push(
+            new google.maps.Marker({
+                position: {lat: direction[i].lat, lng: direction[i].lng},
+                map: map,
+                icon: {url:"/transit-webApp/img/ic_directions_bus.png", anchor: new google.maps.Point(12,12)}
+            })
         );
 
-        //Initialize the route path using the routeCoords
-        var routePath = new google.maps.Polyline({
-            path: routeCoords,
-            geodesic: true,
-            strokeColor: '#0099ff',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-
-        routePath.setMap(map);      //Attach the path to the map
-        map.fitBounds(bounds);      //Fit the map to include all of our coordinates
-
-        //window.scrollTo(0, document.body.scrollHeight);
-
-    });
-
-    //Ok, it just pops down. I can't figure out how to make it slide down smoothly
-    $("html, body").animate({scrollTop: $(document).height()}, 1000);
-
-}
-
-//chooses the "most correct" route_stop_pattern from a list of results, based on a set of criteria
-//TODO: choose route based on schedule for date input
-function selectBestRouteStopPattern(data){
-    var routeStopPatterns = data.route_stop_patterns;
-    if (routeStopPatterns.length === 1)
-        return routeStopPatterns[0];
-
-    //get routes which don't simply consist of n points for n stops
-    //see the first two paragraphs of https://transit.land/documentation/datastore/routes-and-route-stop-patterns.html
-    var roadbindingRoutes = routeStopPatterns.filter(function(routeStopPattern){
-        return routeStopPattern.is_generated === false;
-    });
-
-    if (roadbindingRoutes.length === 1)
-        return roadbindingRoutes;
-
-    //get the route with the most GTFS Identifiers
-    var bestRoute = getRouteWithMostGTFSIds(roadbindingRoutes);
-    roadbindingRoutes.splice(roadbindingRoutes.indexOf(bestRoute),1);   //remove from list
-
-    var GEOHASH_PRECISION = 7;      //7 chars of geohash precision for finding stops connecting "inbound" and "outbound" routes
-    var bestRouteFirstStopGeohash = extractGeohashFromOnestopId(bestRoute.stop_pattern[0]).substr(0, GEOHASH_PRECISION);
-    var bestRouteLastStopGeohash = extractGeohashFromOnestopId(bestRoute.stop_pattern[bestRoute.stop_pattern.length-1]).substr(0, GEOHASH_PRECISION);
-    var bestRouteStartSectors = [bestRouteFirstStopGeohash];
-        bestRouteStartSectors.push(GeoHash.calculateNeighborCodes(bestRouteFirstStopGeohash));
-    var bestRouteEndSectors = [bestRouteLastStopGeohash];
-        bestRouteEndSectors.push(GeoHash.calculateNeighborCodes(bestRouteLastStopGeohash));
-
-
-    //find the outbound to its inbound or inbound to its outbound
-    var potentialMateRoutes = roadbindingRoutes.filter(function(route){
-        var mateStartGeohash = extractGeohashFromOnestopId(route.stop_pattern[0]).substr(0, GEOHASH_PRECISION);
-        var mateEndGeohash = extractGeohashFromOnestopId(route.stop_pattern[route.stop_pattern.length-1]).substr(0, GEOHASH_PRECISION);
-
-        return bestRouteStartSectors.indexOf(mateEndGeohash) > -1 && bestRouteEndSectors.indexOf(mateStartGeohash) > -1;
-    });
-
-    if (potentialMateRoutes.length === 0)
-        return [bestRoute];
-
-    var mateRoute = getRouteWithMostGTFSIds(potentialMateRoutes);
-
-    return [bestRoute, mateRoute];
-}
-
-// onestop_ids have the form s-geohash-name
-function extractGeohashFromOnestopId(onestop_id){
-    onestop_id = onestop_id.substring(onestop_id.indexOf('-')+1);
-    onestop_id = onestop_id.substring(0, onestop_id.indexOf('-'));
-    return onestop_id;
-}
-
-function getRouteWithMostGTFSIds(routes){
-    var max_GTFS_Ids = 0;
-    for (var r = 0; r < routes.length; r++){
-        var num_GTFS_Ids = $.grep(routes[r].identifiers,
-            function(identifier){ return identifier.startsWith("gtfs://"); }).length;
-
-        if (num_GTFS_Ids > max_GTFS_Ids){
-            max_GTFS_Ids = num_GTFS_Ids;
-            routeWithMostGTFSIds = routes[r];
-        }
+        busMarkers.push(
+            new google.maps.Marker({
+                position: {lat: direction[i].lat, lng: direction[i].lng},
+                map: map,
+                icon: {
+                    anchor: new google.maps.Point(0,10),
+                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                    scale: 2,
+                    rotation: direction[i].heading}
+            })
+        );
     }
-
-    return routeWithMostGTFSIds;
+    return busMarkers;
 }
+
+//endregion
+
+//region bus functions
+
+var busDataIntervalId = -1;
+
+function drawBuses(routeId){
+    fetchBusData(routeId);
+    if (busDataIntervalId != -1)
+        clearInterval(busDataIntervalId);
+    busDataIntervalId = setInterval(function(){fetchBusData(routeId);}, 10 * 1000);     //update every 10 seconds
+}
+
+function fetchBusData(routeId){
+    getBusData(routeId).then(function(data){addBusMarkers(data);});
+}
+
+var busMarkers = [];
+
+function addBusMarkers(busCoords){
+    var bc_keys = Object.keys(busCoords);
+    var dir0 = busCoords[bc_keys[0]];
+    var dir1 = busCoords[bc_keys[1]];
+    var newBusMarkers = buildBusMarkersForDirection(dir0).concat(buildBusMarkersForDirection(dir1));
+
+    //clear existing markers before adding new ones
+    for (var m = 0; m < busMarkers.length; m++)
+        busMarkers[m].setMap(null);
+
+    $.each(newBusMarkers, function(index, value){value.setMap(map);});
+    busMarkers = newBusMarkers;
+}
+
+//endregion
