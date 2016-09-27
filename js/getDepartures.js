@@ -84,14 +84,14 @@ function getStop(lat, lon, submitDate, submitTime) {
 
 function getDepartures(stop, submitDate, submitTime) {
 
-    /*
+    
     var t = submitTime.split(":");
     var e = parseInt(t[0]) + 3;
-    var res = submitTime + "," + e + ":" + t[1] + ":" + t[2];
-    */
+    var resTime = (e-4) + ":" + t[1] + ":" + t[2] + "," + e + ":" + t[1] + ":" + t[2];
+    
 
     var url = "https://transit.land/api/v1/schedule_stop_pairs?operator_onestop_id=o-c2kx-spokanetransitauthority&origin_onestop_id=" +
-            stop.onestop_id + "&date=" + submitDate;
+            stop.onestop_id + "&date=" + submitDate + "&origin_departure_between=" + resTime;
 
     $.get({
         url: url,

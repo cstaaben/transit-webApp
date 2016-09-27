@@ -349,3 +349,7 @@ tr.favesRow:hover{
 .tripFavBtn{
 	padding-bottom: 50px;
 }
+
+.error.message ul {
+	list-style: square outside;
+}

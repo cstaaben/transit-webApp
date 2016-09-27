@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" type="text/css" href="css/table.css">
@@ -65,30 +66,57 @@
 		<div class="ui small modal" id="favExistsAlert">
 			<i class="close icon"></i>
 			<div class="header">Favorite Exists</div>
-			<div class="image content"><i class="warning sign icon"></i></div>
-			<div class="description" id="favExistsMsg"></div>
+			<div class="large icon image content"><i class="large warning sign icon"></i></div>
+			<div class="content" id="favExistsMsg"></div>
 			<div class="actions">
 				<div class="ui small blue button" id="favExistsBtn">OK</div>
+			</div>
+		</div>
+		
+		<div class="ui small modal" id="favSavedAlert">
+			<i class="close icon"></i>
+			<div class="header">Favorite Saved</div>
+			<div class="image content"><i class="large empty star icon"></i></div>
+			<div class="content" id="favSavedMsg"></div>
+			<div class="actions">
+				<div class="ui small blue button" id="favSavedBtn">OK</div>
+			</div>
+		</div>
+		
+		<div class="ui small modal" id="delFavConfirm">
+			<i class="close icon"></i>
+			<div class="header">Delete Favorite</div>
+			<div class="image content"><i class="large help icon"></i></div>
+			<div class="content" id="delFavMsg"></div>
+			<div class="actions">
+				<div class="ui small red button" id="delFavConfBtn">Delete</div>
+				<div class="ui small button" id="delFavCancelBtn">Cancel</div>
 			</div>
 		</div>
 	
 		<div id="divFindStops" class="formBody">
 
+			<div class="ui error message" style="display: none; list-style: circle outside initial;">
+				<div class="header">Submission Error</div>
+			</div>
+		
 			<div id="divInputForm" class="ui large form">
 				<div class="field">
-					<p class="invalid" style="display: none;">* Please Enter Your Location</p>
+					<label>Location</label>
 					<input type="text" id="inputLocation" placeholder="Location" autofocus><br>
 				</div>
 
 				<div class="two fields">
 					<div class="field">
+						<label>Date</label>
 						<input type="date" id="date" placeholder="Date">
 					</div>
 					<div class="field">
+						<label>Time</label>
 						<input type="time" id="time" placeholder="Time">
 					</div>
 				</div>
-				<button class="ui huge blue button" id="btnSubmit">Submit</button>
+				<button class="ui huge blue submit button" id="btnSubmit">Submit</button>
 			</div>
 
 		</div>
@@ -100,15 +128,18 @@
 				<p class="invalid destination">* Please Enter A Destination</p>
 				<div class="two fields">
 					<div class="field">
+						<label>Starting Point</label>
 						<input id="inputTripStarting" type="text" placeholder="Starting Place">
 					</div>
 
 					<div class="field">
+						<label>Destination</label>
 						<input id="inputTripDestination" type="text" placeholder="Destination">
 					</div>
 				</div>
 				<div class="three fields">
 					<div class="field">
+						<label>Date</label>
 						<input id="date2" type="date">
 					</div>
 					<div class="field">
@@ -118,6 +149,7 @@
 						</select>
 					</div>
 					<div class="field">
+						<label>Time</label>
 						<input type="time" id="time2">
 					</div>
 				</div>

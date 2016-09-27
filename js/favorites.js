@@ -12,6 +12,8 @@ $(document).ready(function() {
     } else { 											//favorites cookie does already exist
         printFavorites(favorites);
     }
+    
+    $("#delFavCancelBtn").click(function() { $("#delFavConfirm").modal("hide"); });
 
     //TODO: implement favorites usage
     $(".btnFave")
@@ -31,17 +33,20 @@ $(document).ready(function() {
 });
 
 function addToFaves(routeName, routeId) {
-//    console.log(routeName);
-    console.log(routeId);
+    //console.log(routeName);
+    //console.log(routeId);
 
     var favorites = getFavorites();
     if (favorites === undefined)
         favorites = [];
    
    var rid = JSON.stringify(routeId);
+   //console.log(rid);
 
     var route = {id: rid, name: routeName};
+    
     favorites.push(route);
+    //console.log(favorites);
     cleanFavorites();
     saveFavorites(favorites);
     printFavorites(getFavorites());
@@ -79,21 +84,29 @@ function onFavoriteDelBtnClick(favoriteId) {
             deleting = favorites[f];
         }
     } while (f++ < favorites.length-1);
+    
+    //console.log(newFaves);
 
-    if (confirm("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?")) {
-        cleanFavorites();
-        saveFavorites(newFaves);
-        if (newFaves.length > 0) {
-            printFavorites(getFavorites());
-        } else {
-            setNoFavesMsg();
-        }
-    }
-
-    $(".btnDelFave").click(function() {
-        var ddata = parseInt($(this).attr("value"));
-        onFavoriteDelBtnClick(ddata);
-    });
+	$("#delFavMsg").empty().append("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?");
+	$("#delFavConfirm").modal("show");
+	$("#delFavConfBtn").click(newFaves, function() {
+	//if(confirm("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?")) {
+			cleanFavorites();
+			saveFavorites(newFaves);
+			//console.log(getFavorites());
+			if (newFaves.length > 0) {
+			  printFavorites(getFavorites());
+			} else {
+			  setNoFavesMsg();
+			}
+			
+			$("#delFavConfirm").modal("hide");
+			
+			$(".btnDelFave").click(function() {
+					var ddata = parseInt($(this).attr("value"));
+					onFavoriteDelBtnClick(ddata);
+			});
+	});
 }
 
 //cleans the favorites table
@@ -135,7 +148,7 @@ function printFavorites(favorites) {
 						<td class="favName"><span>' + favorites["name"] + '</span></td>';
 
         div += ('<td class="faveTd">\
-				<button id="' + favorites["name"] + '" data-id="' + favorites["id"] + '" class="ui icon button btnFave">\
+				<button id="' + favorites["name"] + '" data-id=' + favorites["id"] + ' class="ui icon button btnFave">\
 					<i class="bus icon"></i>\
 				</button></td>');
         div += "</tr>";

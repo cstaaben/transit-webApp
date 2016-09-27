@@ -12,31 +12,7 @@ $(document).ready(function() {
 
     getRoutes();
     initForm();
-    setMenu();
-    
-    $("#divInputForm").form({
-    		    fields: {
-    		    	    location: {
-    		    	    	    identifier: 'location',
-    		    	    	    rules: [
-    		    	    	    	    {
-    		    	    	    	    	    type: 'empty',
-    		    	    	    	    	    prompt: 'Please enter a location'
-    		    	    	    	    }
-    		    	    	    ]
-    		    	    },
-    		    	    date: {
-				    identifier: 'stopDate',
-				    rules: [
-				    	    {
-				    	    	    type: 'empty',
-				    	    	    prompt: 'Please enter a date'
-				    	    }
-				    ]
-			    }
-    		    }
-    });
-    		    	    
+    setMenu(); 
 
     //console.log( "ready!" );
 
@@ -44,7 +20,8 @@ $(document).ready(function() {
     $("#btnTripSubmit").click(tripSubmit);
     $("#btnRouteSubmit").click(getRoute);
     $("#fullRouteAddFave").click(saveFavoriteRoute);
-    $("#favExistsBtn").click(function() { $(".ui.small.modal").modal('hide'); });
+    $("#favExistsBtn").click(function() { $("#favExistsAlert").modal('hide'); });
+    $("#favSavedBtn").click(function() { $("#favSavedAlert").modal("hide"); });
 });
 
 function getDate() {
@@ -87,12 +64,12 @@ function initForm() {
     $("#date").val(currentDate)
 }
 
-function submitClick() {
+function submitClick() {	
     var locationToSearch = $("#inputLocation").val();
     if (locationToSearch == "") {
-        console.log("empty Location");
         stopsValidation();
     } else {
+    	   $(".error.message").hide();
         $(".invalid").hide();
         $("#divStops").slideDown(500);
 
@@ -111,11 +88,12 @@ function submitClick() {
 
 function tripSubmit() {
     $(".invalid").hide();
+    $(".error .message").hide();
     var origin = $("#inputTripStarting").val();
     var destination = $("#inputTripDestination").val();
 
     if (origin == "" || destination == "") {
-        routeValidation();
+    	   routeValidation();
         return;
     }
 
@@ -209,21 +187,58 @@ function getDateFormatted(dateTime) {
 
 
 function stopsValidation() {
-    $(".invalid").show();
+    //$(".invalid").show();
+    $(".ui.error.message").show();
+    $("#divFindStops").form({
+    		    fields: {
+    		    	    location: {
+    		    	    	    identifier: 'inputLocation',
+    		    	    	    rules: [
+    		    	    	    	    {
+    		    	    	    	    	    type: 'empty',
+    		    	    	    	    	    prompt: 'Please enter a location'
+    		    	    	    	    }
+    		    	    	    ]
+    		    	    },
+    		    	    date: {
+				    identifier: 'date',
+				    rules: [
+				    	    {
+				    	    	    type: 'empty',
+				    	    	    prompt: 'Please enter a date'
+				    	    }
+				    ]
+			    },
+			    time: {
+			    	    identifier: 'time',
+			    	    rules: [
+			    	    	    {
+			    	    	    	    type: 'empty',
+			    	    	    	    prompt: 'Please enter a time'
+			    	    	    }
+			    	    ]
+			    }
+    		    }
+    });
 }
 
 function routeValidation() {
-    var origin = $("#starting").val();
-    var destination = $("#destination").val();
+    var origin = $("#inputTripStarting").val();
+    var destination = $("#inputTripDestination").val();
+    
+    console.log("starting: " + origin + "\ndest: " + destination);
 
     if (origin == "") {
         $(".start").show();
+        console.log("invalid start");
     }
     else if (destination == "") {
         $(".destination").show();
+        console.log("invalid dest");
     }
     if (origin == "" && destination == "") {
         $(".invalid").show();
+        console.log("invalid both");
     }
 }
 
@@ -232,13 +247,16 @@ function saveFavoriteRoute() {
     var routeName = "Route: ";
     routeName += $("#allRoutes").find("option:selected").text();
     var routeId = $("#allRoutes").val();
+    //console.log(routeName + "\n" + routeId);
 
     if (getFavorites() !== undefined && faveExists(routeName)) {
         //alert(routeName + " is already in your favorites!");
         $("#favExistsMsg").empty().append($("#allRoutes").find("option:selected").text() + " is already in your favorites!");
-        $('.ui.small.modal').modal('show');
+        $('#favExistsAlert').modal('show');
     } else {
         addToFaves(routeName, routeId);
-        alert("favorite saved: " + routeName);
+        //alert("favorite saved: " + routeName);
+        $("#favSavedMsg").empty().append(routeName + " has been saved to your favorites.");
+        $("#favSavedAlert").modal("show");
     }
 }
