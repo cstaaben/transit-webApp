@@ -54,9 +54,8 @@ function getViewportBound(boundA, boundB){
 }
 
 function drawRoute(routeGeometry){
-    var rg_keys = Object.keys(routeGeometry);
-    var dir0 = routeGeometry[rg_keys[0]];
-    var dir1 = routeGeometry[rg_keys[1]];
+    var dir0 = routeGeometry[0];
+    var dir1 = routeGeometry[1];
     var latCenter = dir0['latCenter'];
     var lonCenter = dir1['lonCenter'];
 
@@ -68,8 +67,8 @@ function drawRoute(routeGeometry){
 
     $("#divMap").slideDown(500);
 
-    var dir0lines = drawRouteSegments(dir0['Points'], dir0['Color']);
-    var dir1lines = drawRouteSegments(dir1['Points'], dir1['Color']);
+    var dir0lines = buildPolylines(dir0['Points'], dir0['Color']);
+    var dir1lines = buildPolylines(dir1['Points'], dir1['Color']);
 
     $.each(dir0lines, function(index, value){value.setMap(map);});
     $.each(dir1lines, function(index, value){value.setMap(map);});
@@ -84,7 +83,7 @@ function drawRoute(routeGeometry){
 
 //region route functions
 
-function drawRouteSegments(routeSegments, color){
+function buildPolylines(routeSegments, color){
     var polylines = [];
     for (var i = 0; i < routeSegments.length; i++) {
         polylines.push(

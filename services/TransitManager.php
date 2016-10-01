@@ -28,20 +28,16 @@ class TransitManager {
     }
 
     static function getRouteGeometry(string $route_onestop_id) : string {
-        $results = self::getLineDirIdsFromRouteOnestopId($route_onestop_id);
-        $routeLines = [];
+        $results = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
 
-        //request and format data for each direction
-        foreach ($results as $direction) {
-            $request = self::buildLineTraceRequest($direction['lineDirId']);
-            $responseJson = self::requestInfoWebData($request);
-            $geometry = self::buildGeometryFromResult($direction['dirName'], $responseJson);
-            array_push($routeLines, $geometry);
+        $geometries = [];
+        foreach ($results as $result) {
+            $lineDirId = $result['lineDirId'];
+            $geometries[] = json_decode(DatabaseAccessLayer::getRouteGeometryByLineDirId($lineDirId));
         }
-        $json = self::formatArrayToJsonObject($routeLines);
 
         header('Content-Type: application/json');
-        return $json;
+        return json_encode($geometries);
     }
 
     //endregion
@@ -59,24 +55,24 @@ class TransitManager {
     private static function makeSTARequestWithResource(string $request, string $resource) : string {
         $use_proxy = strtolower(parse_ini_file(CONFIG_INI, true)['general']['use_proxies']) == 'true';
         if ($use_proxy)
-            return self::makeRequestThroughProxy($request, $resource);
+            return self::makeRequestThroughProxy($request, $resource)['body'];
         else
-            return self::makeSTArequest($request, $resource);
+            return self::makeSTArequest($request, $resource)['body'];
     }
 
-    private static function makeRequestThroughProxy(string $request, string $resource) : string {
+    private static function makeRequestThroughProxy(string $request, string $resource) : array {
         $proxy = "";
-        do {
-            $proxy = DatabaseAccessLayer::getNextProxy($proxy);
-            $response = self::makeSTArequest($request, $resource, $proxy);
-        } while (empty($response) || $response['statusCode'] != 200);
-
+        //do {
+        $proxy = DatabaseAccessLayer::getNextProxy($proxy);
+        $response = self::makeSTArequest($request, $resource, $proxy);
+        //} while (!self::isResponseValid($response));
         return $response;
     }
 
-    private static function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy = "") : string {
-
-        $requestHeaders = ['Content-Type: application/json',
+    private static function makeSTArequest(string $request, string $subdir, string $IPv4_Proxy = "") : array {
+        $requestHeaders = [
+            //'Accept: application/json',
+            'Content-Type: application/json',
             'Host: tripplanner.spokanetransit.com:8007',
             'Origin: http://tripplanner.spokanetransit.com:8007',
             'Referer: http://tripplanner.spokanetransit.com:8007/'];
@@ -84,7 +80,8 @@ class TransitManager {
         $ch = curl_init("http://tripplanner.spokanetransit.com:8007/$subdir");
         if (!empty($IPv4_Proxy)) {
             curl_setopt($ch, CURLOPT_PROXY, $IPv4_Proxy);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+            //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+            curl_setopt($ch, CURLOPT_PROXYPORT, 80);
         }
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
@@ -92,22 +89,22 @@ class TransitManager {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         //curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-
         $response = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         curl_close($ch);
+        if (empty($response))
+            return $response;
 
-        //$headers = substr($response, 0, $header_size);
+        $headers = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
-
-        return $body;
+        return ['headers' => $headers, 'body' => $body];
     }
 
     //endregion
 
     //region STA request helpers
 
-    private static function getLineDirIdsFromRouteOnestopId($route_onestop_id) : array {
+    static function getLineDirIdsFromRouteOnestopId($route_onestop_id) : array {
         try {
             $lineDirIds = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
         } catch (NoResultsException $exception) {
@@ -119,10 +116,6 @@ class TransitManager {
 
     private static function buildTravelPointsRequest(string $lineDirId) : string {
         return '{"version":"1.1","method":"GetTravelPoints","params":{"travelPointsReqs":[{"lineDirId":"' . $lineDirId . '","callingApp":"RMD"}],"interval":10}}';
-    }
-
-    private static function buildLineTraceRequest(string $lineDirId) : string {
-        return '{"version":"1.1","method":"GetLineTrace","params":{"GetLineTraceRequest":{"LineDirId":' . $lineDirId . '}}}';
     }
 
     private static function buildBusDataFromResult(string $dirName, string $json) : string {
@@ -142,7 +135,7 @@ class TransitManager {
         return $returnJson;
     }
 
-    private static function formatArrayToJsonObject(array $array) : string {
+    static function formatArrayToJsonObject(array $array) : string {
         $json = "{";
         for ($i = 0; $i < count($array); $i++){
             $json .= $array[$i];
@@ -153,18 +146,10 @@ class TransitManager {
         return $json;
     }
 
-    private static function buildGeometryFromResult(string $dirName, string $json) : string {
-        $lineData = json_decode($json, true)['result'][0]['GoogleMap'];
-        $points = [];
-        foreach ($lineData as $segment)
-            array_push($points, $segment['Points']);
-        $lineData[0]['Points'] = $points;
-        $lineData = $lineData[0];
-        $lineData = json_encode($lineData);
-        $lineData = str_replace("Lat", "lat", $lineData);
-        $lineData = str_replace("Lon", "lng", $lineData);
-        $returnJson = "\"$dirName\":$lineData";
-        return $returnJson;
+    private static function isResponseValid($response) : bool{
+        return !empty($response)
+        && strpos($response['headers'], "200 OK") != false
+        && strpos($response['headers'], "application/json") != false;
     }
 
     //endregion

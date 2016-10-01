@@ -96,10 +96,14 @@ function loadAddresses(){
 
     $addresses = loadAddressFile();
     $values = buildValuesFromAddresses($addresses);
-    insertAddressesIntoDatabase($values);
-
-    if (Options::$verboseMode)
+    if (Options::$verboseMode) {
         echo("DONE\n");
+        echo("inserting addresses into database...");
+    }
+
+    insertAddressesIntoDatabase($values);
+    if (Options::$verboseMode)
+      echo("DONE\n");
 }
 
 function buildValuesFromAddresses(array $addresses) : string {
@@ -110,7 +114,7 @@ function buildValuesFromAddresses(array $addresses) : string {
     return $values;
 }
 
-function loadAddressFile() : string {
+function loadAddressFile() : array {
     $addresses = "";
     if (!empty(Options::$inFilename)) {
         $fin = file_get_contents(Options::$inFilename);
@@ -126,6 +130,8 @@ function loadAddressFile() : string {
         $addresses = explode("\n", $fin);
     }
 
+    //remove empty elements
+    $addresses = array_merge(array_diff($addresses, [""]));
     return $addresses;
 }
 
@@ -141,7 +147,7 @@ function insertAddressesIntoDatabase(string $values) : \PDOStatement {
             echo ("truncated table proxies... ");
     }
 
-    $query = "INSERT INTO proxies (address) VALUE ($values) ON DUPLICATE KEY UPDATE address=address;";
+    $query = "INSERT INTO proxies (address) VALUES $values ON DUPLICATE KEY UPDATE address=address;";
     $statement = $pdo->query($query);
     if ($statement === False)
         echo("ERROR: database INSERT failed ");

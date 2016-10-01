@@ -41,7 +41,7 @@ class DatabaseAccessLayer {
 
     }
 
-    static function convert_lineDirId(int $lineDirId) : string {
+    static function convert_lineDirId(int $lineDirId) : array {
         $clean_id = self::sanitizeInt($lineDirId);
         $query = 'CALL `GETROUTEID`(:id);';
 
@@ -53,6 +53,14 @@ class DatabaseAccessLayer {
         return self::queryParameterless($query)[0];
     }
 
+    static function getRouteGeometryByLineDirId(int $lineDirId) : string {
+        $clean_id = self::sanitizeInt($lineDirId);
+        $query = 'CALL `GETROUTEGEOMETRYBYLINEDIRID`(:id)';
+
+        $result = self::queryById($clean_id, $query, PDO::PARAM_STR);
+        return $result[0]['route_geometry'];
+    }
+
     /**
      * @param string $excludeProxy don't return this proxy
      * @return string a new proxy
@@ -61,7 +69,7 @@ class DatabaseAccessLayer {
         $oldId = -1;
         $numProxies = self::getNumberOfProxies();
         do {
-            $newId = self::getRandomInt(1, $numProxies, $oldId);
+            $newId = self::getRandomInt(1, $numProxies+1, $oldId);
             $proxy = self::getProxyById($newId);
         } while($excludeProxy == $proxy);
         return $proxy;

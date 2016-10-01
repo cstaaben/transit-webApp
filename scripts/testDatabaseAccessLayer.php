@@ -107,6 +107,15 @@ function testPreparedStatements() {
     $dbo = DatabaseAccessLayer::getDatabaseConnection();
     $dbo->query("DELETE FROM route_ids WHERE route_onestop_id='r-asdfgh-00';");
     echo("\tPASSED\n");
+
+    echo("   testing GETROUTEGEOMETRYBYLINEDIRID...");
+    try {
+        $result = DatabaseAccessLayer::getRouteGeometryByLineDirId("53210");
+    } catch (NoResultsException $nex) {
+        $msg = $nex->getMessage();
+        echo("\twarning: $msg\n\t\t\t");
+    }
+    echo("\tPASSED\n");
 }
 
 function testProxySetup(){

@@ -27,7 +27,7 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
 #### Database setup:
 1. Import sta_webapp.sql with phpMyAdmin
 2. Create a database user with **SELECT** and **EXECUTE** privileges. These credentials will be used by server responses.
-3. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, EXECUTE**. These credentials will be used by command-line scripts.
+3. Create another user with the following privileges: **SELECT, INSERT, UPDATE, DELETE, EXECUTE, DROP**. These credentials will be used by command-line scripts.
 4. Create a file in the _transit-webApp/services_ directory called _creds.ini_
 5. Format the file like so:
 
