@@ -11,7 +11,7 @@ class Options:
     url = "http://tripplanner.spokanetransit.com:8007/RealTimeManager"
     payload = "{\"version\":\"1.1\",\"method\":\"GetStopsForLine\"," \
               "\"params\":{\"reqLineDirIds\":[{\"lineDirId\":52640}]}}"
-    headers = {'content-type': 'application/json'}
+    headers = {'accept': 'application/json', 'content-type': 'application/json'}
 
     # program options
     print_addresses_only = False
@@ -161,7 +161,7 @@ def make_request(address):
     else:
         end_time = time()
         time_elapsed = end_time - start_time
-        if response.status_code == 200:
+        if response.status_code == 200 and 'json' in response.headers['content-type']:
             if Options.print_addresses_only:
                 print(address)
             else:

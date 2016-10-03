@@ -68,8 +68,9 @@ class DatabaseAccessLayer {
     static function getNextProxy(string $excludeProxy="") : string {
         $oldId = -1;
         $numProxies = self::getNumberOfProxies();
+
         do {
-            $newId = self::getRandomInt(1, $numProxies+1, $oldId);
+            $newId = self::getRandomInt(1, $numProxies, $oldId);
             $proxy = self::getProxyById($newId);
         } while($excludeProxy == $proxy);
         return $proxy;
@@ -79,7 +80,8 @@ class DatabaseAccessLayer {
         $clean_id = self::sanitizeInt($id);
         $query = 'CALL `GETPROXYBYID`(:id);';
 
-        return self::queryById($clean_id, $query, PDO::PARAM_INT);
+        $result = self::queryById($clean_id, $query, PDO::PARAM_INT)[0];
+        return $result['address'];
     }
 
     private static function queryById($id, string $query, int $type) {
@@ -122,9 +124,6 @@ class DatabaseAccessLayer {
     //endregion
 
     static function getRandomInt(int $min, int $max, int $exclude=NAN) : int {
-        if ($min >= $max)
-            throw new \Exception("min must be strictly less than max");
-
         do {
             $newInt = rand($min, $max);
         } while ($newInt === $exclude);

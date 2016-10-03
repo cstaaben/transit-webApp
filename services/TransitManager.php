@@ -54,6 +54,7 @@ class TransitManager {
 
     private static function makeSTARequestWithResource(string $request, string $resource) : string {
         $use_proxy = strtolower(parse_ini_file(CONFIG_INI, true)['general']['use_proxies']) == 'true';
+
         if ($use_proxy)
             return self::makeRequestThroughProxy($request, $resource)['body'];
         else
@@ -92,6 +93,7 @@ class TransitManager {
         $response = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         curl_close($ch);
+
         if (empty($response))
             return $response;
 
