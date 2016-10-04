@@ -41,7 +41,7 @@ class DatabaseAccessLayer {
 
     }
 
-    static function convert_lineDirId(int $lineDirId) : string {
+    static function convert_lineDirId(int $lineDirId) : array {
         $clean_id = self::sanitizeInt($lineDirId);
         $query = 'CALL `GETROUTEID`(:id);';
 
@@ -53,6 +53,14 @@ class DatabaseAccessLayer {
         return self::queryParameterless($query)[0];
     }
 
+    static function getRouteGeometryByLineDirId(int $lineDirId) : string {
+        $clean_id = self::sanitizeInt($lineDirId);
+        $query = 'CALL `GETROUTEGEOMETRYBYLINEDIRID`(:id)';
+
+        $result = self::queryById($clean_id, $query, PDO::PARAM_STR);
+        return $result[0]['route_geometry'];
+    }
+
     /**
      * @param string $excludeProxy don't return this proxy
      * @return string a new proxy
@@ -60,6 +68,7 @@ class DatabaseAccessLayer {
     static function getNextProxy(string $excludeProxy="") : string {
         $oldId = -1;
         $numProxies = self::getNumberOfProxies();
+
         do {
             $newId = self::getRandomInt(1, $numProxies, $oldId);
             $proxy = self::getProxyById($newId);
@@ -71,7 +80,8 @@ class DatabaseAccessLayer {
         $clean_id = self::sanitizeInt($id);
         $query = 'CALL `GETPROXYBYID`(:id);';
 
-        return self::queryById($clean_id, $query, PDO::PARAM_INT);
+        $result = self::queryById($clean_id, $query, PDO::PARAM_INT)[0];
+        return $result['address'];
     }
 
     private static function queryById($id, string $query, int $type) {
@@ -114,9 +124,6 @@ class DatabaseAccessLayer {
     //endregion
 
     static function getRandomInt(int $min, int $max, int $exclude=NAN) : int {
-        if ($min >= $max)
-            throw new \Exception("min must be strictly less than max");
-
         do {
             $newInt = rand($min, $max);
         } while ($newInt === $exclude);
