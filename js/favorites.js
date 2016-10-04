@@ -18,12 +18,7 @@ $(document).ready(function() {
     //TODO: implement favorites usage
     $(".btnFave")
         .unbind("click")
-        .click(function() {
-            var stopID = $(this).attr("data-id");
-            var stopName = $(this).attr("id");
-            console.log(stopID);
-            console.log(stopName);
-        });
+        .click(onFavBtnClicked);
 
     $(".btnDelFave").click(function() {
         var ddata = parseInt($(this).attr("value"));
@@ -31,6 +26,12 @@ $(document).ready(function() {
     });
 
 });
+
+function onFavBtnClicked() {
+	var stopID = $(this).attr("data-id");
+	var stopName = $(this).attr("id");
+	
+}
 
 function addToFaves(routeName, routeId) {
     //console.log(routeName);
