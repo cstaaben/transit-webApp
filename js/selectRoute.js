@@ -1,4 +1,4 @@
-function getRoutes() {
+function requestRoutes() {
     var link = "https://transit.land/api/v1/routes?operated_by=o-c2kx-spokanetransitauthority";
     $.getJSON(link, "", onRoutesReceived);
 }
@@ -34,11 +34,6 @@ function onRoutesReceived(data) {
     }
 
 }// end onRoutesReceived
-
-function getRoute() {
-    var routeId = $("#allRoutes").val();
-    getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
-}
 
 function initRouteMap(routeId, routeGeometry) {
     drawRoute(routeGeometry);

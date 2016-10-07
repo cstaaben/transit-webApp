@@ -1,70 +1,91 @@
 var map;
 
+//region initialization
+
 $(document).ready(function() {
 
-    $("#divMap").hide();
-    $(".menu .item").tab();
-    //$("p").css("padding", "10px");
-    $("#routeMap").hide();
-    $("#divStops").hide();
-    $("h3").hide();
-    $(".ui.modal").modal('hide');
+    $(".menu .item").tab(); //initialize semantic-ui tabs
 
-    getRoutes();
-    initForm();
-    setMenu(); 
+    //fetch and populate
+    requestRoutes();
+    populateDateTimeFieldsForDiv("#divPlanTrip");
 
     //console.log( "ready!" );
 
-    $("#btnSubmit").click(submitClick);
-    $("#btnTripSubmit").click(tripSubmit);
-    $("#btnRouteSubmit").click(getRoute);
-    $("#fullRouteAddFave").click(saveFavoriteRoute);
+    //setup event handlers
+    initMenuHandlers();
+    $("#btnSubmitStops").click(onSubmitStops);
+    $("#btnSubmitTrip").click(onSubmitTrip);
+    $("#btnSubmitRoute").click(onSubmitRoute);
+    $("#btnAddFaveRoute").click(onSaveFavoriteRoute);
     $("#favExistsBtn").click(function() { $("#favExistsAlert").modal('hide'); });
     $("#favSavedBtn").click(function() { $("#favSavedAlert").modal("hide"); });
 });
 
-function getDate() {
-    //GET CURRENT DATE/TIME
-    var date = new Date($.now());
+function initMenuHandlers() {
 
-    //SET TIME AND DATE DATA TO WORK FOR INPUT FIELDS
-    var month = date.getMonth() + 1;
-    if (month < 10)
-        month = "0" + month;
+    $(".planTripMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        hideForms();
+        $("#divPlanTrip").show();
+        populateDateTimeFieldsForDiv("#divPlanTrip");
+    });
 
-    var day = date.getDate();
-    if (day < 10)
-        day = "0" + day;
+    $(".showRoutesMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        hideForms();
+        $("#divViewRoutes").show();
+    });
 
-    //SET TIME AND DATE TO CORRECT FORMAT
-    return date.getFullYear() + "-" + month + "-" + day;
+    $(".findStopsMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        hideForms();
+        $("#divFindStops").show();
+        populateDateTimeFieldsForDiv("#divFindStops")
+    });
 
+    $(".favoritesMenu").click(function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        hideForms();
+        $("#divFavorites").show();
+    });
+
+    $(".menuTab").click(function(){clearInterval(busDataIntervalId);});   //stop requesting bus data
 }
 
-function getTime() {
-    var date = new Date($.now());
-    var hour = date.getHours();
-    if (hour < 10)
-        hour = "0" + hour;
+//endregion
 
-    var minutes = date.getMinutes();
-    if (minutes < 10)
-        minutes = "0" + minutes;
+//region event handlers
 
-    return hour + ":" + minutes;
+function onSubmitTrip() {
+    $(".invalid").hide();
+    $(".error .message").hide();
+    var origin = $("#inputTripStarting").val();
+    var destination = $("#inputTripDestination").val();
+
+    if (origin == "" || destination == "") {
+        showRouteValidationWarnings();
+        return;
+    }
+
+    $("#routes").empty();
+    var divPlanTrip = $("#divPlanTrip");
+    var date = divPlanTrip.find(".dateField").val();
+    var time = divPlanTrip.find(".timeField").val();
+    var sortBy = $("#timeType").val() === "arriveBy";
+    getTrips(origin, destination, date, time, sortBy);
 }
 
-function initForm() {
-    //POPULATE FORM
-    var currentTime = getTime;
-    var currentDate = getDate;
-
-    $("#time").val(currentTime);
-    $("#date").val(currentDate)
+function onSubmitRoute() {
+    var routeId = $("#allRoutes").val();
+    getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
-function submitClick() {	
+function onSubmitStops() {
     var locationToSearch = $("#inputLocation").val();
     if (locationToSearch == "") {
         stopsValidation();
@@ -86,58 +107,29 @@ function submitClick() {
     }//end else
 }
 
-function tripSubmit() {
-    $(".invalid").hide();
-    $(".error .message").hide();
-    var origin = $("#inputTripStarting").val();
-    var destination = $("#inputTripDestination").val();
+// saves route to cookie, displays modal error message from Semantic UI when necessary
+function onSaveFavoriteRoute() {
+    var routeName = "Route: ";
+    var allRoutes = $("#allRoutes");
+    routeName += allRoutes.find("option:selected").text();
+    var routeId = allRoutes.val();
+    //console.log(routeName + "\n" + routeId);
 
-    if (origin == "" || destination == "") {
-    	   routeValidation();
-        return;
+    if (getFavorites() !== undefined && faveExists(routeName)) {
+        //alert(routeName + " is already in your favorites!");
+        $("#favExistsMsg").empty().append(allRoutes.find("option:selected").text() + " is already in your favorites!");
+        $('#favExistsAlert').modal('show');
+    } else {
+        addToFaves(routeName, routeId);
+        //alert("favorite saved: " + routeName);
+        $("#favSavedMsg").empty().append(routeName + " has been saved to your favorites.");
+        $("#favSavedAlert").modal("show");
     }
-
-    $("#routes").empty();
-    var date = $("#date2").val();
-    var time = $("#time2").val();
-    var sortBy = $("#timeType").val() === "arriveBy";
-    getTrips(origin, destination, date, time, sortBy);
 }
 
+//endregion
 
-function setMenu() {
-    $(".findStopsMenu").click(function() {
-        $("li.active").removeClass("active");
-        $(this).addClass("active");
-        hideForms();
-        $("#divFindStops").show();
-    });
-
-    $(".planTripMenu").click(function() {
-        $("li.active").removeClass("active");
-        $(this).addClass("active");
-        hideForms();
-        $("#divPlanTrip").show();
-        populateRouteForm();
-    });
-
-    $(".showRoutesMenu").click(function() {
-        $("li.active").removeClass("active");
-        $(this).addClass("active");
-        hideForms();
-        $("#divGetRoute").show();
-        populateRouteDate();
-    });
-
-    $(".favoritesMenu").click(function() {
-        $("li.active").removeClass("active");
-        $(this).addClass("active");
-        hideForms();
-        $("#divFavorites").show();
-    });
-
-    $(".menuTab").click(function(){clearInterval(busDataIntervalId);});   //stop requesting bus data
-}
+//region helper functions
 
 function hideForms() {
     $(".formBody").hide();
@@ -146,21 +138,15 @@ function hideForms() {
     $("#divStops").hide();
 }
 
-function populateRouteDate() {
-    var date = getDate;
-    $("#routeDate").val(date);
-}
-
-function populateRouteForm() {
-    var dateTime = new Date($.now());
-
-    //POPULATE FORM
-    $("#time2").val(getTimeFormatted(dateTime));
-    $("#date2").val(getDateFormatted(dateTime));
+function populateDateTimeFieldsForDiv(divId){
+    var div = $(divId);
+    div.find(".timeField").val(getCurrentTime());
+    div.find(".dateField").val(getCurrentDate());
 }
 
 //format time data to work for input fields
-function getTimeFormatted(dateTime) {
+function getCurrentTime() {
+    var dateTime = new Date($.now());
     var hour = dateTime.getHours();
     if (hour < 10)
         hour = "0" + hour;
@@ -173,7 +159,8 @@ function getTimeFormatted(dateTime) {
 }
 
 //format date data to work for input fields
-function getDateFormatted(dateTime) {
+function getCurrentDate() {
+    var dateTime = new Date($.now());
     var month = dateTime.getMonth() + 1;
     if (month < 10)
         month = "0" + month;
@@ -184,7 +171,6 @@ function getDateFormatted(dateTime) {
 
     return dateTime.getFullYear() + "-" + month + "-" + day;
 }
-
 
 function stopsValidation() {
     //$(".invalid").show();
@@ -222,7 +208,7 @@ function stopsValidation() {
     });
 }
 
-function routeValidation() {
+function showRouteValidationWarnings() {
     var origin = $("#inputTripStarting").val();
     var destination = $("#inputTripDestination").val();
     
@@ -242,21 +228,4 @@ function routeValidation() {
     }
 }
 
-// saves route to cookie, displays modal error message from Semantic UI when necessary
-function saveFavoriteRoute() {
-    var routeName = "Route: ";
-    routeName += $("#allRoutes").find("option:selected").text();
-    var routeId = $("#allRoutes").val();
-    //console.log(routeName + "\n" + routeId);
-
-    if (getFavorites() !== undefined && faveExists(routeName)) {
-        //alert(routeName + " is already in your favorites!");
-        $("#favExistsMsg").empty().append($("#allRoutes").find("option:selected").text() + " is already in your favorites!");
-        $('#favExistsAlert').modal('show');
-    } else {
-        addToFaves(routeName, routeId);
-        //alert("favorite saved: " + routeName);
-        $("#favSavedMsg").empty().append(routeName + " has been saved to your favorites.");
-        $("#favSavedAlert").modal("show");
-    }
-}
+//endregion

@@ -39,8 +39,7 @@ h2{
 		border: none;
 		border-bottom: 1px solid #eee; 
 		position: relative;
-		padding-left: 50%; 
-		position: relative;
+		padding-left: 50%;
 	}
 	
 	.tblFindStops td:before { 
