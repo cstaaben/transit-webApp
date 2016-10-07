@@ -72,7 +72,7 @@ function onSubmitTrip() {
         return;
     }
 
-    $("#routes").empty();
+    $("#routesGrid").empty();
     var divPlanTrip = $("#divPlanTrip");
     var date = divPlanTrip.find(".dateField").val();
     var time = divPlanTrip.find(".timeField").val();
@@ -81,7 +81,7 @@ function onSubmitTrip() {
 }
 
 function onSubmitRoute() {
-    var routeId = $("#allRoutes").val();
+    var routeId = $("#allRoutesList").val();
     getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
@@ -110,7 +110,7 @@ function onSubmitStops() {
 // saves route to cookie, displays modal error message from Semantic UI when necessary
 function onSaveFavoriteRoute() {
     var routeName = "Route: ";
-    var allRoutes = $("#allRoutes");
+    var allRoutes = $("#allRoutesList");
     routeName += allRoutes.find("option:selected").text();
     var routeId = allRoutes.val();
     //console.log(routeName + "\n" + routeId);
@@ -132,6 +132,12 @@ function onSaveFavoriteRoute() {
 //region helper functions
 
 function hideForms() {
+    /*
+    var tripRoutes = $("#divTripRoutesList");
+    if (tripRoutes.hasClass("visible"))
+        tripRoutes.transition("fade");
+        */
+
     $(".formBody").hide();
     $(".invalid").hide();
     $("#divMap").hide();

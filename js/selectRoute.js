@@ -4,7 +4,6 @@ function requestRoutes() {
 }
 
 function onRoutesReceived(data) {
-    //console.log(data);
     var routes = data.routes;
     var necessaryRouteData = [];
 
@@ -30,7 +29,7 @@ function onRoutesReceived(data) {
     //Populates the Form
     for (var x = 0; x < necessaryRouteData.length; x++) {
         var str = "<option value = '" + necessaryRouteData[x].id + "'>" + necessaryRouteData[x].num + " - " + necessaryRouteData[x].longName + "</option>";
-        $("#allRoutes").append(str);
+        $("#allRoutesList").append(str);
     }
 
 }// end onRoutesReceived

@@ -135,6 +135,7 @@ function getFavorites() {
     }
 }
 
+//TODO: apply semantic-ui grid
 function printFavorites(favorites) {
 
     //Creates divs from favorites objects

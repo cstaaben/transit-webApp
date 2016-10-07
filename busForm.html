@@ -34,7 +34,7 @@
 </head>
 
 <body class="background">
-	<h2 class="header">Ride with the STA!</h2><br>
+	<h2 class="titleHeader">Ride with the STA!</h2><br>
 
 	<div class="ui container">
 
@@ -101,7 +101,7 @@
 				</div>
 			</div>
 
-			<div id="divPlanTrip" class="formBody">
+			<div class="formBody" id="divPlanTrip">
 
 				<div id="divTripForm" class = "ui large form">
 					<p class="invalid start" style="display: none;">* Please Enter Starting Point&nbsp;</p>
@@ -114,7 +114,7 @@
 
 						<div class="field">
 							<label>Destination</label>
-							<input id="inputTripDestination" type="text" placeholder="Destination">
+							<input id="inputTripDestination" type="text" placeholder="Where to?">
 						</div>
 					</div>
 					<div class="three fields">
@@ -131,20 +131,28 @@
 							<input type="time" class="timeField">
 						</div>
 					</div>
-					<button id="btnSubmitTrip" class="ui huge blue button">Submit</button>
+
+					<div class="ui grid">
+						<div class="six wide column">
+							<button id="btnSubmitTrip" class="ui huge blue button">Submit</button>
+						</div>
+						<div class="six wide column">
+							<button id="btnFavTrip" class="ui large button"><i class="big star icon"></i></button>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div id="divRoutesList" class="formBody">
-				<div id="routes">
+			<div class="formBody" id="divTripRoutesList">
+				<div id="routesGrid" class="ui grid">
 				</div>
 			</div>
 
-			<div id="divViewRoutes" class="formBody">
+			<div class="formBody" id="divViewRoutes">
 
 				<div id="divGetFullRoute" class="ui large form">
 					<div class="field">
-						<select class="ui dropdown" id="allRoutes"></select>
+						<select class="ui dropdown" id="allRoutesList"></select>
 					</div>
 					<div class="divButtonHolder">
 						<button id="btnSubmitRoute" class="ui huge blue button">Submit</button>
@@ -154,7 +162,7 @@
 
 			</div>
 
-			<div id="divFindStops" class="formBody">
+			<div class="formBody" id="divFindStops">
 
 				<div class="ui error message" style="display: none; list-style: circle outside initial;">
 					<div class="header">Submission Error</div>
@@ -181,7 +189,7 @@
 
 			</div>
 
-			<div id="divViewSchedules" class="formBody">
+			<div class="formBody" id="divViewSchedules">
 				<table id="tblAllStops" border="1">
 					<tr>
 						<th>Stop</th>
@@ -190,14 +198,14 @@
 				</table>
 			</div>
 
-			<div id="divFavorites" class="formBody">
+			<div class="formBody" id="divFavorites">
 				<table id="faves"></table>
 			</div>
 
-			<div id="divStops" class="formBody">
+			<div class="formBody" id="divStops">
 			</div>
 
-			<div id="divMap" class="formBody"></div>
+			<div class="formBody" id="divMap"></div>
 
 		</div><!-- End Pusher div -->
 

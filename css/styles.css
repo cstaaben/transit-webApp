@@ -15,11 +15,9 @@
  OPTIONAL OTHER BACKGROUND
  */
 
-.header{
-	/* padding: .25em; */
+.titleHeader{
 	text-align: center;
 	font-family: 'Open Sans', sans-serif;
-	/* font-size: 4em; */
 	color: white;
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
@@ -130,7 +128,6 @@ input{
 
 
 #divFavorites {
-	max-height: 300px;
 	overflow:scroll;
 	overflow-x: hidden;
 	
@@ -237,26 +234,14 @@ tr.favesRow:hover{
 	display: inline-block;
 }
 
-#divRoutesList {
+#divTripRoutesList {
 	margin-top:20px;
 	width: 100%;
-	max-height: 330px;
 	overflow-x: hidden;
 	overflow-y: hidden;
 }
 
-#routes {
-	margin-top:10px;
-	background-color:white;
-	border-radius: 10px;
-}
-
-.pRoutesRow, .pRoutesRow>p {
-	display:inline-block;
-	margin-bottom: 5px;
-}
-
-.pRoutesRow {
+.routeRow {
 	height: 60px;
 	position: relative;
 	background-color: white;
@@ -267,47 +252,47 @@ tr.favesRow:hover{
 	font-family: 'Open Sans', sans-serif;
 }
 
-.pRoutesRow:hover{
+.routeRow:hover{
 	background-color: #f8f5f5;
 }
 
-.pRoutesRow.selected{
+.routeRow.selected{
 	background-color: hsla(202, 37%, 47%, 0.86);
 }
 
 .routeDtoA {
 	font-size: 2em;
 	font-weight: lighter;
+	/*
 	margin-top:5px;
 	margin-bottom:5px;
 	margin-left:70px;
+	*/
 }
 
 .routeDist {
 	font-size: 1.3em;
+	/*
 	position:absolute;
 	right:15px;
 	top:19px;
+	*/
 }
 
 .routeDur {
 	font-size: 1.5em;
 	font-weight: bolder;
+	/*
 	margin-left:40px;
+	*/
 }
 
 .routeFare{
 	font-size: 1em;
+	/*
 	margin-left:50px;
+	*/
 }
-
-.pRouteBusIcon{
-	position:absolute;
-	left:15px;
-	top:15px;
-	
-}
-
 
 #pRoutesAddFave0,#pRoutesAddFave1,#pRoutesAddFave2,#pRoutesAddFave3 {
 	padding: 11px 10px 14px 10px;
@@ -315,10 +300,6 @@ tr.favesRow:hover{
 	right: 10px;
 	top: 10px;
 	background-color: lightgray;
-}
-
-.btnAddFave{
-	padding-bottom: 10px;
 }
 
 #timeType{
@@ -329,10 +310,20 @@ tr.favesRow:hover{
 	margin-bottom: -20px !important;
 }
 
-.tripFavBtn{
-	padding-bottom: 50px;
-}
-
 .error.message ul {
 	list-style: square outside;
+}
+
+
+.btn-bus {
+	padding: 6px 3px 6px 3px !important;
+}
+
+#btnFavTrip>i {
+	margin: auto;
+}
+
+.divDirectionsPanel {
+	background-color: whitesmoke;
+	margin: 0px 14px 14px 14px;
 }
