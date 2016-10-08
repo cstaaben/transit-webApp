@@ -2,15 +2,19 @@
 //ahenry
 //comment
 
-//TODO: clean megafunction
+//TODO: clean megafunction getStop()
 function getStop(lat, lon, submitDate, submitTime) {
 
     var STOP_SEARCH_RADIUS = 250;   //search within 250 meters of given GPS coords
 
-    if (!isNaN(lat) && !isNaN(lon)) {
-        var url = "https://transit.land/api/v1/stops?lat=" + lat + "&lon=" + lon + "&r=" + STOP_SEARCH_RADIUS;
-        $.getJSON(url,
-            function(data) {
+    if (isNaN(lat) || isNaN(lon)) {
+        console.error("one or both of these are NaN. lat: " + lat + "; lng: " + lng);
+        return;
+    }
+
+    var url = "https://transit.land/api/v1/stops?lat=" + lat + "&lon=" + lon + "&r=" + STOP_SEARCH_RADIUS;
+    $.getJSON(url,
+        function(data) {
 
             // Paragraph version of parsing data
             $("#divStops").empty();
@@ -29,13 +33,13 @@ function getStop(lat, lon, submitDate, submitTime) {
                     stopName += stop.name;
                     var stopId = stop.onestop_id;
 
-			    if (faveExists(stopName)) {//route exists in favorites already
-				   //alert(stopName + " is already in your favorites!");
-				   $('.ui.modal').modal('show');
-			    } else {
-				   addToFaves(stopName, stopId);
-			    }
-                    
+                if (faveExists(stopName)) {//route exists in favorites already
+                   //alert(stopName + " is already in your favorites!");
+                   $('.ui.modal').modal('show');
+                } else {
+                   addToFaves(stopName, stopId);
+                }
+
                 });
 
                 getDepartures(stop, submitDate, submitTime);
@@ -77,14 +81,15 @@ function getStop(lat, lon, submitDate, submitTime) {
                 }
             });
 
-        });
-    }
+            $("#divStopsSegment").removeClass("loading");
+            $("#btnSubmitStops").removeClass("loading").removeClass("disabled");
+            $("#divStops:hidden").transition("slide left");
 
-}
+    }); //end callback
+}   //end getStop
 
 function getDepartures(stop, submitDate, submitTime) {
 
-    
     var t = submitTime.split(":");
     var e = parseInt(t[0]) + 3;
     var resTime = (e-4) + ":" + t[1] + ":" + t[2] + "," + e + ":" + t[1] + ":" + t[2];
@@ -104,7 +109,7 @@ function getDepartures(stop, submitDate, submitTime) {
 
 }
 
-//TODO: clean megafunction
+//TODO: clean megafunction buildRouteList()
 function buildRouteList(data, stop) {
     var dest;
     var pid;

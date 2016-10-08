@@ -32,6 +32,9 @@ function onRoutesReceived(data) {
         $("#allRoutesList").append(str);
     }
 
+    if (!data.hasOwnProperty("next"))
+        $("#divGetFullRoute").removeClass("loading");
+
 }// end onRoutesReceived
 
 function initRouteMap(routeId, routeGeometry) {
@@ -53,13 +56,13 @@ function drawRoute(routeGeometry){
     var latCenter = dir0['latCenter'];
     var lonCenter = dir1['lonCenter'];
 
+    $("#divMap").empty().transition("fly right in");
+
     var mapDiv = document.getElementById('divMap');
     map = new google.maps.Map(mapDiv, {
         center: {lat: latCenter, lng: lonCenter},
         zoom: 12
     });
-
-    $("#divMap").slideDown(500);
 
     var dir0lines = buildPolylines(dir0['Points'], dir0['Color']);
     var dir1lines = buildPolylines(dir1['Points'], dir1['Color']);

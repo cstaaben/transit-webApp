@@ -22,17 +22,14 @@
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
+/* region menu */
+
 .menuBar{
 	background-color: hsla(82,54%,64%,0.86);
 	padding: 1em;
 	position: relative;
 	margin-top: -33px;
 	margin-bottom: 1em;
-}
-
-input{
-	opacity: 1;
-	color: green;	
 }
 
 #menu{
@@ -61,59 +58,12 @@ input{
 	background-color: hsla(82, 54%, 64%, 0.86);
 }
 
-#inputLocation {
-	max-width: 100%;
-}
-
-#divInputForm {
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 10px;
-}
-
-#planRoute{
-	padding-top: 2.7em;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 10px;
-}
-
-#divMap, #divStops {
-	display: none;
-	margin-top: 4em;
-	padding: 0 0 0 0;
-}
-
-#divStops {
-	height: 300px;
-}
-
-#divMap {
-	margin-top: 1.5em;
-	margin-bottom: 10%;
-	height: 600px;
-}
-
-#routeMap{
-	margin: 4em 25% 10% 25%;
-	width: 50%;
-	height: 600px;
-}
-
-#divStops {
-	background-color: hsla(82, 54%, 64%, 0.86);
-	font-family: 'Open Sans', sans-serif;
-	font-size: 1.5em;
-	padding-top: .5em;
-	overflow-x: hidden;
-	overflow-y: scroll;
-	margin-top: 1em;
-
-}
+/* endregion menu */
 
 .formBody{
 	background: hsla(82, 54%, 64%, 0.86);
 	padding: 2em;
+	margin-bottom: 1em;
 }
 
 /*all hidden by default except the one which will be displayed first*/
@@ -121,16 +71,76 @@ input{
 	display: none;
 }
 
-
-#divGetFullRoute, #divTripForm {
-	margin-top:10px;
+#divMap {
+	height: 600px;
+	margin-bottom: 1em;
+	padding: 0 0 0 0;
 }
 
+#busArrows{
+	color: grey;
+	vertical-align: 0;
+}
+
+/* region trips */
+
+.divTripDirectionsPanel {
+	background-color: whitesmoke;
+	margin: 0 14px 14px 14px;
+}
+
+.btn-bus {
+	padding: 6px 3px 6px 3px !important;
+}
+
+#btnFavTrip>i {
+	margin: auto;
+}
+
+.routeRow {
+	height: 60px;
+	background-color: white;
+	border-radius: 10px;
+	color: black;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.routeRow:hover{
+	background-color: lightgray;
+}
+
+.routeRow.selected{
+	background-color: hsla(202, 37%, 47%, 0.86);
+}
+
+/* endregion trips */
+
+/* region stops */
+
+#divStopsSegment {
+	padding: 0;
+	border: 0;
+}
+
+#stopList{
+	text-align: left;
+}
+
+#stopList li{
+	list-style: none;
+}
+
+#stopList input{
+	margin: .2em;
+}
+
+/* endregion stops */
+
+/* region faves */
 
 #divFavorites {
 	overflow:scroll;
 	overflow-x: hidden;
-	
 }
 
 #faves{
@@ -158,11 +168,6 @@ tr.favesRow{
 	position:relative;
 }
 
-td#buttonTd{
-	display: inline-block;
-	margin-left:12px;
-}
-
 .favName{
 	display: inline-block;
 	margin-left:30px;
@@ -183,12 +188,6 @@ tr.favesRow:hover{
 	
 }
 
-#btnAddFaveRoute {
-	position:absolute;
-	top:1px;
-	left: 150px;
-}
-
 #addFavBtn{
 	display:inline-block;
 	margin-left: 5px;
@@ -201,32 +200,18 @@ tr.favesRow:hover{
 	padding: 5px;
 }
 
-#busArrows{
-	color: grey;
-	vertical-align: 0;
-}
+/* endregion faves */
 
-
-
-#stopList{
-	text-align: left;
-
-}
-
-
-#stopList li{
-	list-style: none;
-}
-
-#stopList input{
-	margin: .2em;
-}
-
-
+/* region forms and validation */
 
 .ui.form>.destination{
 	margin-right: 15em;
 }
+
+#timeType{
+	height: 43px;
+}
+
 .invalid{
 	color: red;
 	font-size: 1em;
@@ -234,96 +219,8 @@ tr.favesRow:hover{
 	display: inline-block;
 }
 
-#divTripRoutesList {
-	margin-top:20px;
-	width: 100%;
-	overflow-x: hidden;
-	overflow-y: hidden;
-}
-
-.routeRow {
-	height: 60px;
-	position: relative;
-	background-color: white;
-	border-radius: 10px;
-	width: 100%;
-	padding: 5px;
-	color: black;
-	font-family: 'Open Sans', sans-serif;
-}
-
-.routeRow:hover{
-	background-color: #f8f5f5;
-}
-
-.routeRow.selected{
-	background-color: hsla(202, 37%, 47%, 0.86);
-}
-
-.routeDtoA {
-	font-size: 2em;
-	font-weight: lighter;
-	/*
-	margin-top:5px;
-	margin-bottom:5px;
-	margin-left:70px;
-	*/
-}
-
-.routeDist {
-	font-size: 1.3em;
-	/*
-	position:absolute;
-	right:15px;
-	top:19px;
-	*/
-}
-
-.routeDur {
-	font-size: 1.5em;
-	font-weight: bolder;
-	/*
-	margin-left:40px;
-	*/
-}
-
-.routeFare{
-	font-size: 1em;
-	/*
-	margin-left:50px;
-	*/
-}
-
-#pRoutesAddFave0,#pRoutesAddFave1,#pRoutesAddFave2,#pRoutesAddFave3 {
-	padding: 11px 10px 14px 10px;
-	position:absolute !important;
-	right: 10px;
-	top: 10px;
-	background-color: lightgray;
-}
-
-#timeType{
-	height: 43px;
-}
-
-#viewSchedule{
-	margin-bottom: -20px !important;
-}
-
 .error.message ul {
 	list-style: square outside;
 }
 
-
-.btn-bus {
-	padding: 6px 3px 6px 3px !important;
-}
-
-#btnFavTrip>i {
-	margin: auto;
-}
-
-.divDirectionsPanel {
-	background-color: whitesmoke;
-	margin: 0px 14px 14px 14px;
-}
+/* endregion forms and validation */

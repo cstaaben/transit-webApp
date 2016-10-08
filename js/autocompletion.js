@@ -7,7 +7,7 @@ function initAutocomplete(){
         componentRestrictions: {'country': 'us'}
     };
 
-    new google.maps.places.Autocomplete((document.getElementById('inputLocation')), options);
+    new google.maps.places.Autocomplete((document.getElementById('inputLocationStops')), options);
     new google.maps.places.Autocomplete((document.getElementById('inputTripStarting')), options);
     new google.maps.places.Autocomplete((document.getElementById('inputTripDestination')),options);
 

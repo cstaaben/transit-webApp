@@ -11,7 +11,7 @@ var routeResults = null;
 
 //this is the only function called from outside this file
 //TODO: encapsulate the rest
-function getTrips(origin, dest, date, time, sortArrivingElseDeparting) {
+function requestTrips(origin, dest, date, time, sortArrivingElseDeparting) {
 
     var directionsService = new google.maps.DirectionsService();
     var timeFormatted = concatDateTime(date, time);
@@ -34,24 +34,29 @@ function getTrips(origin, dest, date, time, sortArrivingElseDeparting) {
 
 //TODO: change to semantic-ui warning message
 function onDirectionsReceived(results, status) {
+    var btnSubmitTrip = $("#btnSubmitTrip");
+
     if (status !== 'OK') {
         console.error("directionsResult status: " + status);
         console.error(results);
+        btnSubmitTrip.removeClass("disabled").removeClass("loading");
         return;
     }
 
     if (results.routes.length < 1) {
         console.log("no direction results received");
+        btnSubmitTrip.removeClass("disabled").removeClass("loading");
         return;
     }
 
-    routeResults = results;                                                                 //save for rendering routes
-
+    routeResults = results;                                                             //save for rendering routes
     setupFavoriteButton(results);
 
-    //show the first result
+    $("#divTripRoutesList").transition("fly left in");
+    $("#divMap").transition("fly right in");
+
+    //initialize map and set directions for first result
     var firstResult = buildRouteFromIndex(results, 0);
-    $("#divMap").empty().show();
     map = initializeGMap();
     var directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
@@ -68,8 +73,7 @@ function onDirectionsReceived(results, status) {
     }
 
     $("#rr0").addClass('selected');
-    //$("#divTripRoutesList").transition("swing down");
-    $("#divTripRoutesList").show();
+    btnSubmitTrip.removeClass("disabled").removeClass("loading");
 }
 
 function setupDetailsButton(routeRowId, directionsRenderer){
@@ -77,11 +81,11 @@ function setupDetailsButton(routeRowId, directionsRenderer){
     //wire button
     var detailsButton = $(routeRowId).find(".btnShowDetails");
     detailsButton.click(function(){
-        var dirPanel = $(this).closest(".routeRow").next(".divDirectionsPanel")[0];
+        var dirPanel = $(this).closest(".routeRow").next(".divTripDirectionsPanel")[0];
         if ($(this).find("i").hasClass("down")) {
             $(this).find("i").removeClass("down").addClass("up");
 
-            $(".divDirectionsPanel.visible").transition("slide up");
+            $(".divTripDirectionsPanel.visible").transition("slide up");
             $(dirPanel).transition("slide down");
             directionsRenderer.setPanel(dirPanel);
         } else {
@@ -167,7 +171,7 @@ function buildRouteHTML(routeResult, routeIndex) {
             '<div class="three wide column">' + distance + '</div>' +
             '<div class="two wide column"><button class="btnShowDetails ui icon button" id="' + routeRowId + 'Details"' + '><i class="chevron down icon"></i></button></div>' +
         '</div>' +
-        '<div class="divDirectionsPanel" id="' + routeRowId + 'dirPanel" style="display: none;"></div><br>';
+        '<div class="divTripDirectionsPanel" id="' + routeRowId + 'dirPanel" style="display: none;"></div><br>';
     return routeRow;
 }
 
@@ -176,7 +180,7 @@ function onRouteRowSelected(directionsRenderer, selectedRow){
         return;                                                 //don't re-render
 
     $(".btnShowDetails").find("i").removeClass("up").addClass("down");
-    $(".divDirectionsPanel.visible").transition("slide down");                   //close directions
+    $(".divTripDirectionsPanel.visible").transition("slide down");                   //close directions
 
     var routeNum = selectedRow.attr("data-route-number");
     directionsRenderer.setDirections(buildRouteFromIndex(routeResults, routeNum));

@@ -16,5 +16,4 @@ function getGeoCodeDone(data, submitDate, submitTime) {
     } else {
         alert("Geocode failed: " + data["status"] + "\n" + data["error_message"]);
     }
-
 }

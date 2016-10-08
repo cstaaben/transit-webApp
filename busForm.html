@@ -101,8 +101,9 @@
 				</div>
 			</div>
 
-			<div class="formBody" id="divPlanTrip">
+			<!-- primary forms -->
 
+			<div class="formBody" id="divPlanTrip">
 				<div id="divTripForm" class = "ui large form">
 					<p class="invalid start" style="display: none;">* Please Enter Starting Point&nbsp;</p>
 					<p class="invalid destination" style="display: none;">* Please Enter A Destination&nbsp;</p>
@@ -143,23 +144,19 @@
 				</div>
 			</div>
 
-			<div class="formBody" id="divTripRoutesList">
-				<div id="routesGrid" class="ui grid">
-				</div>
-			</div>
-
 			<div class="formBody" id="divViewRoutes">
-
-				<div id="divGetFullRoute" class="ui large form">
-					<div class="field">
-						<select class="ui dropdown" id="allRoutesList"></select>
-					</div>
-					<div class="divButtonHolder">
-						<button id="btnSubmitRoute" class="ui huge blue button">Submit</button>
-						<button class='btnAddFave ui huge icon button' id="btnAddFaveRoute"><i class='star icon'></i></button>
+				<div id="divGetFullRoute" class="ui large form loading">
+					<div class="fields">
+						<div class="field">
+							<select class="ui dropdown" id="allRoutesList">
+								<option class="selectListPlaceholder">Select a route!</option>
+							</select>
+						</div>
+						<div class="field">
+							<button class='btnAddFave ui large icon button' id="btnAddFaveRoute"><i class='star icon'></i></button>
+						</div>
 					</div>
 				</div>
-
 			</div>
 
 			<div class="formBody" id="divFindStops">
@@ -168,10 +165,10 @@
 					<div class="header">Submission Error</div>
 				</div>
 
-				<div id="divInputForm" class="ui large form">
+				<div id="divStopsForm" class="ui large form">
 					<div class="field">
 						<label>Location</label>
-						<input type="text" id="inputLocation" placeholder="Location" autofocus><br>
+						<input type="text" id="inputLocationStops" placeholder="Location" autofocus><br>
 					</div>
 
 					<div class="two fields">
@@ -189,6 +186,14 @@
 
 			</div>
 
+			<!-- end primary forms -->
+
+			<!-- secondary forms -->
+
+			<div class="formBody" id="divTripRoutesList">
+				<div id="routesGrid" class="ui grid"></div>
+			</div>
+
 			<div class="formBody" id="divViewSchedules">
 				<table id="tblAllStops" border="1">
 					<tr>
@@ -202,14 +207,17 @@
 				<table id="faves"></table>
 			</div>
 
-			<div class="formBody" id="divStops">
+			<div class="ui vertical segment" id="divStopsSegment">
+				<div class="formBody" id="divStops"></div>
 			</div>
 
-			<div class="formBody" id="divMap"></div>
+			<div class="formBody hidden" id="divMap"></div>
 
-		</div><!-- End Pusher div -->
+			<!-- end secondary forms -->
 
-	</div><!-- End Content div-->
+		</div><!-- end pusher div -->
+
+	</div><!-- end content div-->
 
 </body>
 </html>

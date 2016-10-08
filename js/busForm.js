@@ -10,13 +10,11 @@ $(document).ready(function() {
     requestRoutes();
     populateDateTimeFieldsForDiv("#divPlanTrip");
 
-    //console.log( "ready!" );
-
     //setup event handlers
     initMenuHandlers();
-    $("#btnSubmitStops").click(onSubmitStops);
     $("#btnSubmitTrip").click(onSubmitTrip);
-    $("#btnSubmitRoute").click(onSubmitRoute);
+    $("#allRoutesList").change(onSubmitRoute);
+    $("#btnSubmitStops").click(onSubmitStops);
     $("#btnAddFaveRoute").click(onSaveFavoriteRoute);
     $("#favExistsBtn").click(function() { $("#favExistsAlert").modal('hide'); });
     $("#favSavedBtn").click(function() { $("#favSavedAlert").modal("hide"); });
@@ -24,37 +22,55 @@ $(document).ready(function() {
 
 function initMenuHandlers() {
 
+    //do nothing if this tab is already active
+    $(".menuTab").click(function(event){
+        if ($(this).hasClass("active"))
+            event.stopImmediatePropagation();
+        else
+            clearInterval(busDataIntervalId);           //stop requesting bus data
+    });
+
     $(".planTripMenu").click(function() {
         $("li.active").removeClass("active");
         $(this).addClass("active");
-        hideForms();
-        $("#divPlanTrip").show();
-        populateDateTimeFieldsForDiv("#divPlanTrip");
+        hideFormsExcept("#divPlanTrip");
+
+        //restore routes and map if already have them
+        if (document.getElementById("routesGrid").hasChildNodes())
+            onSubmitTrip();
+        else
+            populateDateTimeFieldsForDiv("#divPlanTrip");
     });
 
     $(".showRoutesMenu").click(function() {
         $("li.active").removeClass("active");
         $(this).addClass("active");
-        hideForms();
-        $("#divViewRoutes").show();
+        hideFormsExcept("#divViewRoutes");
+
+        //restore route if selected
+        if ($("#allRoutesList").val().charAt(0) == 'r')
+            onSubmitRoute();
+
     });
 
     $(".findStopsMenu").click(function() {
         $("li.active").removeClass("active");
         $(this).addClass("active");
-        hideForms();
-        $("#divFindStops").show();
-        populateDateTimeFieldsForDiv("#divFindStops")
+        hideFormsExcept("#divFindStops");
+
+        //restore results
+        if ($("#inputLocationStops").val() != "")
+            //onSubmitStops();
+            $("#divStops:hidden").transition("slide left");
+        else
+            populateDateTimeFieldsForDiv("#divFindStops");
     });
 
     $(".favoritesMenu").click(function() {
         $("li.active").removeClass("active");
         $(this).addClass("active");
-        hideForms();
-        $("#divFavorites").show();
+        hideFormsExcept("#divFavorites");
     });
-
-    $(".menuTab").click(function(){clearInterval(busDataIntervalId);});   //stop requesting bus data
 }
 
 //endregion
@@ -72,38 +88,41 @@ function onSubmitTrip() {
         return;
     }
 
+    $("#btnSubmitTrip").addClass("disabled").addClass("loading");
     $("#routesGrid").empty();
+
     var divPlanTrip = $("#divPlanTrip");
     var date = divPlanTrip.find(".dateField").val();
     var time = divPlanTrip.find(".timeField").val();
     var sortBy = $("#timeType").val() === "arriveBy";
-    getTrips(origin, destination, date, time, sortBy);
+    requestTrips(origin, destination, date, time, sortBy);
 }
 
 function onSubmitRoute() {
-    var routeId = $("#allRoutesList").val();
+    var allRoutesList = $("#allRoutesList");
+    var routeId = allRoutesList.val();
+    allRoutesList.find("option").remove(".selectListPlaceholder");
+
     getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
 function onSubmitStops() {
-    var locationToSearch = $("#inputLocation").val();
-    if (locationToSearch == "") {
+    var locationToSearch = $("#inputLocationStops").val();
+    if (locationToSearch == "") {                                   //TODO: fix stopsValidation to handle this case
         stopsValidation();
     } else {
-    	   $(".error.message").hide();
+    	$(".error.message").hide();
         $(".invalid").hide();
-        $("#divStops").slideDown(500);
 
-        // automatically scroll down to stops div
-        $('html,body').animate({
-                scrollTop: $("#divStops").offset().top
-            },
-            'slow');
+        if ($("#divStops").is(":visible"))
+            $("#divStopsSegment").addClass("loading");
+        $("#btnSubmitStops").addClass("loading").addClass("disabled");
 
         var date = new Date($.now());
         var time = $("#time").val() + ":" + date.getSeconds();
         var submitDate = $("#date").val();
         getGeocoding(locationToSearch, submitDate, time);
+
     }//end else
 }
 
@@ -131,17 +150,12 @@ function onSaveFavoriteRoute() {
 
 //region helper functions
 
-function hideForms() {
-    /*
-    var tripRoutes = $("#divTripRoutesList");
-    if (tripRoutes.hasClass("visible"))
-        tripRoutes.transition("fade");
-        */
-
+function hideFormsExcept(divId) {
+    $(".formBody.visible:not("+divId+"):not(divMap)").transition("fade out");
     $(".formBody").hide();
     $(".invalid").hide();
-    $("#divMap").hide();
     $("#divStops").hide();
+    $(divId).show();
 }
 
 function populateDateTimeFieldsForDiv(divId){
