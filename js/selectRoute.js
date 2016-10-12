@@ -42,8 +42,7 @@ function initRouteMap(routeId, routeGeometry) {
     drawBuses(routeId);
     //TODO: draw stops
 
-    //TODO: scroll down to map
-    //$("html, body").animate({scrollTop: $(document).height()}, 1000);
+    $("#divRoutesLoader").removeClass("active");
 }
 
 function getViewportBound(boundA, boundB){

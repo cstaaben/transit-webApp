@@ -3,6 +3,7 @@
 namespace transit_webApp;
 
 use Exception;
+use PDO;
 
 require_once '../services/DatabaseAccessLayer.php';
 
@@ -54,25 +55,48 @@ function testDatabaseConnection() {
 }
 
 function testDatabaseTables() {
-    $dbh = DatabaseAccessLayer::getDatabaseConnection();
     echo("testing existence of tables...\n");
-    $tables = parse_ini_file(CONFIG_INI, true)['required_tables']['tables'];
-    $useProxies = strtolower(parse_ini_file(CONFIG_INI, true)['general']['use_proxies']) == 'true';
+    $dbh = DatabaseAccessLayer::getDatabaseConnection();
+    $config = parse_ini_file(CONFIG_INI, true);
+    testRequiredTables($dbh, $config);
+    testConditionalTables($dbh, $config);
+}
 
-    foreach ($tables as $table) {
-        echo("   table \"$table\": ");
-        if ($table == 'proxies' && !$useProxies) {
-            echo("\t\tSKIPPED\n");
-            continue;
-        }
+function testRequiredTables(PDO $dbh, array $config){
+    $tables = $config['required_tables']['tables'];
 
-        $results = $dbh->query("SELECT * FROM $table;");
+    foreach ($tables as $table)
+        testTable($dbh, $table, true);
+}
 
-        if ($results === False)
-            throw new Exception("Table missing: $table");
-        else
-            echo("\t\tEXISTS\n");
+function testConditionalTables(PDO $dbh, array $config){
+    $settingKeys = $config['conditional_tables']['table_keys'];
+
+    foreach($settingKeys as $settingKey) {
+        $testIt = strtolower($config['general'][$settingKey] == 'true');
+        testConditionalTable($dbh, $config, $settingKey, $testIt);
     }
+}
+
+function testConditionalTable(PDO $dbh, array $config, $settingKey, $testIt){
+    $table_name = $config['conditional_tables']['table_name'][$settingKey];
+    testTable($dbh, $table_name, $testIt);
+}
+
+function testTable(PDO $dbh, string $table_name, bool $testIt){
+    echo("   table \"$table_name\":");
+    $tabs = strlen($table_name) > 10 ? "\t" : "\t\t";
+    if (!$testIt) {
+        echo($tabs . "SKIPPED\n");
+        return;
+    }
+
+    $results = $dbh->query("SELECT * FROM $table_name");
+
+    if ($results === False)
+        throw new Exception("Table missing: $table_name");
+    else
+        echo($tabs . "EXISTS\n");
 }
 
 /**
@@ -106,7 +130,7 @@ function testPreparedStatements() {
     DatabaseAccessLayer::updateRouteId("r-asdfgh-00", "12345", "00", "TESTING");
     $dbo = DatabaseAccessLayer::getDatabaseConnection();
     $dbo->query("DELETE FROM route_ids WHERE route_onestop_id='r-asdfgh-00';");
-    echo("\tPASSED\n");
+    echo("\t\tPASSED\n");
 
     echo("   testing GETROUTEGEOMETRYBYLINEDIRID...");
     try {
@@ -115,7 +139,7 @@ function testPreparedStatements() {
         $msg = $nex->getMessage();
         echo("\twarning: $msg\n\t\t\t");
     }
-    echo("\tPASSED\n");
+    echo("\t\tPASSED\n");
 }
 
 function testProxySetup(){

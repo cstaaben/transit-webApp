@@ -102,6 +102,7 @@ function onSubmitRoute() {
     var allRoutesList = $("#allRoutesList");
     var routeId = allRoutesList.val();
     allRoutesList.find("option").remove(".selectListPlaceholder");
+    $("#divRoutesLoader").addClass("active");
 
     getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }

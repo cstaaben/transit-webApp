@@ -38,7 +38,6 @@ class DatabaseAccessLayer {
         $query = 'CALL `GETLINEDIRID`(:id);';
 
         return self::queryById($clean_id, $query, PDO::PARAM_INT);
-
     }
 
     static function convert_lineDirId(int $lineDirId) : array {
@@ -59,6 +58,15 @@ class DatabaseAccessLayer {
 
         $result = self::queryById($clean_id, $query, PDO::PARAM_STR);
         return $result[0]['route_geometry'];
+    }
+
+    static function getDirNameByLineDirId(int $lineDirId) : string {
+        $clean_id = self::sanitizeInt($lineDirId);
+        $dbo = self::getDatabaseConnection();
+        $query = "SELECT dirName FROM route_ids WHERE lineDirId = $clean_id;";
+        $statement = $dbo->query($query);
+        $dirName = $statement->fetch(PDO::FETCH_ASSOC)["dirName"];
+        return $dirName;
     }
 
     /**

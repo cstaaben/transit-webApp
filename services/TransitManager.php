@@ -33,7 +33,7 @@ class TransitManager {
         $geometries = [];
         foreach ($results as $result) {
             $lineDirId = $result['lineDirId'];
-            $geometries[] = json_decode(DatabaseAccessLayer::getRouteGeometryByLineDirId($lineDirId));
+            $geometries[] = json_decode(self::getLineDirGeometry($lineDirId));
         }
 
         header('Content-Type: application/json');
@@ -43,6 +43,23 @@ class TransitManager {
     //endregion
 
     //region STA request functions
+
+    private static function getLineDirGeometry(int $lineDirId) : string{
+        $useDB = strtolower(parse_ini_file(CONFIG_INI)['use_database_for_route_geometry']) == 'true';
+
+        if ($useDB)
+            return DatabaseAccessLayer::getRouteGeometryByLineDirId($lineDirId);
+        else {
+            $response = self::requestRouteGeometry($lineDirId);
+            $dirName = DatabaseAccessLayer::getDirNameByLineDirId($lineDirId);
+            return self::buildGeometryFromResult($lineDirId, $dirName, $response);
+        }
+    }
+
+    static function requestRouteGeometry(string $lineDirId) : string {
+        $request = self::buildLineTraceRequest($lineDirId);
+        return TransitManager::requestInfoWebData($request);
+    }
 
     static function requestRealTimeManagerData(string $request) : string {
         return self::makeSTARequestWithResource($request, 'RealTimeManager');
@@ -106,6 +123,27 @@ class TransitManager {
 
     //region STA request helpers
 
+    static function buildGeometryFromResult(string $lineDirId, string $dirName, string $json) : string {
+        $lineData = json_decode($json, true)['result'][0]['GoogleMap'];
+
+        //add all points
+        $points = [];
+        foreach ($lineData as $segment)
+            array_push($points, $segment['Points']);
+        $lineData = $lineData[0];
+
+        //add/set properties
+        $lineData['Points'] = $points;
+        $lineData['lineDirId'] = $lineDirId;
+        $lineData['dirName'] = $dirName;
+
+        //replace for quicker consumption clientside
+        $lineData = json_encode($lineData);
+        $lineData = str_replace("Lat", "lat", $lineData);
+        $lineData = str_replace("Lon", "lng", $lineData);
+        return $lineData;
+    }
+
     static function getLineDirIdsFromRouteOnestopId($route_onestop_id) : array {
         try {
             $lineDirIds = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
@@ -114,6 +152,10 @@ class TransitManager {
             //TODO: log to file
         }
         return $lineDirIds;
+    }
+
+    static function buildLineTraceRequest(string $lineDirId) : string {
+        return '{"version":"1.1","method":"GetLineTrace","params":{"GetLineTraceRequest":{"LineDirId":' . $lineDirId . '}}}';
     }
 
     private static function buildTravelPointsRequest(string $lineDirId) : string {
@@ -148,12 +190,6 @@ class TransitManager {
         return $json;
     }
 
-    private static function isResponseValid($response) : bool{
-        return !empty($response)
-        && strpos($response['headers'], "200 OK") != false
-        && strpos($response['headers'], "application/json") != false;
-    }
-
     //endregion
 
 
@@ -179,7 +215,7 @@ class TransitManager {
     }
 
     /**
-     * Post body example: {"method":"getBusLocations","params":"r-12354-00"}
+     * Post body example: {"method":"getBusData","params":"r-12354-00"}
      * @return string
      */
     static function processRequest() : string {
