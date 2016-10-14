@@ -135,7 +135,7 @@ function drawBuses(routeId){
 }
 
 function fetchBusData(routeId){
-    getBusData(routeId).then(function(data){addBusMarkers(data);});
+    requestBusData(routeId).then(function(data){addBusMarkers(data);});
 }
 
 var busMarkers = [];

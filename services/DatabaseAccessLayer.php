@@ -5,7 +5,11 @@ namespace transit_webApp;
 use PDO;
 use PDOException;
 
-require_once 'NoResultsException.php';
+require_once 'models\LatitudeLongitude.php';
+require_once 'exceptions\NoResultsException.php';
+
+use transit_webApp\models\LatitudeLongitude;
+use transit_webApp\exceptions\NoResultsException;
 
 define('CREDS_INI', 'creds.ini');
 
@@ -68,6 +72,27 @@ class DatabaseAccessLayer {
         $dirName = $statement->fetch(PDO::FETCH_ASSOC)["dirName"];
         return $dirName;
     }
+
+    static function getStopsWithinRadius(LatitudeLongitude $latLng, int $radius) : string {
+        $offset = LatitudeLongitude::convertMetersToDegrees($radius);
+
+        $query = 'CALL `GETSTOPSWITHINOFFSETOFCOORDS`(:latitude :longitude :degreesOffset)';
+        $dbo = self::getDatabaseConnection();
+        $statement = $dbo->prepare($query);
+        $latitude = $latLng->getLatitude();
+        $longitude = $latLng->getLongitude();
+        $statement->bindParam(':latitude', $latitude);
+        $statement->bindParam(':longitude', $longitude);
+        $statement->bindParam(':degreesOffset', $offset);
+        $statement->execute();
+
+        $result = $statement->fetchAll();
+        if (!$result)
+            return "{}";
+        return $result;
+    }
+
+
 
     /**
      * @param string $excludeProxy don't return this proxy

@@ -1,6 +1,6 @@
 <?php
 
-namespace transit_webApp;
+namespace transit_webApp\exceptions;
 
 /**
  * To be thrown when a database call returns no results

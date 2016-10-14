@@ -1,3 +1,7 @@
+//TODO: cool stuff:
+//when routes are requested, load them and their stops into memory here before drawing
+//when a user uses "Find stops", let them pick a stop, then draw the routes serviced by that stop, and their stops
+
 var map;
 
 //region initialization
@@ -104,9 +108,10 @@ function onSubmitRoute() {
     allRoutesList.find("option").remove(".selectListPlaceholder");
     $("#divRoutesLoader").addClass("active");
 
-    getRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
+    requestRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
 }
 
+/* Removed until the STA gets it together and adds their stops back into transit.land
 function onSubmitStops() {
     var locationToSearch = $("#inputLocationStops").val();
     if (locationToSearch == "") {                                   //TODO: fix stopsValidation to handle this case
@@ -125,6 +130,60 @@ function onSubmitStops() {
         getGeocoding(locationToSearch, submitDate, time);
 
     }//end else
+}
+*/
+
+function onSubmitStops(){
+    if ($("#divStops").is(":visible"))
+        $("#divStopsSegment").addClass("loading");
+    $("#btnSubmitStops").addClass("loading").addClass("disabled");
+
+    var location = $("#inputLocationStops").val();
+    requestGeocoding(location, onGeocodingRequestComplete);
+}
+
+var stopSearchRadius = 250;
+var stopSearchLat = 0.0;
+var stopSearchLng = 0.0;
+
+function onGeocodingRequestComplete(data) {
+    if (data["status"] != "OK") {
+        alert("Geocode failed: " + data["status"] + "\n" + data["error_message"]);
+        return;
+    }
+
+    var latLng = data.results[0].geometry.location;
+    stopSearchLat = latLng.lat;
+    stopSearchLng = latLng.lng;
+    stopSearchRadius = 250;
+    requestStopsUntilRadiusTooLarge();
+
+}
+
+function requestStopsUntilRadiusTooLarge(){
+    requestStopsAtCoordinates(stopSearchLat, stopSearchLng, stopSearchRadius).then(function(data){ onStopsReceived(data); });
+}
+
+function onStopsReceived(stops){
+    if (stops == "{}") {
+        if (stopSearchRadius *= 2 < 1001)
+            requestStopsUntilRadiusTooLarge();
+        else
+            alert("no stops found for that location :(");       //TODO: better integrate alert into interface
+        return;
+    }
+
+    drawStops(stops);
+    $("#divStopsSegment").removeClass("loading");
+    $("#btnSubmitStops").removeClass("loading").removeClass("disabled");
+    $("#divStops:hidden").transition("slide left");
+}
+
+function drawStops(stops){
+    var result = JSON.parse(stops);
+    for (var stop = 0; stop < result.stops.length; stop++){
+        console.log(stop);                                      //TODO: just draw it to the map
+    }
 }
 
 // saves route to cookie, displays modal error message from Semantic UI when necessary

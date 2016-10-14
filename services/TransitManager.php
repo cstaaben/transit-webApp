@@ -2,7 +2,12 @@
 
 namespace transit_webApp;
 
+require_once 'models\LatitudeLongitude.php';
+require_once 'exceptions\NoResultsException.php';
 require_once 'DatabaseAccessLayer.php';
+
+use transit_webApp\models\LatitudeLongitude;
+use transit_webApp\exceptions\NoResultsException;
 
 define('CONFIG_INI', 'config.ini');
 
@@ -10,7 +15,7 @@ class TransitManager {
 
     //region higher level functions
 
-    static function getBusData(string $route_onestop_id) : string {
+    private static function getBusData(string $route_onestop_id) : string {
         $results = self::getLineDirIdsFromRouteOnestopId($route_onestop_id);
         $busCoords = [];
 
@@ -27,7 +32,7 @@ class TransitManager {
         return $json;
     }
 
-    static function getRouteGeometry(string $route_onestop_id) : string {
+    private static function getRouteGeometry(string $route_onestop_id) : string {
         $results = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
 
         $geometries = [];
@@ -40,9 +45,16 @@ class TransitManager {
         return json_encode($geometries);
     }
 
-    //endregion
+    private static function getStops(string $latitude, string $longitude, string $radius) : string {
+        $latLng = new LatitudeLongitude($latitude, $longitude);
+        $radiusInt = intval($radius);
+        var_dump(DatabaseAccessLayer::getStopsWithinRadius($latLng, $radiusInt));
+        die();
+    }
 
-    //region STA request functions
+    //endregion high-level functions
+
+    //region mid-level functions
 
     private static function getLineDirGeometry(int $lineDirId) : string{
         $useDB = strtolower(parse_ini_file(CONFIG_INI)['use_database_for_route_geometry']) == 'true';
@@ -56,6 +68,10 @@ class TransitManager {
         }
     }
 
+    //endregion
+
+    //region STA request functions
+
     static function requestRouteGeometry(string $lineDirId) : string {
         $request = self::buildLineTraceRequest($lineDirId);
         return TransitManager::requestInfoWebData($request);
@@ -65,7 +81,7 @@ class TransitManager {
         return self::makeSTARequestWithResource($request, 'RealTimeManager');
     }
 
-    static function requestInfoWebData(string $request) : string {
+    private static function requestInfoWebData(string $request) : string {
         return self::makeSTARequestWithResource($request, 'InfoWeb');
     }
 
@@ -119,7 +135,7 @@ class TransitManager {
         return ['headers' => $headers, 'body' => $body];
     }
 
-    //endregion
+    //endregion STA request functions
 
     //region STA request helpers
 
@@ -144,7 +160,7 @@ class TransitManager {
         return $lineData;
     }
 
-    static function getLineDirIdsFromRouteOnestopId($route_onestop_id) : array {
+    private static function getLineDirIdsFromRouteOnestopId($route_onestop_id) : array {
         try {
             $lineDirIds = DatabaseAccessLayer::convert_route_onestop_id($route_onestop_id);
         } catch (NoResultsException $exception) {
@@ -154,7 +170,7 @@ class TransitManager {
         return $lineDirIds;
     }
 
-    static function buildLineTraceRequest(string $lineDirId) : string {
+    private static function buildLineTraceRequest(string $lineDirId) : string {
         return '{"version":"1.1","method":"GetLineTrace","params":{"GetLineTraceRequest":{"LineDirId":' . $lineDirId . '}}}';
     }
 
@@ -179,7 +195,7 @@ class TransitManager {
         return $returnJson;
     }
 
-    static function formatArrayToJsonObject(array $array) : string {
+    private static function formatArrayToJsonObject(array $array) : string {
         $json = "{";
         for ($i = 0; $i < count($array); $i++){
             $json .= $array[$i];
@@ -190,7 +206,7 @@ class TransitManager {
         return $json;
     }
 
-    //endregion
+    //endregion STA request helpers
 
 
     public static function makeTransitLandRequest(string $endpoint) : string {
@@ -206,29 +222,82 @@ class TransitManager {
         return $response;
     }
 
+    //region request helper methods
+
     private static function validateMethod($method){
-        $acceptableMethods = ['getBusData', 'getRouteGeometry'];
+        $acceptableMethods = ['getBusData', 'getRouteGeometry', 'getStops'];
         if (!in_array($method, $acceptableMethods, true)) {
             http_response_code(400);
             die();
         }
     }
 
+    private static function getMethodFromRequest() : string {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true);
+            $method = $post['method'];
+        } else if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+            $method = $_GET['method'];
+        } else {
+            http_response_code(405);
+            die();
+        }
+        if ($method == null || $method == "") {
+            http_response_code(400);
+            die();
+        }
+        return $method;
+    }
+
+    private static function getParamsFromRequest(string $method) : array {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $post = json_decode(file_get_contents('php://input'), true);
+            $params = [$post['params']];
+        } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            if ($method === 'getStops') {
+                $params = self::getRequestStopsParamsFromRequest();
+            } else {
+                http_response_code(400);
+                die();
+            }
+        } else {
+            http_response_code(400);
+            die();
+        }
+
+        return $params;
+    }
+
+    private function getRequestStopsParamsFromRequest() : array{
+        if (!array_key_exists('lat', $_GET)
+            || !array_key_exists('lng', $_GET)
+            || !array_key_exists('r', $_GET)) {
+            http_response_code(400);
+            die();
+        }
+        else
+            return [
+                $_GET['lat'],
+                $_GET['lng'],
+                $_GET['r']
+            ];
+    }
+
+    //endregion request helper methods
+
+
     /**
      * Post body example: {"method":"getBusData","params":"r-12354-00"}
      * @return string
      */
     static function processRequest() : string {
-        $post = json_decode(file_get_contents('php://input'), true);
-        if ($post == null)
-            return "";
-
-        $method = $post['method'];
+        $method = self::getMethodFromRequest();
         self::validateMethod($method);
-        $method = 'self::' . $method;
 
-        $params = $post['params'];
-        $response = call_user_func($method, $params);
+        $params = self::getParamsFromRequest($method);
+
+        $method = 'self::' . $method;
+        $response = call_user_func_array($method, $params);
 
         return $response;
     }

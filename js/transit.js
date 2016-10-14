@@ -66,20 +66,28 @@ function getStopsForRoute(route_onestop_id){
     });
 }
 
-function getBusData(route_onestop_id){
+function requestBusData(route_onestop_id){
     return $.ajax({
         type: "POST",
         url: '/transit-webApp/services/TransitManager.php',
         dataType: 'json',
-        data: '{"method":"getBusData","params":"' + route_onestop_id + '"}'
+        data: '{"method":"requestBusData","params":"' + route_onestop_id + '"}'
     });
 }
 
-function getRouteGeometry(route_onestop_id){
+function requestRouteGeometry(route_onestop_id){
     return $.ajax({
         type: "POST",
         url: '/transit-webApp/services/TransitManager.php',
         dataType: 'json',
-        data: '{"method":"getRouteGeometry","params":"' + route_onestop_id + '"}'
+        data: '{"method":"requestRouteGeometry","params":"' + route_onestop_id + '"}'
+    });
+}
+
+function requestStopsAtCoordinates(latitude, longitude, radius){
+    return $.ajax({
+        type: "GET",
+        url: '/transit-webApp/services/TransitManager.php?method=getStops&lat=' + latitude + '&lng=' + longitude + '&r=' + radius,
+        dataType: 'json'
     });
 }

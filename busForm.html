@@ -21,7 +21,7 @@
 			document.write(googleMapsAPIsrc);
 		})();
 	</script>
-    <script src="js/geocodingStart.js"></script>
+    <script src="js/geocoding.js"></script>
     <script src="js/map.js"></script>
     <script src="js/getDepartures.js"></script>
     <script src="js/favorites.js"></script>
@@ -174,16 +174,18 @@
 						<input type="text" id="inputLocationStops" placeholder="Location" autofocus><br>
 					</div>
 
+					<!-- //SHELVED: until STA gets it together and adds their stops back to transit.land
 					<div class="two fields">
 						<div class="field">
 							<label>Date</label>
-							<input type="date" placeholder="Date" class="dateField">
+							<input type="date" placeholder="Date" class="dateField" id="date">
 						</div>
 						<div class="field">
 							<label>Time</label>
-							<input type="time" placeholder="Time" class="timeField">
+							<input type="time" placeholder="Time" class="timeField" id="time">
 						</div>
 					</div>
+					-->
 					<button class="ui huge blue submit button" id="btnSubmitStops">Submit</button>
 				</div>
 

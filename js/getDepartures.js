@@ -2,8 +2,8 @@
 //ahenry
 //comment
 
-//TODO: clean megafunction getStop()
-function getStop(lat, lon, submitDate, submitTime) {
+//TODO: clean megafunction getStops()
+function getStops(lat, lon, submitDate, submitTime) {
 
     var STOP_SEARCH_RADIUS = 250;   //search within 250 meters of given GPS coords
 
@@ -86,7 +86,7 @@ function getStop(lat, lon, submitDate, submitTime) {
             $("#divStops:hidden").transition("slide left");
 
     }); //end callback
-}   //end getStop
+}   //end getStops
 
 function getDepartures(stop, submitDate, submitTime) {
 
