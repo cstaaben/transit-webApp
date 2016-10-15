@@ -48,8 +48,10 @@ class TransitManager {
     private static function getStops(string $latitude, string $longitude, string $radius) : string {
         $latLng = new LatitudeLongitude($latitude, $longitude);
         $radiusInt = intval($radius);
-        var_dump(DatabaseAccessLayer::getStopsWithinRadius($latLng, $radiusInt));
-        die();
+        $stops = DatabaseAccessLayer::getStopsWithinRadius($latLng, $radiusInt);
+
+        header('Content-Type: application/json');
+        return json_encode($stops);
     }
 
     //endregion high-level functions

@@ -75,23 +75,25 @@ class DatabaseAccessLayer {
         return $dirName;
     }
 
-    static function getStopsWithinRadius(LatitudeLongitude $latLng, int $radius) : string {
+    static function getStopsWithinRadius(LatitudeLongitude $latLng, int $radius) : array {
+        $query = "CALL `GETSTOPSWITHINOFFSETOFCOORDS`(:latitude_in, :longitude_in, :offset_in);";
         $offset = LatitudeLongitude::convertMetersToDegrees($radius);
-
-        $query = 'CALL `GETSTOPSWITHINOFFSETOFCOORDS`(:latitude :longitude :degreesOffset)';
-        $dbo = self::getDatabaseConnection();
-        $statement = $dbo->prepare($query);
         $latitude = $latLng->getLatitude();
         $longitude = $latLng->getLongitude();
-        $statement->bindParam(':latitude', $latitude);
-        $statement->bindParam(':longitude', $longitude);
-        $statement->bindParam(':degreesOffset', $offset);
+
+        $dbo = self::getDatabaseConnection();
+        $statement = $dbo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $statement->bindValue(':latitude_in', $latitude);
+        $statement->bindValue(':longitude_in', $longitude);
+        $statement->bindValue(':offset_in', $offset);
         $statement->execute();
 
-        $result = $statement->fetchAll();
-        if (!$result)
-            return "{}";
-        return $result;
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $stops = [];
+        foreach ($results as $result)
+            $stops[] = json_decode($result['JSON']);
+        return $stops;
     }
 
 

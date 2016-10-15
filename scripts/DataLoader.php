@@ -18,7 +18,7 @@ class DataLoader {
 
         $lineDirIds = self::extractLineDirIds($lineDirInfos);
 
-        //self::updateTable_route_ids($lineDirInfos);
+        self::updateTable_route_ids($lineDirInfos);
         self::updateTable_stops($lineDirIds);
     }
 

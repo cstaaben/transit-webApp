@@ -15,7 +15,7 @@ class LatitudeLongitude {
     }
 
     private function validate(){
-        if ($this->latitude < 0 || $this->latitude > 90)
+        if ($this->latitude < -90 || $this->latitude > 90)
             throw new \InvalidArgumentException("Latitude out of range: $this->latitude");
         if ($this->longitude < -180 || $this->longitude > 180)
             throw new \InvalidArgumentException("Longitude out of range: $this->longitude");
