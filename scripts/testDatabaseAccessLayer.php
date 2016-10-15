@@ -1,9 +1,13 @@
 <?php
+//TODO: refactor to use PHPUnit
 
 namespace transit_webApp;
 
 use Exception;
 use PDO;
+use transit_webApp\models\LatitudeLongitude;
+use transit_webApp\exceptions\NoResultsException;
+use transit_webApp\models\Stop;
 
 require_once '../services/DatabaseAccessLayer.php';
 
@@ -134,12 +138,54 @@ function testPreparedStatements() {
 
     echo("   testing GETROUTEGEOMETRYBYLINEDIRID...");
     try {
-        $result = DatabaseAccessLayer::getRouteGeometryByLineDirId("53210");
+        DatabaseAccessLayer::getRouteGeometryByLineDirId("53210");
     } catch (NoResultsException $nex) {
         $msg = $nex->getMessage();
         echo("\twarning: $msg\n\t\t\t");
     }
     echo("\t\tPASSED\n");
+
+    echo("   testing GETSTOPSWITHINRADIUS...");
+    try {
+        $result = DatabaseAccessLayer::getStopsWithinRadius(new LatitudeLongitude("45", "90"), 0);
+        if (gettype($result) != "array" && !$result)
+            throw new NoResultsException("FAILED");
+    } catch (NoResultsException $nex) {
+        $msg = $nex->getMessage();
+        echo("\twarning: $msg\n\t\t\t");
+    }
+    echo("\t\tPASSED\n");
+
+    $stop = '{
+        "stopId": 2205,
+        "abbr": "SCC",
+        "name": "Spokane Community College",
+        "ivrNum": "3204",
+        "pictureFilePath": "",
+        "point": {
+            "lon": -117.3626,
+            "lat": 47.675956
+        },
+        "stopType": "N",
+        "lineDirs": [
+            {
+                "lineDirId": 52640
+            },
+            {
+                "lineDirId": 52640
+            }
+        ]
+    }';
+
+    echo("   testing UPDATESTOP...");
+    try {
+        DatabaseAccessLayer::updateStop(Stop::buildStopsFromDecodedJson(json_decode($stop, true))[0]);
+    } catch (Exception $ex) {
+        $msg = $ex->getMessage();
+        echo("\twarning: $msg\n\t\t\t");
+    }
+    echo("\t\tPASSED\n");
+
 }
 
 function testProxySetup(){

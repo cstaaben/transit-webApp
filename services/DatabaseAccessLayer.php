@@ -87,7 +87,6 @@ class DatabaseAccessLayer {
         $statement->bindValue(':longitude_in', $longitude);
         $statement->bindValue(':offset_in', $offset);
         $statement->execute();
-
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         $stops = [];

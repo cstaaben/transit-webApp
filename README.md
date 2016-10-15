@@ -42,7 +42,7 @@ Note that the Geocoding API won't accept keys with referer restrictions, hence t
     db_password = "<YOUR_TEST_USERNAME_HERE>"
 ```
 
-6. Run _php loadRoute_ids.php_ to load the route_ids table.
+6. Run _php DataLoader.php_ to load the necessary tables.
 7. (optional) Run _php loadRouteGeometries.php_ and set _use_database_for_route_geometry = 'true' in config.ini. This will yield better performance at the cost of maintenance - you'll want to run this periodically to keep routes updated. 
 8. Check to see if proxies are necessary with _python3 Proxytester.py -d_
     + if test passes, set _use_proxies = 'false'_ in _config.ini_ and skip to step 11.
