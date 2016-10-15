@@ -5,11 +5,13 @@ namespace transit_webApp;
 use PDO;
 use PDOException;
 
-require_once 'models\LatitudeLongitude.php';
-require_once 'exceptions\NoResultsException.php';
-
 use transit_webApp\models\LatitudeLongitude;
 use transit_webApp\exceptions\NoResultsException;
+use transit_webApp\models\Stop;
+
+require_once 'models\LatitudeLongitude.php';
+require_once 'exceptions\NoResultsException.php';
+require_once 'models\Stop.php';
 
 define('CREDS_INI', 'creds.ini');
 
@@ -151,6 +153,19 @@ class DatabaseAccessLayer {
         $statement->bindValue(':lineDirId', $lineDirId);
         $statement->bindValue(':routeNum', $routeNum);
         $statement->bindValue(':dirName', $dirName);
+        $statement->execute();
+    }
+
+    static function updateStop(Stop $stop){
+        $pdo = self::getDatabaseConnection();
+        $query = "CALL `UPDATESTOP`(:stopId_in, :json_in, :latitude_in, :longitude_in, :lineDirId_in);";
+
+        $statement = $pdo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $statement->bindValue(':stopId_in', $stop->getStopId(), PDO::PARAM_INT);
+        $statement->bindValue(':json_in', $stop->getJson(), PDO::PARAM_STR);
+        $statement->bindValue(':latitude_in', $stop->getLatitude());
+        $statement->bindValue(':longitude_in', $stop->getLongitude());
+        $statement->bindValue(':lineDirId_in', $stop->getLineDirId(), PDO::PARAM_INT);
         $statement->execute();
     }
 

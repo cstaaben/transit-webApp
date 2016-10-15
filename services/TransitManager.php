@@ -303,4 +303,5 @@ class TransitManager {
     }
 }
 
-print(TransitManager::processRequest());
+if (php_sapi_name() !== 'cli')
+    print(TransitManager::processRequest());
