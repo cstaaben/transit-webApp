@@ -2,6 +2,8 @@
 //ahenry
 //comment
 
+//SHELVED: until STA gets it together and adds their stops back to transit.land
+
 //TODO: clean megafunction getStops()
 function getStops(lat, lon, submitDate, submitTime) {
 

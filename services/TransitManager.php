@@ -54,6 +54,15 @@ class TransitManager {
         return json_encode($stops);
     }
 
+    private function getStopsBounded(string $northBound, string $eastBound, string $southBound, string $westBound){
+        $northEast = new LatitudeLongitude($northBound, $eastBound);
+        $southWest = new LatitudeLongitude($southBound, $westBound);
+        $stops = DatabaseAccessLayer::getStopsWithinBounds($northEast, $southWest);
+
+        header('Content-Type: application/json');
+        return json_encode($stops);
+    }
+
     //endregion high-level functions
 
     //region mid-level functions
@@ -227,7 +236,7 @@ class TransitManager {
     //region request helper methods
 
     private static function validateMethod($method){
-        $acceptableMethods = ['getBusData', 'getRouteGeometry', 'getStops'];
+        $acceptableMethods = ['getBusData', 'getRouteGeometry', 'getStops', 'getStopsBounded'];
         if (!in_array($method, $acceptableMethods, true)) {
             http_response_code(400);
             die();
@@ -258,6 +267,8 @@ class TransitManager {
         } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if ($method === 'getStops') {
                 $params = self::getRequestStopsParamsFromRequest();
+            } else if ($method === 'getStopsBounded'){
+                $params = self::getStopsBoundedParamsFromRequest();
             } else {
                 http_response_code(400);
                 die();
@@ -277,12 +288,29 @@ class TransitManager {
             http_response_code(400);
             die();
         }
-        else
-            return [
-                $_GET['lat'],
-                $_GET['lng'],
-                $_GET['r']
-            ];
+
+        return [
+            $_GET['lat'],
+            $_GET['lng'],
+            $_GET['r']
+        ];
+    }
+
+    private function getStopsBoundedParamsFromRequest() : array {
+        if (!array_key_exists('northBound', $_GET)
+            || !array_key_exists('eastBound', $_GET)
+            || !array_key_exists('eastBound', $_GET)
+            || !array_key_exists('eastBound', $_GET)){
+            http_response_code(400);
+            die();
+        }
+
+        return [
+            $_GET['northBound'],
+            $_GET['eastBound'],
+            $_GET['southBound'],
+            $_GET['westBound']
+        ];
     }
 
     //endregion request helper methods

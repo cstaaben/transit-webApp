@@ -55,14 +55,6 @@ function drawRoute(routeGeometry){
     var latCenter = dir0['latCenter'];
     var lonCenter = dir1['lonCenter'];
 
-    $("#divMap").empty().transition("fly right in");
-
-    var mapDiv = document.getElementById('divMap');
-    map = new google.maps.Map(mapDiv, {
-        center: {lat: latCenter, lng: lonCenter},
-        zoom: 12
-    });
-
     var dir0lines = buildPolylines(dir0['Points'], dir0['Color']);
     var dir1lines = buildPolylines(dir1['Points'], dir1['Color']);
 
@@ -73,8 +65,9 @@ function drawRoute(routeGeometry){
     var eastBound = getViewportBound(dir0['lonEast'], dir1['lonEast']);
     var southBound = getViewportBound(dir0['latSouth'], dir1['latSouth']);
     var westBound = getViewportBound(dir0['lonWest'], dir1['lonWest']);
-    var bound = {north: northBound, east: eastBound, south: southBound, west: westBound};
-    map.fitBounds(bound);
+
+
+    initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
 }
 
 //region route functions

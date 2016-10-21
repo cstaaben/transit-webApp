@@ -152,11 +152,25 @@ function onGeocodingRequestComplete(data) {
         return;
     }
 
+    var placeGeometry = data['results'][0]['geometry'];
+    var latCenter = placeGeometry['location']['lat'];
+    var lonCenter = placeGeometry['location']['lng'];
+    var northBound = placeGeometry['viewport']['northeast']['lat'];
+    var eastBound = placeGeometry['viewport']['northeast']['lng'];
+    var southBound = placeGeometry['viewport']['southwest']['lat'];
+    var westBound = placeGeometry['viewport']['southwest']['lng'];
+
+    initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
+
     var latLng = data.results[0].geometry.location;
     stopSearchLat = latLng.lat;
     stopSearchLng = latLng.lng;
     stopSearchRadius = 250;
-    requestStopsUntilRadiusTooLarge();
+    requestStopsInBounds(northBound, eastBound, southBound, westBound).then(function(data){
+        onStopsReceived(data);
+        updateStopsWhenNecessary();
+    });
+    //requestStopsUntilRadiusTooLarge();
 
 }
 
@@ -165,13 +179,14 @@ function requestStopsUntilRadiusTooLarge(){
 }
 
 function onStopsReceived(stops){
+    /*
     if (stops == "{}") {
         if (stopSearchRadius *= 2 < 1001)
             requestStopsUntilRadiusTooLarge();
         else
             alert("no stops found for that location :(");       //TODO: better integrate alert into interface
         return;
-    }
+    }*/
 
     drawStops(stops);
     $("#divStopsSegment").removeClass("loading");
@@ -180,10 +195,13 @@ function onStopsReceived(stops){
 }
 
 function drawStops(stops){
-    var result = JSON.parse(stops);
-    for (var stop = 0; stop < result.stops.length; stop++){
-        console.log(stop);                                      //TODO: just draw it to the map
+    console.log(stops);
+
+    for (var stop = 0; stop < stops.length; stop++){
+        buildBusStopMarker(stops[stop]);
     }
+    drawBusStops();
+    console.log("drawStops done");
 }
 
 // saves route to cookie, displays modal error message from Semantic UI when necessary

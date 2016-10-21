@@ -91,3 +91,11 @@ function requestStopsAtCoordinates(latitude, longitude, radius){
         dataType: 'json'
     });
 }
+
+function requestStopsInBounds(northBound, eastBound, southBound, westBound){
+    return $.ajax({
+        type: "GET",
+        url: '/transit-webApp/services/TransitManager.php?method=getStopsBounded&northBound=' + northBound + '&eastBound=' + eastBound + '&southBound=' + southBound + '&westBound=' +westBound,
+        dataType: 'json'
+    });
+}

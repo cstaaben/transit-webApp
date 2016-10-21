@@ -95,6 +95,20 @@ class DatabaseAccessLayer {
         return $stops;
     }
 
+    static function getStopsWithinBounds(LatitudeLongitude $northEast, LatitudeLongitude $southWest){
+        $northBound = $northEast->getLatitude();
+        $eastBound = $northEast->getLongitude();
+        $southBound = $southWest->getLatitude();
+        $westBound = $southWest->getLongitude();
+        $query = "SELECT JSON FROM transit_webapp.stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";
+        $results = self::queryParameterless($query);
+
+        $stops = [];
+        foreach ($results as $result)
+            $stops[] = json_decode($result['JSON']);
+        return $stops;
+    }
+
 
 
     /**
@@ -139,7 +153,7 @@ class DatabaseAccessLayer {
         $statement = $pdo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
         $statement->execute();
 
-        $result = $statement->fetch();
+        $result = $statement->fetchAll();
         if (!$result)
             throw new NoResultsException("results not found");
         return $result;
