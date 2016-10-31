@@ -71,7 +71,7 @@ function requestBusData(route_onestop_id){
         type: "POST",
         url: '/transit-webApp/services/TransitManager.php',
         dataType: 'json',
-        data: '{"method":"requestBusData","params":"' + route_onestop_id + '"}'
+        data: '{"method":"getBusData","params":"' + route_onestop_id + '"}'
     });
 }
 
@@ -80,7 +80,7 @@ function requestRouteGeometry(route_onestop_id){
         type: "POST",
         url: '/transit-webApp/services/TransitManager.php',
         dataType: 'json',
-        data: '{"method":"requestRouteGeometry","params":"' + route_onestop_id + '"}'
+        data: '{"method":"getRouteGeometry","params":"' + route_onestop_id + '"}'
     });
 }
 

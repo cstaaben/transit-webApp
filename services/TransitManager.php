@@ -2,9 +2,9 @@
 
 namespace transit_webApp;
 
-require_once 'models\LatitudeLongitude.php';
-require_once 'exceptions\NoResultsException.php';
-require_once 'DatabaseAccessLayer.php';
+require_once dirname(__FILE__) . '/models/LatitudeLongitude.php';
+require_once dirname(__FILE__) . '/exceptions/NoResultsException.php';
+require_once dirname(__FILE__) . '/DatabaseAccessLayer.php';
 
 use transit_webApp\models\LatitudeLongitude;
 use transit_webApp\exceptions\NoResultsException;

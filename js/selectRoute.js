@@ -53,21 +53,20 @@ function drawRoute(routeGeometry){
     var dir0 = routeGeometry[0];
     var dir1 = routeGeometry[1];
     var latCenter = dir0['latCenter'];
-    var lonCenter = dir1['lonCenter'];
+    var lonCenter = dir0['lonCenter'];
 
     var dir0lines = buildPolylines(dir0['Points'], dir0['Color']);
     var dir1lines = buildPolylines(dir1['Points'], dir1['Color']);
-
-    $.each(dir0lines, function(index, value){value.setMap(map);});
-    $.each(dir1lines, function(index, value){value.setMap(map);});
 
     var northBound = getViewportBound(dir0['latNorth'], dir1['latNorth']);
     var eastBound = getViewportBound(dir0['lonEast'], dir1['lonEast']);
     var southBound = getViewportBound(dir0['latSouth'], dir1['latSouth']);
     var westBound = getViewportBound(dir0['lonWest'], dir1['lonWest']);
 
-
     initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
+
+    $.each(dir0lines, function(index, value){value.setMap(map);});
+    $.each(dir1lines, function(index, value){value.setMap(map);});
 }
 
 //region route functions

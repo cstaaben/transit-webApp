@@ -9,9 +9,9 @@ use transit_webApp\models\LatitudeLongitude;
 use transit_webApp\exceptions\NoResultsException;
 use transit_webApp\models\Stop;
 
-require_once 'models\LatitudeLongitude.php';
-require_once 'exceptions\NoResultsException.php';
-require_once 'models\Stop.php';
+require_once dirname(__FILE__) . '/models/LatitudeLongitude.php';
+require_once dirname(__FILE__) . '/exceptions/NoResultsException.php';
+require_once dirname(__FILE__) . '/models/Stop.php';
 
 define('CREDS_INI', 'creds.ini');
 
@@ -55,7 +55,7 @@ class DatabaseAccessLayer {
 
     static function getNumberOfProxies() : int {
         $query = 'CALL `GETNUMBEROFPROXIES`;';
-        return self::queryParameterless($query)[0];
+        return self::queryParameterless($query)[0][0];
     }
 
     static function getRouteGeometryByLineDirId(int $lineDirId) : string {
@@ -95,12 +95,13 @@ class DatabaseAccessLayer {
         return $stops;
     }
 
+    //TODO: parameterize query
     static function getStopsWithinBounds(LatitudeLongitude $northEast, LatitudeLongitude $southWest){
         $northBound = $northEast->getLatitude();
         $eastBound = $northEast->getLongitude();
         $southBound = $southWest->getLatitude();
         $westBound = $southWest->getLongitude();
-        $query = "SELECT JSON FROM transit_webapp.stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";
+        $query = "SELECT JSON FROM tbaumgar_transit_webapp.stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";
         $results = self::queryParameterless($query);
 
         $stops = [];
