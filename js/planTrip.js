@@ -164,7 +164,7 @@ function buildRouteHTML(routeResult, routeIndex) {
     var duration = routeResult.legs[0].duration.text;
     var distance = routeResult.legs[0].distance.text;
 
-    var routeRow = '<div class="routeRow five column row" id="' + routeRowId + '" data-route-number="' + routeIndex + '">' +
+    var routeRow = '<div class="routeRow row" id="' + routeRowId + '" data-route-number="' + routeIndex + '">' +
             '<div class="two wide column"><button class="ui icon button btn-bus"><i class="big bus icon"></i></button></div>' +
             '<div class="four wide column">' + departureTime + ' - ' + arrivalTime + '</div>' +
             '<div class="four wide column">' + duration + '</div>' +

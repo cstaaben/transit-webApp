@@ -17,7 +17,7 @@ $(document).ready(function() {
 
     //TODO: implement favorites usage
     $(".btnFave")
-        .unbind("click")
+        //.unbind("click")
         .click(onFavBtnClicked);
 
     $(".btnDelFave").click(function() {
@@ -30,7 +30,7 @@ $(document).ready(function() {
 function onFavBtnClicked() {
 	var stopID = $(this).attr("data-id");
 	var stopName = $(this).attr("id");
-	
+	alert("Favorites functionality not yet implemented - check back later!");
 }
 
 function addToFaves(routeName, routeId) {
@@ -112,9 +112,7 @@ function onFavoriteDelBtnClick(favoriteId) {
 
 //cleans the favorites table
 function cleanFavorites() {
-    $(" #divFavorites ")
-        .empty()
-        .append('<table id="faves"></table>');
+    $(" #faves ").empty();
 }
 
 function saveFavorites(favorites) {
@@ -135,31 +133,32 @@ function getFavorites() {
     }
 }
 
-//TODO: apply semantic-ui grid
-function printFavorites(favorites) {
-
-    //Creates divs from favorites objects
-    var makeFaves = function(favorites) {
-
-        var div = '<tr class="favesRow">\
-						<td id="buttonTd">\
-							<button class="ui icon negative button btnDelFave" value="' + (j) + '">\
-								<i class="small remove icon"></i>\
-							</button>\
-						</td>\
-						<td class="favName"><span>' + favorites["name"] + '</span></td>';
-
-        div += ('<td class="faveTd">\
-				<button id="' + favorites["name"] + '" data-id=' + favorites["id"] + ' class="ui icon button btnFave">\
+function printFavorites(favorites){
+    var makeFavoriteRow = function(favorite, index){
+        var divRow = '<div class="faveRow row">\
+            <div class="one wide column">\
+                <button id="' + favorite["name"] + '" data-id=' + favorite["id"] + ' class="ui icon button btnFave">\
 					<i class="bus icon"></i>\
-				</button></td>');
-        div += "</tr>";
-        return div;
+				</button>\
+            </div>\
+            \
+            <div class="one wide column">\
+                <button class="ui icon negative button btnDelFave" value="' + index + '">\
+                    <i class="small remove icon"></i>\
+                </button>\
+            </div>\
+            \
+            <div class="six wide column">\
+                <span>' + favorite["name"] + '</span>\
+            </div>\
+            \
+        </div>';
+        return divRow;
     };
 
     //Print cookies to the page
     for (var j = 0; j < favorites.length; j++) {
-        $("#faves").append(makeFaves(favorites[j]));
+        $("#faves").append(makeFavoriteRow(favorites[j], j));
     }
 
     $(".btnFave")

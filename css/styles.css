@@ -139,8 +139,7 @@
 /* region faves */
 
 #divFavorites {
-	overflow:scroll;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
 #faves{
@@ -153,7 +152,6 @@
 .ui.icon.button.btnFave{
 	display:inline-block;
 	background-color: cornflowerblue;
-	position:absolute;
 	right:10px;
 	top:7px;
 }
