@@ -17,7 +17,6 @@ $(document).ready(function() {
 
     //TODO: implement favorites usage
     $(".btnFave")
-        //.unbind("click")
         .click(onFavBtnClicked);
 
     $(".btnDelFave").click(function() {
@@ -51,6 +50,7 @@ function addToFaves(routeName, routeId) {
     cleanFavorites();
     saveFavorites(favorites);
     printFavorites(getFavorites());
+    $(".noFavesMessage").remove();
 
     $(".btnDelFave").click(function() {
         var ddata = parseInt($(this).attr("value"));
@@ -90,23 +90,26 @@ function onFavoriteDelBtnClick(favoriteId) {
 
 	$("#delFavMsg").empty().append("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?");
 	$("#delFavConfirm").modal("show");
-	$("#delFavConfBtn").click(newFaves, function() {
-	//if(confirm("Are you sure you want to delete \"" + deleting["name"] + "\" from your favorites?")) {
-			cleanFavorites();
-			saveFavorites(newFaves);
-			//console.log(getFavorites());
-			if (newFaves.length > 0) {
-			  printFavorites(getFavorites());
-			} else {
-			  setNoFavesMsg();
-			}
-			
-			$("#delFavConfirm").modal("hide");
-			
-			$(".btnDelFave").click(function() {
-					var ddata = parseInt($(this).attr("value"));
-					onFavoriteDelBtnClick(ddata);
-			});
+	$("#delFavConfBtn").unbind("click").click(newFaves, function() {
+        cleanFavorites();
+        saveFavorites(newFaves);
+
+        console.log(newFaves.length + " faves left");
+
+        if (newFaves.length > 0) {
+            printFavorites(getFavorites());
+        } else {
+            console.log("about to display no faves message");
+            console.log(newFaves);
+            setNoFavesMsg();
+        }
+
+        $("#delFavConfirm").modal("hide");
+
+        $(".btnDelFave").click(function() {
+                var ddata = parseInt($(this).attr("value"));
+                onFavoriteDelBtnClick(ddata);
+        });
 	});
 }
 
@@ -172,7 +175,9 @@ function printFavorites(favorites){
 }
 
 function setNoFavesMsg() {
-    $("#divFavorites").append("<p class='faveMessage'>You have no favorite routes or stops!<br>Find stops, plan a trip, or view a route then save it to your favorites.</p>");
+    if ($(".noFavesMessage").length == 0) {
+        $("#divFavorites").append("<p class='noFavesMessage'>You have no favorite routes or stops!<br>Find stops, plan a trip, or view a route then save it to your favorites.</p>");
+    }
 }
 
 

@@ -191,7 +191,7 @@ tr.favesRow:hover{
 	margin-left: 5px;
 }
 
-.faveMessage {
+.noFavesMessage {
 	color: white;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 1.25em;
