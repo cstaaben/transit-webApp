@@ -1,0 +1,26 @@
+{
+  "name": "transit-webapp",
+  "version": "0.5.0",
+  "description": "1. Get two browser API keys from [console.developers.google.com](https://console.developers.google.com)\r 2. Configure one key to only accept requests from your domain\r 3. Create a file in the _transit-webPapp/js_ directory called _apiKeys.js_ containing the two variables:",
+  "main": "index.js",
+  "dependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.18.0",
+    "babel-preset-latest": "^6.16.0",
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cstaaben/transit-webApp.git"
+  },
+  "author": "Timothy Baumgartner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cstaaben/transit-webApp/issues"
+  },
+  "homepage": "https://github.com/cstaaben/transit-webApp#readme"
+}

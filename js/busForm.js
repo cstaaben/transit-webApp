@@ -2,16 +2,22 @@
 //when routes are requested, load them and their stops into memory here before drawing
 //when a user uses "Find stops", let them pick a stop, then draw the routes serviced by that stop, and their stops
 
+import RouteManager from './RouteManager-compiled.js';
+import FavoritesManager from './FavoritesManager-compiled.js';
+import Requester from './Requester-compiled.js';
+import MapManager from './MapManager-compiled.js';
+
 var map;
 
 //region initialization
 
 $(document).ready(function() {
+    new FavoritesManager();
 
     $(".menu .item").tab(); //initialize semantic-ui tabs
 
     //fetch and populate
-    requestRoutes();
+    RouteManager.populateListWithRoutes();// requestRoutes();
     populateDateTimeFieldsForDiv("#divPlanTrip");
 
     //setup event handlers
@@ -31,7 +37,7 @@ function initMenuHandlers() {
         if ($(this).hasClass("active"))
             event.stopImmediatePropagation();
         else
-            clearInterval(busDataIntervalId);           //stop requesting bus data
+            RouteManager.stopRequestingBusData();
     });
 
     $(".planTripMenu").click(function() {
@@ -108,7 +114,7 @@ function onSubmitRoute() {
     allRoutesList.find("option").remove(".selectListPlaceholder");
     $("#divRoutesLoader").addClass("active");
 
-    requestRouteGeometry(routeId).then(function(data){initRouteMap(routeId, data);});
+    Requester.requestRouteGeometry(routeId).then(function(data){RouteManager.renderRouteToMap(routeId, data, map);});
 }
 
 /* Removed until the STA gets it together and adds their stops back into transit.land
@@ -160,22 +166,18 @@ function onGeocodingRequestComplete(data) {
     var southBound = placeGeometry['viewport']['southwest']['lat'];
     var westBound = placeGeometry['viewport']['southwest']['lng'];
 
-    initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
+    MapManager.initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
 
     var latLng = data.results[0].geometry.location;
     stopSearchLat = latLng.lat;
     stopSearchLng = latLng.lng;
     stopSearchRadius = 250;
-    requestStopsInBounds(northBound, eastBound, southBound, westBound).then(function(data){
+    Requester.requestStopsInBounds(northBound, eastBound, southBound, westBound).then(function(data){
         onStopsReceived(data);
-        updateStopsWhenNecessary();
+        MapManager.updateStopsWhenNecessary();
     });
     //requestStopsUntilRadiusTooLarge();
 
-}
-
-function requestStopsUntilRadiusTooLarge(){
-    requestStopsAtCoordinates(stopSearchLat, stopSearchLng, stopSearchRadius).then(function(data){ onStopsReceived(data); });
 }
 
 function onStopsReceived(stops){
@@ -188,36 +190,32 @@ function onStopsReceived(stops){
         return;
     }*/
 
-    drawStops(stops);
+    MapManager.drawBusStopsFromData(stops);
     $("#divStopsSegment").removeClass("loading");
     $("#btnSubmitStops").removeClass("loading").removeClass("disabled");
     $("#divStops:hidden").transition("slide left");
 }
 
-function drawStops(stops){
-    console.log(stops);
-
-    for (var stop = 0; stop < stops.length; stop++){
-        buildBusStopMarker(stops[stop]);
-    }
-    drawBusStops();
-    console.log("drawStops done");
-}
-
 // saves route to cookie, displays modal error message from Semantic UI when necessary
 function onSaveFavoriteRoute() {
-    var routeName = "Route: ";
     var allRoutes = $("#allRoutesList");
+    //don't save placeholder
+    if (allRoutes.find("option:selected").hasClass("selectListPlaceholder")){
+        return;
+    }
+
+    var routeName = "Route: ";
     routeName += allRoutes.find("option:selected").text();
     var routeId = allRoutes.val();
     //console.log(routeName + "\n" + routeId);
 
-    if (getFavorites() !== undefined && faveExists(routeName)) {
+    if (FavoritesManager.getFavorites() !== undefined && FavoritesManager.favoriteExists(routeName)) {
         //alert(routeName + " is already in your favorites!");
         $("#favExistsMsg").empty().append(allRoutes.find("option:selected").text() + " is already in your favorites!");
         $('#favExistsAlert').modal('show');
     } else {
-        addToFaves(routeName, routeId);
+
+        FavoritesManager.addToFavorites(routeName, routeId);
         //alert("favorite saved: " + routeName);
         $("#favSavedMsg").empty().append(routeName + " has been saved to your favorites.");
         $("#favSavedAlert").modal("show");

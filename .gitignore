@@ -4,3 +4,6 @@
 .idea/
 js/apiKeys.js
 services/creds.ini
+node_modules/
+*.map
+*-compiled.js

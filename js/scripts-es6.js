@@ -1,0 +1,10 @@
+require('jquery');
+require('./external/date.js');
+require('./external/jquery.cookie.js');
+require('./external/semantic.min.js');
+require('./busForm.js');
+require('./geocoding.js');
+require('./CookieManager.js');
+require('./FavoritesManager.js');
+require('./RouteManager.js');
+require('./planTrip.js');
