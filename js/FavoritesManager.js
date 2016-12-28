@@ -1,4 +1,4 @@
-import CookieManager from './CookieManager-compiled.js';
+import CookieManager from './CookieManager.js';
 
 export default class FavoritesManager {
 

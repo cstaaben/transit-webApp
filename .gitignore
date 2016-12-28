@@ -7,3 +7,4 @@ services/creds.ini
 node_modules/
 *.map
 *-compiled.js
+js/scripts.min.js

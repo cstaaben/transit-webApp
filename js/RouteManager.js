@@ -1,12 +1,12 @@
-import MapManager from './MapManager-compiled.js';
-import Requester from './Requester-compiled.js';
+import MapManager from './MapManager.js';
+import Requester from './Requester.js';
 
 export default class RouteManager {
     static populateListWithRoutes(list){
         $.getJSON(_routesURL, "", function(data){ _onRoutesReceived(data, list); });
     }
 
-    static renderRouteToMap(routeId, routeGeometry, map){
+    static renderRouteToMap(routeId, routeGeometry){
         _renderRoute(routeGeometry);
         _drawBuses(routeId);
         //TODO: draw stops
@@ -142,7 +142,7 @@ const _buildBusMarkersForDirection = function(direction){
 
 //region bus functions
 
-var busDataIntervalId = -1;
+let busDataIntervalId = -1;
 
 const _drawBuses = function(routeId){
     fetchBusData(routeId);
@@ -156,7 +156,7 @@ function fetchBusData(routeId){
     Requester.requestBusData(routeId).then(function(data){_addBusMarkers(data);});
 }
 
-var busMarkers = [];
+let busMarkers = [];
 
 const _addBusMarkers = function(busCoords){
     const bc_keys = Object.keys(busCoords);

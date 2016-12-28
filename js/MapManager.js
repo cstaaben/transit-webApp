@@ -1,3 +1,6 @@
+import Requester from './Requester.js';
+
+
 let _map = {};
 let _busStopMarkers = {};
 
@@ -55,8 +58,8 @@ export default class MapManager {
     }
 
     static moveMap(latLng) {
-        var lat = parseFloat(latLng[1]);
-        var lng = parseFloat(latLng[0]);
+        const lat = parseFloat(latLng[1]);
+        const lng = parseFloat(latLng[0]);
 
         _map.panTo({lat: lat, lng: lng});
         google.maps.event.addListenerOnce(_map, "idle", function() {
@@ -67,14 +70,14 @@ export default class MapManager {
 
     static setMarker(latLng, name) {
 
-        var marker = new google.maps.Marker({
+        const marker = new google.maps.Marker({
             position: {lat: parseFloat(latLng[1]), lng: parseFloat(latLng[0])},
             draggable: false,
             title: name,
             animation: google.maps.Animation.DROP
         });
 
-        var infoWindow = new google.maps.InfoWindow();
+        const infoWindow = new google.maps.InfoWindow();
         marker.addListener("click", function() {
             infoWindow.close();
             infoWindow.setContent(name);
@@ -83,7 +86,7 @@ export default class MapManager {
     }
 
     static drawBusStopsFromMarkers() {
-        for (var key in _busStopMarkers) {
+        for (let key in _busStopMarkers) {
             if (_busStopMarkers.hasOwnProperty(key)) {
                 _busStopMarkers[key].setMap(_map);
             }
@@ -93,17 +96,17 @@ export default class MapManager {
     static drawBusStopsFromData(stops){
         console.log(stops);
 
-        for (var stop = 0; stop < stops.length; stop++){
+        for (let stop = 0; stop < stops.length; stop++){
             MapManager.buildBusStopMarker(stops[stop]);
         }
         MapManager.drawBusStopsFromMarkers();
     }
 
     static buildBusStopMarker(busStop) {
-        var lat = parseFloat(busStop.point.lat);
-        var lng = parseFloat(busStop.point.lon);
+        const lat = parseFloat(busStop.point.lat);
+        const lng = parseFloat(busStop.point.lon);
 
-        var marker = new google.maps.Marker({
+        const marker = new google.maps.Marker({
             position: {lat: lat, lng: lng},
             draggable: false,
             icon: '../transit-webApp/img/bus_stop.png',
@@ -111,7 +114,7 @@ export default class MapManager {
             animation: google.maps.Animation.DROP
         });
 
-        var infoWindow = new google.maps.InfoWindow();
+        const infoWindow = new google.maps.InfoWindow();
         marker.addListener("click", function() {
             infoWindow.close();
             infoWindow.setContent(busStop.name);
@@ -127,15 +130,15 @@ export default class MapManager {
 
 const _onMapBoundsChanged = function() {
     console.log("bounds changed");
-    var bounds = _map.getBounds();
-    var northEast = bounds.getNorthEast();
-    var southWest = bounds.getSouthWest();
-    var northBound = northEast.lat();
-    var eastBound = northEast.lng();
-    var southBound = southWest.lat();
-    var westBound = southWest.lng();
+    const bounds = _map.getBounds();
+    const northEast = bounds.getNorthEast();
+    const southWest = bounds.getSouthWest();
+    const northBound = northEast.lat();
+    const eastBound = northEast.lng();
+    const southBound = southWest.lat();
+    const westBound = southWest.lng();
 
-    MapManager.requestStopsInBounds(northBound, eastBound, southBound, westBound).then(function(data) {
+    Requester.requestStopsInBounds(northBound, eastBound, southBound, westBound).then(function(data) {
         MapManager.drawBusStopsFromData(data);
     });
 };

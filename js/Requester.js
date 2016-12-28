@@ -110,4 +110,9 @@ export default class Requester {
             dataType: 'json'
         });
     }
+
+    static requestGeocoding(location, callback){
+        const requestAddress = "https://maps.googleapis.com/maps/api/geocode/json?address=" + location + "&key=" + API_KEY_UNRESTRICTED;
+        $.getJSON(requestAddress, "", function(data) { callback(data); });
+    }
 }

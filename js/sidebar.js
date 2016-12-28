@@ -1,7 +1,8 @@
 $(document).ready( function (){
+	/*
 	$("#menuSlider").hide();
 	$(".menuBar").hide();
-	/*
+	*/
 	var width = $(window).width();
 	if((width < 1023))
 		$("#menu").hide();
@@ -20,5 +21,5 @@ $(document).ready( function (){
 
 	$("a").click(function(){
 		$('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
-	});*/
+	});
 });

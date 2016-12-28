@@ -101,7 +101,7 @@ class DatabaseAccessLayer {
         $eastBound = $northEast->getLongitude();
         $southBound = $southWest->getLatitude();
         $westBound = $southWest->getLongitude();
-        $query = "SELECT JSON FROM tbaumgar_transit_webapp.stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";
+        $query = "SELECT JSON FROM " . self::$db_name . ".stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";        //TODO: dehardcode
         $results = self::queryParameterless($query);
 
         $stops = [];
@@ -187,7 +187,7 @@ class DatabaseAccessLayer {
 
     //endregion
 
-    static function getRandomInt(int $min, int $max, int $exclude=NAN) : int {
+    static function getRandomInt(int $min, int $max, int $exclude=null) : int {
         do {
             $newInt = rand($min, $max);
         } while ($newInt === $exclude);
