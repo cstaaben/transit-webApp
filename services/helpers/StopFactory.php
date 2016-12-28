@@ -1,6 +1,6 @@
 <?php
 
-namespace transit_webApp\factories;
+namespace transit_webApp\helpers;
 
 use transit_webApp\models\Stop;
 use transit_webApp\TransitManager;
