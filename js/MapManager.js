@@ -126,6 +126,10 @@ export default class MapManager {
         }
     }
 
+    static getViewportBound(boundA, boundB){
+        return (Math.abs(boundA) > Math.abs(boundB)) ? boundA : boundB;
+    };
+
 }
 
 const _onMapBoundsChanged = function() {

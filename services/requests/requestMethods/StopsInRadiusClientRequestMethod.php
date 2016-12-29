@@ -12,7 +12,7 @@ use transit_webApp\DatabaseAccessLayer;
 
 class StopsInRadiusClientRequestMethod extends AClientRequestMethod implements IClientRequestMethod {
 
-    const METHOD_NAME = 'getStops';
+    const METHOD_NAME = 'getStopsInRadius';
     private $latitude = '';
     private $longitude = '';
     private $radius = 1000;

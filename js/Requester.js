@@ -1,9 +1,7 @@
-//TODO: encapsulate in singleton scope
 /**
  * Encapsulates calls to transit.php
  */
 
-//TODO: implement caching
 let listOfRoutes = {};
 let lineTraces = {};
 let stopsForLine = {};
@@ -98,7 +96,7 @@ export default class Requester {
     static requestStopsAtCoordinates(latitude, longitude, radius) {
         return $.ajax({
             type: "GET",
-            url: '/transit-webApp/services/TransitManager.php?method=getStops&lat=' + latitude + '&lng=' + longitude + '&r=' + radius,
+            url: '/transit-webApp/services/TransitManager.php?method=getStopsInRadius&lat=' + latitude + '&lng=' + longitude + '&r=' + radius,
             dataType: 'json'
         });
     }

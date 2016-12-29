@@ -66,11 +66,6 @@ const _onRoutesReceived = function(data) {
 
 };
 
-//TODO: put in map
-const _getViewportBound = function(boundA, boundB){
-    return (Math.abs(boundA) > Math.abs(boundB)) ? boundA : boundB;
-};
-
 const _renderRoute = function(routeGeometry){
     const dir0 = routeGeometry[0];
     const dir1 = routeGeometry[1];
@@ -80,10 +75,10 @@ const _renderRoute = function(routeGeometry){
     const dir0lines = _buildPolylines(dir0['Points'], dir0['Color']);
     const dir1lines = _buildPolylines(dir1['Points'], dir1['Color']);
 
-    const northBound = _getViewportBound(dir0['latNorth'], dir1['latNorth']);
-    const eastBound = _getViewportBound(dir0['lonEast'], dir1['lonEast']);
-    const southBound = _getViewportBound(dir0['latSouth'], dir1['latSouth']);
-    const westBound = _getViewportBound(dir0['lonWest'], dir1['lonWest']);
+    const northBound = MapManager.getViewportBound(dir0['latNorth'], dir1['latNorth']);
+    const eastBound = MapManager.getViewportBound(dir0['lonEast'], dir1['lonEast']);
+    const southBound = MapManager.getViewportBound(dir0['latSouth'], dir1['latSouth']);
+    const westBound = MapManager.getViewportBound(dir0['lonWest'], dir1['lonWest']);
 
     MapManager.initMapWithBounds(latCenter, lonCenter, northBound, eastBound, southBound, westBound);
 

@@ -95,22 +95,27 @@ class DatabaseAccessLayer {
         return $stops;
     }
 
-    //TODO: parameterize query
     static function getStopsWithinBounds(LatitudeLongitude $northEast, LatitudeLongitude $southWest){
+        $query = "CALL `GETSTOPSINBOUNDS`(:northBound, :eastBound, :southBound, :westBound);";
         $northBound = $northEast->getLatitude();
         $eastBound = $northEast->getLongitude();
         $southBound = $southWest->getLatitude();
         $westBound = $southWest->getLongitude();
-        $query = "SELECT JSON FROM " . self::$db_name . ".stops WHERE Latitude < $northBound AND Latitude > $southBound AND Longitude < $eastBound AND Longitude > $westBound";        //TODO: dehardcode
-        $results = self::queryParameterless($query);
+
+        $dbo = self::getDatabaseConnection();
+        $statement = $dbo->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $statement->bindValue(':northBound', $northBound);
+        $statement->bindValue(':eastBound', $eastBound);
+        $statement->bindValue(':southBound', $southBound);
+        $statement->bindValue(':westBound', $westBound);
+        $statement->execute();
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         $stops = [];
         foreach ($results as $result)
             $stops[] = json_decode($result['JSON']);
         return $stops;
     }
-
-
 
     /**
      * @param string $excludeProxy don't return this proxy
